@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: entornos-seguros-db
+    environment:
+      POSTGRES_USER: entornos_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-TuContrasenaSegura123!}
+      POSTGRES_DB: entornos_seguros_db
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=es_CO.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - entornos-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U entornos_user -d entornos_seguros_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: entornos-seguros-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@entornosseguros.gov.co}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-AdminPassword123!}
+    ports:
+      - "5050:80"
+    networks:
+      - entornos-network
+    depends_on:
+      - postgres
+
+  redis:
+    image: redis:7-alpine
+    container_name: entornos-seguros-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - entornos-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: entornos-seguros-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/entornos_seguros_db
+      SPRING_DATASOURCE_USERNAME: entornos_user
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-TuContrasenaSegura123!}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-tu-secreto-jwt-super-seguro-cambiar-en-produccion}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+    ports:
+      - "8080:8080"
+    networks:
+      - entornos-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/logs:/app/logs
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  entornos-network:
+    driver: bridge

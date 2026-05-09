@@ -1,0 +1,346 @@
+/* ============================================
+   ESTILOS PRINCIPALES - TEMA PROFESIONAL
+   Entornos Seguros Bogotá
+   ============================================ */
+
+:root {
+    /* Colores Institucionales */
+    -primary-dark: #001F3F;
+    -primary-light: #00BCD4;
+    -background-light: #F5F5F5;
+    -background-dark: #FFFFFF;
+    -text-dark: #333333;
+    -text-light: #666666;
+    -border-color: #CCCCCC;
+    
+    /* Estados */
+    -success: #27AE60;
+    -warning: #F39C12;
+    -danger: #E74C3C;
+    -info: #3498DB;
+    
+    /* Espacios */
+    -padding-small: 8px;
+    -padding-medium: 15px;
+    -padding-large: 25px;
+    -spacing-small: 5px;
+    -spacing-medium: 10px;
+    -spacing-large: 20px;
+}
+
+/* ============ ROOT NODE ============ */
+.root {
+    -fx-font-family: "Inter", sans-serif;
+    -fx-font-size: 12px;
+    -fx-text-fill: -text-dark;
+    -fx-background-color: -background-light;
+}
+
+/* ============ BUTTONS ============ */
+.button {
+    -fx-padding: -padding-medium;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: -primary-dark;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 31, 63, 0.3), 5, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #002855;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 31, 63, 0.5), 8, 0, 0, 3);
+}
+
+.button:pressed {
+    -fx-background-color: #001F3F;
+}
+
+.button-primary {
+    -fx-background-color: -primary-light;
+}
+
+.button-primary:hover {
+    -fx-background-color: #00A8B8;
+}
+
+.button-success {
+    -fx-background-color: -success;
+}
+
+.button-success:hover {
+    -fx-background-color: #229954;
+}
+
+.button-danger {
+    -fx-background-color: -danger;
+}
+
+.button-danger:hover {
+    -fx-background-color: #C0392B;
+}
+
+/* ============ LABELS ============ */
+.label {
+    -fx-text-fill: -text-dark;
+}
+
+.label-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -primary-dark;
+}
+
+.label-subtitle {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -primary-dark;
+}
+
+.label-caption {
+    -fx-font-size: 10px;
+    -fx-text-fill: -text-light;
+}
+
+/* ============ TEXT FIELDS ============ */
+.text-field, .password-field {
+    -fx-padding: -padding-small -padding-medium;
+    -fx-font-size: 12px;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 4;
+    -fx-background-color: white;
+    -fx-text-fill: -text-dark;
+    -fx-border-width: 1;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -primary-light;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 188, 212, 0.2), 5, 0, 0, 0);
+}
+
+/* ============ COMBO BOX ============ */
+.combo-box {
+    -fx-border-color: -border-color;
+    -fx-border-radius: 4;
+    -fx-background-color: white;
+}
+
+.combo-box:focused {
+    -fx-border-color: -primary-light;
+    -fx-border-width: 2;
+}
+
+/* ============ SPINNERS ============ */
+.spinner {
+    -fx-border-color: -border-color;
+    -fx-border-radius: 4;
+}
+
+/* ============ SCROLL PANE ============ */
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.scroll-pane .scroll-bar {
+    -fx-padding: 0;
+}
+
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-padding: 0;
+}
+
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+    -fx-padding: 0;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: derive(-primary-light, 20%);
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -primary-light;
+}
+
+/* ============ TABLE VIEW ============ */
+.table-view {
+    -fx-border-color: -border-color;
+    -fx-border-width: 1;
+    -fx-fixed-cell-size: 35;
+}
+
+.table-view .column-header {
+    -fx-background-color: -background-light;
+    -fx-text-fill: -text-dark;
+    -fx-font-weight: bold;
+    -fx-border-color: -border-color;
+}
+
+.table-view .cell {
+    -fx-padding: -padding-small;
+    -fx-border-color: -border-color;
+}
+
+/* ============ TREE VIEW ============ */
+.tree-view {
+    -fx-border-color: -border-color;
+}
+
+.tree-cell {
+    -fx-padding: -padding-small;
+}
+
+/* ============ TAB PANE ============ */
+.tab-pane {
+    -fx-padding: 0;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: -background-light;
+    -fx-border-color: -border-color;
+}
+
+.tab {
+    -fx-background-color: -background-light;
+    -fx-text-fill: -text-light;
+    -fx-padding: -padding-medium;
+}
+
+.tab:selected {
+    -fx-background-color: white;
+    -fx-text-fill: -primary-dark;
+}
+
+/* ============ SEPARATOR ============ */
+.separator {
+    -fx-padding: -spacing-medium 0;
+}
+
+.separator .line {
+    -fx-border-color: -border-color;
+}
+
+/* ============ ALERT DIALOG ============ */
+.dialog-pane {
+    -fx-background-color: white;
+    -fx-padding: -padding-large;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -primary-dark;
+}
+
+.dialog-pane .content {
+    -fx-padding: -padding-large;
+}
+
+/* ============ PROGRESS BAR ============ */
+.progress-bar {
+    -fx-padding: 8px;
+}
+
+.progress-bar .bar {
+    -fx-background-color: -primary-light;
+}
+
+/* ============ HYPERLINK ============ */
+.hyperlink {
+    -fx-text-fill: -primary-light;
+    -fx-padding: 0;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: -primary-light;
+}
+
+.hyperlink:hover {
+    -fx-underline: true;
+}
+
+/* ============ CUSTOM CLASSES ============ */
+
+.card {
+    -fx-border-color: -border-color;
+    -fx-border-radius: 8;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+    -fx-padding: -padding-large;
+}
+
+.card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 8, 0, 0, 3);
+}
+
+.sidebar {
+    -fx-background-color: -primary-dark;
+    -fx-border-color: -border-color;
+    -fx-border-width: 0 1 0 0;
+}
+
+.topbar {
+    -fx-background-color: -primary-dark;
+    -fx-border-color: -border-color;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: -padding-medium;
+}
+
+.topbar .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.panel-header {
+    -fx-background-color: -background-light;
+    -fx-border-color: -border-color;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: -padding-medium;
+}
+
+.status-badge {
+    -fx-background-radius: 15;
+    -fx-padding: 5 10 5 10;
+    -fx-font-size: 10;
+    -fx-font-weight: bold;
+}
+
+.status-badge-success {
+    -fx-background-color: -success;
+    -fx-text-fill: white;
+}
+
+.status-badge-warning {
+    -fx-background-color: -warning;
+    -fx-text-fill: white;
+}
+
+.status-badge-danger {
+    -fx-background-color: -danger;
+    -fx-text-fill: white;
+}
+
+.status-badge-info {
+    -fx-background-color: -info;
+    -fx-text-fill: white;
+}
+
+/* ============ RESPONSIVE ADJUSTMENTS ============ */
+@media (max-width: 768px) {
+    .root {
+        -fx-font-size: 11px;
+    }
+    
+    .label-title {
+        -fx-font-size: 18px;
+    }
+    
+    .button {
+        -fx-padding: 8px 12px;
+    }
+}
