@@ -1,6 +1,6 @@
 
 
-## 🏗️ Arquitectura del Proyecto
+##  Arquitectura del Proyecto
 
 ```
 EntornosSeurosBogota/
