@@ -1,24 +1,4 @@
-# 🛡️ Entornos Seguros Bogotá
 
-**Sistema Inteligente de Reportes de Seguridad Ciudadana en Tiempo Real**
-
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Java](https://img.shields.io/badge/Java-17+-red)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
-![JavaFX](https://img.shields.io/badge/JavaFX-21-orange)
-
-## 📋 Descripción General
-
-**Entornos Seguros Bogotá** es una plataforma moderna y profesional que conecta ciudadanos con autoridades locales para crear entornos más seguros en la capital colombiana. La aplicación permite reportar incidentes de seguridad en tiempo real con geolocalización, mapas interactivos y dashboards analíticos.
-
-### 🎯 Objetivos Principales
-- ✅ Reportes de incidentes en tiempo real
-- ✅ Geolocalización inteligente con mapas interactivos
-- ✅ Dashboard analítico con métricas de seguridad
-- ✅ Comunicación inmediata con autoridades
-- ✅ Sistema de notificaciones en vivo (WebSocket)
-- ✅ Interfaz moderna, elegante y profesional
 
 ## 🏗️ Arquitectura del Proyecto
 
