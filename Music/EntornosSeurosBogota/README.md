@@ -105,15 +105,7 @@ Amarillo Alerta:              #F39C12
 - **Cuerpo**: Montserrat (Regular, 400)
 - **Código**: JetBrains Mono
 
-### Características UI/UX
-- ✨ Glassmorphism ligero
-- 🎭 Dark Mode opcional
-- 🎬 Animaciones suaves
-- 📱 Responsive (Escritorio, Tablet, Móvil)
-- ⚡ Microinteracciones elegantes
-- 🌊 Transiciones fluidas
 
-## 🚀 Inicio Rápido
 
 ### Requisitos Previos
 - Java 17+
@@ -158,7 +150,7 @@ mvn clean install
 mvn javafx:run
 ```
 
-## 📚 Documentación Detallada
+##  Documentación Detallada
 
 - **[SETUP.md](docs/SETUP.md)** - Guía completa de instalación
 - **[API.md](docs/API.md)** - Documentación de endpoints REST
@@ -166,7 +158,7 @@ mvn javafx:run
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Arquitectura de software
 - **[UI_UX.md](docs/UI_UX.md)** - Guía de componentes y estilos
 
-## 🎯 Funcionalidades Principales
+##  Funcionalidades Principales
 
 ### 1. Sistema de Autenticación
 - Login con JWT
@@ -204,7 +196,7 @@ mvn javafx:run
 - Sonidos de emergencia (opcional)
 - Notificaciones de escritorio
 
-## 📊 Base de Datos
+##  Base de Datos
 
 ### Tablas Principales
 - `users` - Usuarios del sistema
@@ -216,17 +208,9 @@ mvn javafx:run
 
 Ver [DATABASE.md](docs/DATABASE.md) para detalles completos.
 
-## 🔒 Seguridad
 
-- ✅ Autenticación JWT
-- ✅ CORS configurado
-- ✅ HTTPS en producción
-- ✅ SQL Injection prevention
-- ✅ XSS protection
-- ✅ Rate limiting
-- ✅ Validación de entrada
 
-## 📝 API REST (Ejemplos)
+##  API REST (Ejemplos)
 
 ```bash
 # Autenticación
@@ -253,7 +237,7 @@ GET /api/v1/analytics/heatmap
 GET /api/v1/analytics/trends
 ```
 
-## 🧪 Testing
+##  Testing
 
 ```bash
 # Backend
@@ -265,7 +249,7 @@ cd frontend
 mvn test
 ```
 
-## 🐳 Deployment con Docker
+##  Deployment con Docker
 
 ```bash
 # Build de imagen personalizada
@@ -298,26 +282,13 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 👥 Equipo de Desarrollo
 
-**Entornos Seguros Bogotá** fue desarrollado por la **Secretaría Distrital de Seguridad** en colaboración con la **Policía Nacional de Colombia**.
+**Entornos Seguros Bogotá** fue desarrollado
 
 ---
 
-## 🎉 ¡PROYECTO COMPLETAMENTE CONFIGURADO!
 
-Este proyecto está **100% listo para comenzar a desarrollar**. Se ha creado:
 
-✅ **45+ carpetas organizadas** por funcionalidad  
-✅ **30+ archivos de configuración** profesionales  
-✅ **3,000+ líneas de documentación**  
-✅ **Base de datos** con 11 tablas y relaciones completas  
-✅ **Entidades Java** con JPA y Lombok  
-✅ **Repositorios** con consultas personalizadas  
-✅ **Seguridad JWT** completamente configurada  
-✅ **Docker Compose** para servicios  
-✅ **Estilos CSS** modernos con Glassmorphism  
-✅ **CI/CD Pipeline** con GitHub Actions  
 
-### 🚀 Inicio en 3 Pasos
 
 ```bash
 # 1. Configurar variables de entorno
@@ -341,7 +312,7 @@ docker-compose up -d
 | [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | Árbol completo del proyecto |
 | [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) | Resumen ejecutivo |
 
-### 🔐 Credenciales Iniciales
+###  Credenciales Iniciales
 
 ```
 Super Admin:     admin@entornosseguros.gov.co / Admin123!
@@ -350,7 +321,7 @@ Ciudadano:       ciudadano@entornosseguros.gov.co / Admin123!
 Policía:         policia@entornosseguros.gov.co / Admin123!
 ```
 
-### 📊 Estructura del Proyecto
+###  Estructura del Proyecto
 
 ```
 EntornosSeurosBogota/
@@ -364,7 +335,7 @@ EntornosSeurosBogota/
 └── PROJECT_SUMMARY.md         # Resumen ejecutivo
 ```
 
-### ✨ Características Principales
+###  Características Principales
 
 **Seguridad**
 - JWT Authentication
