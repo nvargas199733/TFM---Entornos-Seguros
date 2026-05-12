@@ -1,9 +1,9 @@
-function App() {
+import HomePolice from "./pages/HomePolice";
+
+const App = () => {
   return (
-    <div>
-      <h1>Frontend Policía</h1>
-    </div>
+    <HomePolice />
   );
-}
+};
 
 export default App;

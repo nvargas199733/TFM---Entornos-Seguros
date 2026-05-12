@@ -1,0 +1,99 @@
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px 32px;
+
+  background-color: #0f172a;
+  color: white;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Logo y nombre */
+
+.header__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__logo {
+  font-size: 28px;
+}
+
+.header__title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Navegación */
+
+.header__nav {
+  display: flex;
+  gap: 24px;
+}
+
+.header__link {
+  text-decoration: none;
+  color: #cbd5e1;
+
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.header__link:hover {
+  color: white;
+}
+
+.header__link--active {
+  color: #38bdf8;
+}
+
+/* Botón usuario */
+
+.header__user-button {
+  border: none;
+
+  background-color: #1e293b;
+
+  color: white;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.header__user-button:hover {
+  background-color: #334155;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .header__nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+}
