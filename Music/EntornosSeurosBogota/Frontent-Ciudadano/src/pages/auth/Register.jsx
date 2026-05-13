@@ -23,17 +23,6 @@ function Register() {
           Inicio de sesión
         </button>
 
-        <label className="terms-box">
-          <input type="checkbox" />
-
-          <span>
-            Declaro tener mas de 18 años y acepto los{" "}
-            <a href="#">Términos y Condiciones</a>, la{" "}
-            <a href="#">Política de Privacidad</a> y la{" "}
-            <a href="#">guía comunitaria</a>
-          </span>
-        </label>
-
       </section>
     </main>
   );

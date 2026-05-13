@@ -1,7 +1,7 @@
-import Register from "./pages/auth/Register";
+import RegisterForm from "./pages/auth/RegisterForm";
 
 function App() {
-  return <Register />;
+  return <RegisterForm />;
 }
 
 export default App;
