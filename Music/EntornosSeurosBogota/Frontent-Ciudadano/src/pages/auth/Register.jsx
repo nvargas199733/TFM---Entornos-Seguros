@@ -1,6 +1,13 @@
 import "./Register.css";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
+
+  const handleCreateAccount = () => {
+    navigate("/registro");
+  };
+
   return (
     <main className="register-container">
       <section className="register-content">
@@ -15,7 +22,10 @@ function Register() {
           className="register-logo"
         />
 
-        <button className="register-button create-account">
+        <button 
+        className="register-button create-account"
+        onClick={() => navigate("/registro")}
+        >
           Registrarse
         </button>
 

@@ -15,7 +15,7 @@ function RegisterForm() {
 
           <input
             type="text"
-            placeholder="Nombre y apellido"
+            placeholder="Nombre completo"
           />
 
           <input
