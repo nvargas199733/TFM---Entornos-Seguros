@@ -1,6 +1,7 @@
 import "./Register.css";
 import { useNavigate } from "react-router-dom";
 
+
 function Register() {
   const navigate = useNavigate();
 
@@ -29,7 +30,10 @@ function Register() {
           Registrarse
         </button>
 
-        <button className="register-button login-button">
+        <button className="register-button login-button"
+            className="register-button login-button"
+            onClick={() => navigate("/login")}
+        >
           Inicio de sesión
         </button>
 
