@@ -1,6 +1,25 @@
 import "./RegisterForm.css";
+import { useState } from "react";
 
 function RegisterForm() {
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    setError("");
+
+    alert("Formulario enviado correctamente");
+  };
+
   return (
     <main className="form-container">
       <section className="form-card">
@@ -11,36 +30,46 @@ function RegisterForm() {
           className="form-logo"
         />
 
-        <form className="register-form">
+        <form className="register-form" onSubmit={handleSubmit}>
 
           <input
             type="text"
             placeholder="Nombre completo"
+            required
           />
 
           <input
-            type="text"
+            type="number"
             placeholder="Cédula"
+            required
           />
 
           <input
             type="email"
             placeholder="Correo electrónico"
+            required
           />
 
           <input
-            type="tel"
+            type="number"
             placeholder="Celular"
+            required
           />
 
           <input
             type="password"
             placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
           <input
             type="password"
             placeholder="Confirmar contraseña"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
           />
 
           <label className="terms-box">
@@ -53,6 +82,14 @@ function RegisterForm() {
                 <a href="#">guía comunitaria</a>
             </span>
             </label>
+
+            {
+            error && (
+                <p className="password-error">
+                {error}
+                </p>
+            )
+            }
 
           <button type="submit">
             Registrarse
