@@ -1,6 +1,9 @@
 import "./Login.css";
+import { useNavigate } from "react-router-dom";
+
 
 function Login() {
+    const navigate = useNavigate();
   return (
     <main className="login-container">
       <section className="login-card">
@@ -10,7 +13,12 @@ function Login() {
           className="login-logo"
         />
 
-        <form className="login-form">
+        <form className="login-form"
+            onSubmit={(e) => {
+                e.preventDefault();
+                navigate("/menu");
+            }}
+            >
           <input
             type="email"
             placeholder="Correo electrónico"

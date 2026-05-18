@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import Register from "../pages/auth/Register";
 import RegisterForm from "../pages/auth/RegisterForm";
 import Login from "../pages/auth/Login";
+import MenuPage from "../pages/menu/Menu";
 
 function AppRoutes() {
   return (
