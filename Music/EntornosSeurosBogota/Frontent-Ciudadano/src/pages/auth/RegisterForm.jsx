@@ -51,11 +51,15 @@ function RegisterForm() {
           />
 
           <input
-            type="number"
+            type="text"
+            name="celular"
             placeholder="Celular"
+            pattern="[0-9]{10}"
+            inputMode="numeric"
+            maxLength="10"
+            minLength="10"
             required
-          />
-
+            />
           <input
             type="password"
             placeholder="Contraseña"
