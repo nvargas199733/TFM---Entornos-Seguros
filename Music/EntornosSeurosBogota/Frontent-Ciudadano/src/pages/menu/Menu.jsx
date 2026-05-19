@@ -1,5 +1,6 @@
 import "./Menu.css";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import {
   Menu,
@@ -12,14 +13,17 @@ import {
 
 function MenuPage() {
     const navigate = useNavigate();
+    const [openMenu, setOpenMenu] = useState(false);
   return (
     <main className="menu-container">
 
       {/* Header */}
       <header className="top-header">
-
-        <button className="icon-button">
-          <Menu size={32} />
+        <button
+            className="icon-button"
+            onClick={() => setOpenMenu(true)}
+        >
+           <Menu size={32} />
         </button>
 
         <button className="icon-button">
@@ -27,6 +31,53 @@ function MenuPage() {
         </button>
 
       </header>
+
+      {
+        openMenu && (
+            <>
+            <div
+                className="sidebar-overlay"
+                onClick={() => setOpenMenu(false)}
+            ></div>
+
+            <aside className="sidebar-menu">
+
+                <button
+                className="sidebar-item"
+                onClick={() => navigate("/menu")}
+                >
+                <MapPinned size={24} />
+                Mapa de los CAI
+                </button>
+
+                <button
+                className="sidebar-item"
+                onClick={() => navigate("/generar-reporte")}
+                >
+                <FileText size={24} />
+                Generar Reportes
+                </button>
+
+                <button
+                className="sidebar-item"
+                onClick={() => navigate("/mis-reportes")}
+                >
+                <ClipboardList size={24} />
+                Mis Reportes
+                </button>
+
+                <button
+                className="sidebar-item"
+                onClick={() => navigate("/perfil")}
+                >
+                <User size={24} />
+                Perfil
+                </button>
+
+            </aside>
+            </>
+        )
+        }
 
       {/* Logo */}
       <section className="logo-section">

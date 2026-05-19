@@ -120,3 +120,63 @@
     height: 54px;
   }
 }
+
+/* OVERLAY */
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.35);
+  z-index: 998;
+}
+
+/* SIDEBAR */
+
+.sidebar-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 270px;
+  height: 100vh;
+
+  background-color: white;
+
+  padding: 90px 20px 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  z-index: 999;
+
+  box-shadow: 4px 0 20px rgba(0,0,0,0.12);
+}
+
+/* ITEMS */
+
+.sidebar-item {
+  border: none;
+  background-color: #eef6fc;
+
+  border-radius: 14px;
+
+  padding: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  color: #0d4876;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.sidebar-item:hover {
+  background-color: #dcecff;
+}

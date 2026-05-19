@@ -5,6 +5,7 @@ import Login from "../pages/auth/Login";
 import MenuPage from "../pages/menu/Menu";
 import Profile from "../pages/profile/Profile";
 import CreateReport from "../pages/reports/CreateReport";
+import MyReports from "../pages/reports/MyReports";
 
 function AppRoutes() {
   return (
@@ -35,6 +36,10 @@ function AppRoutes() {
         <Route 
           path="/generar-reporte" 
           element={<CreateReport />} 
+        />
+        <Route 
+          path="/mis-reportes" 
+          element={<MyReports />} 
         />
 
       </Routes>

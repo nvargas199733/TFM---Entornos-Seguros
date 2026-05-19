@@ -14,15 +14,13 @@
 }
 
 .report-header {
-  height: 150px;
+  height: 132px;
   background-color: #0d4876;
   color: white;
-  padding: 28px 24px 0;
+  padding: 26px 22px 0;
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  border-bottom-left-radius: 42% 18%;
-  border-bottom-right-radius: 42% 18%;
+  align-items: flex-start;
 }
 
 .report-header h1 {
