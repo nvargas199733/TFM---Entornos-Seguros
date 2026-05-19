@@ -4,6 +4,7 @@ import RegisterForm from "../pages/auth/RegisterForm";
 import Login from "../pages/auth/Login";
 import MenuPage from "../pages/menu/Menu";
 import Profile from "../pages/profile/Profile";
+import CreateReport from "../pages/reports/CreateReport";
 
 function AppRoutes() {
   return (
@@ -15,7 +16,6 @@ function AppRoutes() {
           path="/"
           element={<Register />}
         />
-
         <Route
           path="/registro"
           element={<RegisterForm />}
@@ -31,6 +31,10 @@ function AppRoutes() {
         <Route 
           path="/perfil" 
           element={<Profile />} 
+        />
+        <Route 
+          path="/generar-reporte" 
+          element={<CreateReport />} 
         />
 
       </Routes>

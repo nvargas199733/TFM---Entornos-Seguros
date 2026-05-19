@@ -1,4 +1,5 @@
 import "./Profile.css";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Bell,
@@ -12,11 +13,12 @@ import {
 } from "lucide-react";
 
 function Profile() {
+    const navigate = useNavigate();
   return (
     <main className="profile-container">
       <section className="profile-card">
         <header className="profile-header">
-          <button className="profile-icon-button">
+          <button className="profile-icon-button" onClick={() => navigate(-1)}>
             <ArrowLeft size={28} />
           </button>
 

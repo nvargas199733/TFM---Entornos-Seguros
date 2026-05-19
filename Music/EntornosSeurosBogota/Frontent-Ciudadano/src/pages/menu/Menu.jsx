@@ -1,4 +1,5 @@
 import "./Menu.css";
+import { useNavigate } from "react-router-dom";
 
 import {
   Menu,
@@ -10,6 +11,7 @@ import {
 } from "lucide-react";
 
 function MenuPage() {
+    const navigate = useNavigate();
   return (
     <main className="menu-container">
 
@@ -55,9 +57,12 @@ function MenuPage() {
           <span>Mis Reportes</span>
         </button>
 
-        <button className="menu-card">
-          <User size={70} />
-          <span>Perfil</span>
+        <button
+        className="menu-card"
+        onClick={() => navigate("/perfil")}
+        >
+        <User size={70} />
+        <span>Perfil</span>
         </button>
 
       </section>
