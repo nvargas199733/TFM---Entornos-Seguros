@@ -3,6 +3,7 @@ import Register from "../pages/auth/Register";
 import RegisterForm from "../pages/auth/RegisterForm";
 import Login from "../pages/auth/Login";
 import MenuPage from "../pages/menu/Menu";
+import Profile from "../pages/profile/Profile";
 
 function AppRoutes() {
   return (
@@ -22,6 +23,14 @@ function AppRoutes() {
         <Route
           path="/login"
           element={<Login />}
+        />
+        <Route
+          path="/menu"
+          element={<MenuPage />}
+        />
+        <Route 
+          path="/perfil" 
+          element={<Profile />} 
         />
 
       </Routes>
