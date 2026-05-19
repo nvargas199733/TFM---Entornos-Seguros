@@ -47,14 +47,20 @@ function MenuPage() {
           <span>Mapa de los CAI</span>
         </button>
 
-        <button className="menu-card">
-          <FileText size={70} />
-          <span>Generar Reportes</span>
+        <button
+            className="menu-card"
+            onClick={() => navigate("/generar-reporte")}
+        >
+            <FileText size={70} />
+            <span>Generar Reportes</span>
         </button>
 
-        <button className="menu-card">
-          <ClipboardList size={70} />
-          <span>Mis Reportes</span>
+        <button
+            className="menu-card"
+            onClick={() => navigate("/mis-reportes")}
+        >
+            <ClipboardList size={70} />
+            <span>Mis Reportes</span>
         </button>
 
         <button

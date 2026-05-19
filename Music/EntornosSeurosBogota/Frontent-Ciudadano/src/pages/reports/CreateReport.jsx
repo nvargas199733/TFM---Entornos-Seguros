@@ -38,7 +38,7 @@ function CreateReport() {
 
           <p className="counter">0/1000</p>
 
-          <h2 className="evidence-title">Evidencia</h2>
+          <h2 className="evidence-title">Agregar evidencia</h2>
 
           <section className="evidence-buttons">
             <button type="button" className="evidence-option">

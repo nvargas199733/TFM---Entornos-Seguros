@@ -85,23 +85,28 @@
 }
 
 .evidence-option {
-  border: 1.5px dashed #b9c8d6;
-  background-color: white;
-  border-radius: 50px;
-  min-height: 120px;
+  border: none;
+  background-color: #eef6fc;
+  border-radius: 14px;
+  min-height: 118px;
   color: #0d4876;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+
   font-weight: 700;
   cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(13, 72, 118, 0.08);
 }
 
 .evidence-option span {
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
+  line-height: 1.2;
 }
 
 .map-preview {
