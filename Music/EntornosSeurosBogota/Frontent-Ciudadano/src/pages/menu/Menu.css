@@ -180,3 +180,42 @@
 .sidebar-item:hover {
   background-color: #dcecff;
 }
+
+/* LOGO SIDEBAR */
+
+.sidebar-top {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.sidebar-logo {
+  width: 150px;
+  object-fit: contain;
+}
+
+/* BOTON LOGOUT */
+
+.logout-button {
+  margin-top: auto;
+
+  border: none;
+  background-color: #0d4876;
+
+  color: white;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.logout-button:hover {
+  opacity: 0.92;
+}

@@ -32,7 +32,7 @@ function MenuPage() {
 
       </header>
 
-      {
+            {
         openMenu && (
             <>
             <div
