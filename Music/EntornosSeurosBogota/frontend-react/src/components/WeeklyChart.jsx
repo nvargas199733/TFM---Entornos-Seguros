@@ -1,10 +1,9 @@
 /*
   WeeklyChart:
-  Gráfico de barras para mostrar los incidentes registrados
-  durante la semana actual.
+  Gráfico de barras semanal.
 
-  Usa Recharts para crear una visualización sencilla,
-  clara y responsive.
+  Recibe los reportes desde StatsPanel.jsx
+  y calcula cuántos incidentes ocurrieron por día.
 */
 
 import {
@@ -16,28 +15,36 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-/* Datos simulados mientras el backend no esté conectado */
-const weeklyData = [
-  { day: "Lun", incidents: 4 },
-  { day: "Mar", incidents: 7 },
-  { day: "Mié", incidents: 5 },
-  { day: "Jue", incidents: 6 },
-  { day: "Vie", incidents: 8 },
-  { day: "Sáb", incidents: 3 },
-  { day: "Dom", incidents: 2 },
-];
+const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-/* Total semanal calculado automáticamente */
-const weeklyTotal = weeklyData.reduce((sum, item) => sum + item.incidents, 0);
+const WeeklyChart = ({ reports }) => {
+  /*
+    Creamos una estructura base para los 7 días.
+  */
+  const weeklyData = days.map((day) => ({
+    day,
+    incidents: 0,
+  }));
 
-const WeeklyChart = () => {
+  /*
+    Recorremos los reportes recibidos y sumamos
+    cada incidente en el día correspondiente.
+  */
+  reports.forEach((report) => {
+    const reportDate = new Date(report.reportedAt);
+
+    const dayIndex = reportDate.getDay();
+
+    weeklyData[dayIndex].incidents += 1;
+  });
+
   return (
     <div className="weekly-chart">
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={weeklyData}>
           <XAxis dataKey="day" />
 
-          <YAxis />
+          <YAxis allowDecimals={false} />
 
           <Tooltip />
 
@@ -51,7 +58,5 @@ const WeeklyChart = () => {
     </div>
   );
 };
-
-export { weeklyTotal };
 
 export default WeeklyChart;

@@ -5,6 +5,8 @@
   La información viene desde reportsData.js.
 */
 
+import { useNavigate } from "react-router-dom";
+
 const incidentIcons = {
   Robo: "🚨",
   Accidente: "🚗",
@@ -12,6 +14,7 @@ const incidentIcons = {
 };
 
 const UserReportCard = ({ report }) => {
+  const navigate = useNavigate();
   const icon = incidentIcons[report.type] || "⚠️";
 
   return (
@@ -54,7 +57,11 @@ const UserReportCard = ({ report }) => {
         />
       </section>
 
-      <button className="user-report-card__button" type="button">
+      <button
+        className="user-report-card__button"
+        type="button"
+        onClick={() => navigate(`/reportes/${report.id}/generar-informe`)}
+      >
         Generar informe
       </button>
     </article>

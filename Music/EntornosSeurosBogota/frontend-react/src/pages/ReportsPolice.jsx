@@ -18,23 +18,27 @@ import HeroBanner from "../components/HeroBanner";
 
 const ReportsPolice = () => {
   const [filter, setFilter] = useState("Todos");
+  const attendedReports =
+  JSON.parse(localStorage.getItem("attendedReports")) || [];
 
-  /*
-  Primero:
-  obtenemos solo los reportes pendientes.
+/*
+  Primero mostramos solo reportes:
+  - con status pendiente
+  - que no estén registrados como atendidos en localStorage
 */
-  const pendingReports = reportsData.filter(
-    (report) => report.status === "pendiente",
-  );
+const pendingReports = reportsData.filter(
+  (report) =>
+    report.status === "pendiente" &&
+    !attendedReports.includes(report.id)
+);
 
-  /*
-  Luego:
-  aplicamos el filtro por tipo.
+/*
+  Luego aplicamos filtro por tipo.
 */
-  const filteredReports =
-    filter === "Todos"
-      ? pendingReports
-      : pendingReports.filter((report) => report.type === filter);
+const filteredReports =
+  filter === "Todos"
+    ? pendingReports
+    : pendingReports.filter((report) => report.type === filter);
 
   return (
     <div className="reports-police">

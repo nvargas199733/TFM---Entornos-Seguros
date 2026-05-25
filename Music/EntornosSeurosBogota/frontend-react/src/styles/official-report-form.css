@@ -1,0 +1,68 @@
+.official-report {
+  position: relative;
+  z-index: 2;
+  width: min(680px, 100%);
+  background-color: white;
+  border-radius: 24px;
+  padding: 34px;
+  box-shadow: 0 12px 30px rgba(13, 72, 118, 0.18);
+}
+
+.official-report__title {
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 24px;
+  font-size: 32px;
+}
+
+.official-report__section {
+  margin-bottom: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.official-report__section h2 {
+  color: var(--color-primary);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.official-report__section p {
+  line-height: 1.7;
+  color: #334155;
+}
+
+.official-report__label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.official-report__label select,
+.official-report__label textarea {
+  width: 100%;
+  border: 1px solid #dbe3ea;
+  border-radius: 14px;
+  padding: 14px;
+  font-family: "Poppins", sans-serif;
+}
+
+.official-report__label textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.official-report__button {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #0d4876, #408d9c);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}

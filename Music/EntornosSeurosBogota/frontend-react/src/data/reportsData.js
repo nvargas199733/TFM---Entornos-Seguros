@@ -287,6 +287,90 @@ const reportsData = [
     evidenceImage:
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
   },
+
+    {
+    id: 21,
+    type: "Robo",
+    status: "pendiente",
+    reportedAt: "2026-05-25T09:20:00",
+    description: "Robo de celular en zona comercial.",
+    location: "Av. Principal",
+    reporterName: "Mateo Aguilar",
+    identification: "0912233445",
+    phone: "0991122334",
+    evidenceImage:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475",
+  },
+
+  {
+    id: 22,
+    type: "Accidente",
+    status: "pendiente",
+    reportedAt: "2026-05-24T16:45:00",
+    description: "Choque leve entre automóvil y motocicleta.",
+    location: "Av. Universitaria",
+    reporterName: "Camila Herrera",
+    identification: "0923344556",
+    phone: "0982233445",
+    evidenceImage:
+      "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+  },
+
+  {
+    id: 23,
+    type: "Vandalismo",
+    status: "pendiente",
+    reportedAt: "2026-05-24T11:30:00",
+    description: "Daños a una parada de transporte público.",
+    location: "Calle Central",
+    reporterName: "José Zambrano",
+    identification: "0934455667",
+    phone: "0973344556",
+    evidenceImage:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab",
+  },
+
+  {
+    id: 24,
+    type: "Robo",
+    status: "atendido",
+    reportedAt: "2026-05-23T18:10:00",
+    description: "Intento de robo en local de comida.",
+    location: "Malecón",
+    reporterName: "Daniela Torres",
+    identification: "0945566778",
+    phone: "0964455667",
+    evidenceImage:
+      "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a",
+  },
+
+  {
+    id: 25,
+    type: "Accidente",
+    status: "pendiente",
+    reportedAt: "2026-05-22T08:55:00",
+    description: "Vehículo detenido por falla mecánica en vía principal.",
+    location: "Av. Los Chirijos",
+    reporterName: "Ricardo Ponce",
+    identification: "0956677889",
+    phone: "0955566778",
+    evidenceImage:
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d",
+  },
+
+  {
+    id: 26,
+    type: "Vandalismo",
+    status: "pendiente",
+    reportedAt: "2026-05-21T20:25:00",
+    description: "Pintura no autorizada en muro comunitario.",
+    location: "Barrio Norte",
+    reporterName: "Valeria León",
+    identification: "0967788990",
+    phone: "0946677889",
+    evidenceImage:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
+  },
 ];
 
 export default reportsData;
