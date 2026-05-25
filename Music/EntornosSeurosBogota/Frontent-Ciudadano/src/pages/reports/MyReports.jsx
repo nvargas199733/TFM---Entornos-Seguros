@@ -18,7 +18,7 @@ function MyReports() {
   const reports = [
     {
       id: 1,
-      fecha: "20 mayo 2025 - 09:30 a.m.",
+      fecha: "19 mayo 2026 - 09:30 a.m.",
       localidad: "Engativá",
       descripcion:
         "Se presenta un grupo de personas consumiendo sustancias en el parque y causando disturbios.",
@@ -27,7 +27,7 @@ function MyReports() {
     },
     {
       id: 2,
-      fecha: "18 mayo 2025 - 04:15 p.m.",
+      fecha: "18 mayo 2026 - 04:15 p.m.",
       localidad: "Suba",
       descripcion:
         "Robo de bicicleta en vía pública cerca del centro comercial.",
@@ -36,7 +36,7 @@ function MyReports() {
     },
     {
       id: 3,
-      fecha: "15 mayo 2025 - 11:20 a.m.",
+      fecha: "15 mayo 2026 - 11:20 a.m.",
       localidad: "Teusaquillo",
       descripcion:
         "Vehículo mal estacionado bloqueando la entrada del garaje.",
