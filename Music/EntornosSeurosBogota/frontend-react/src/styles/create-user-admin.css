@@ -1,0 +1,10 @@
+.create-user-admin {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+.create-user-admin__content {
+  width: min(900px, 92%);
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
