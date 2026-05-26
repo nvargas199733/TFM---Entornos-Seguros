@@ -1,16 +1,27 @@
 import "./CreateReport.css";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   Send,
   Camera,
   Image,
-  MapPin
+  MapPin,
+  ShieldAlert,
+  PersonStanding,
+  Car,
+  House,
+  UserSearch
 } from "lucide-react";
 
 function CreateReport() {
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const selectedReport = location.state || {
+    title: "Generar Reporte",
+    color: "blue"
+  };
   return (
     <main className="create-report-container">
       <section className="create-report-card">
@@ -19,13 +30,23 @@ function CreateReport() {
             <ArrowLeft size={28} />
           </button>
 
-          <h1>Generar Reporte</h1>
+          <h1>{selectedReport.title}</h1>
 
           <button className="report-icon-button">
             <Send size={28} />
           </button>
         </header>
 
+        <section className="selected-report-icon-section">
+          <div className={`selected-report-icon ${selectedReport.color}`}>
+            {selectedReport.title === "Emergencia de Seguridad" && <ShieldAlert size={42} />}
+            {selectedReport.title === "Robo a persona" && <PersonStanding size={42} />}
+            {selectedReport.title === "Robo de vehículo" && <Car size={42} />}
+            {selectedReport.title === "Robo a casa" && <House size={42} />}
+            {selectedReport.title === "Actividad sospechosa" && <UserSearch size={42} />}
+          </div>
+        </section>
+        
         <section className="report-content">
           <label className="report-label">Descripción / Detalle</label>
 

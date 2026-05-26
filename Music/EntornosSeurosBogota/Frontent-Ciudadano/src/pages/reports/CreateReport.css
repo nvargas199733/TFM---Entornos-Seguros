@@ -14,13 +14,17 @@
 }
 
 .report-header {
-  height: 132px;
+  height: 180px;
   background-color: #0d4876;
   color: white;
+
   padding: 26px 22px 0;
+
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
+  position: relative;
 }
 
 .report-header h1 {
@@ -37,7 +41,7 @@
 }
 
 .report-content {
-  padding: 28px 22px;
+ padding: 70px 22px 28px;
 }
 
 .report-label,
@@ -174,6 +178,51 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+}
+
+.selected-report-icon-section {
+  position: absolute;
+
+  bottom: 670px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+}
+
+.selected-report-icon {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(13, 72, 118, 0.18);
+}
+
+.selected-report-icon.blue {
+  background-color: #1d5ed8;
+}
+
+.selected-report-icon.sky {
+  background-color: #29a5f2;
+}
+
+.selected-report-icon.red {
+  background-color: #ff4d4d;
+}
+
+.selected-report-icon.green {
+  background-color: #50c943;
+}
+
+.selected-report-icon.teal {
+  background-color: #16b9a8;
 }
 
 @media (min-width: 768px) {

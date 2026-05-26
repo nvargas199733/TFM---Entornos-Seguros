@@ -51,11 +51,11 @@ function MenuPage() {
                 </button>
 
                 <button
-                className="sidebar-item"
-                onClick={() => navigate("/generar-reporte")}
+                  className="sidebar-item"
+                  onClick={() => navigate("/tipos-reporte")}
                 >
-                <FileText size={24} />
-                Generar Reportes
+                  <FileText size={24} />
+                  <span>Generar Reportes</span>
                 </button>
 
                 <button
@@ -100,7 +100,7 @@ function MenuPage() {
 
         <button
             className="menu-card"
-            onClick={() => navigate("/generar-reporte")}
+            onClick={() => navigate("/tipos-reporte")}
         >
             <FileText size={70} />
             <span>Generar Reportes</span>
