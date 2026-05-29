@@ -22,7 +22,7 @@ function MyReports() {
       localidad: "Engativá",
       descripcion:
         "Se presenta un grupo de personas consumiendo sustancias en el parque y causando disturbios.",
-      estado: "Patrulla en camino",
+      estado: "Pendiente",
       tipo: "warning"
     },
     {
@@ -31,7 +31,7 @@ function MyReports() {
       localidad: "Suba",
       descripcion:
         "Robo de bicicleta en vía pública cerca del centro comercial.",
-      estado: "Atendido el incidente",
+      estado: "Atendido",
       tipo: "success"
     },
     {
@@ -40,8 +40,8 @@ function MyReports() {
       localidad: "Teusaquillo",
       descripcion:
         "Vehículo mal estacionado bloqueando la entrada del garaje.",
-      estado: "Finalizado",
-      tipo: "finished"
+      estado: "Atendido",
+      tipo: "success"
     }
   ];
 

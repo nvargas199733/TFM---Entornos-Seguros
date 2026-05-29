@@ -41,39 +41,39 @@ function MenuPage() {
             ></div>
 
             <aside className="sidebar-menu">
+              <section className="sidebar-top">
+                <img
+                  src="/Logo E.S.png"
+                  alt="Entornos Seguros"
+                  className="sidebar-logo"
+                />
+              </section>
 
-                <button
-                className="sidebar-item"
-                onClick={() => navigate("/menu")}
-                >
-                <MapPinned size={24} />
-                Mapa de los CAI
+              <section className="sidebar-items">
+                <button className="sidebar-item" onClick={() => navigate("/menu")}>
+                  <MapPinned size={24} />
+                  Mapa de los CAI
                 </button>
 
-                <button
-                  className="sidebar-item"
-                  onClick={() => navigate("/tipos-reporte")}
-                >
+                <button className="sidebar-item" onClick={() => navigate("/tipos-reporte")}>
                   <FileText size={24} />
-                  <span>Generar Reportes</span>
+                  Generar Reportes
                 </button>
 
-                <button
-                className="sidebar-item"
-                onClick={() => navigate("/mis-reportes")}
-                >
-                <ClipboardList size={24} />
-                Mis Reportes
+                <button className="sidebar-item" onClick={() => navigate("/mis-reportes")}>
+                  <ClipboardList size={24} />
+                  Mis Reportes
                 </button>
 
-                <button
-                className="sidebar-item"
-                onClick={() => navigate("/perfil")}
-                >
-                <User size={24} />
-                Perfil
+                <button className="sidebar-item" onClick={() => navigate("/perfil")}>
+                  <User size={24} />
+                  Perfil
                 </button>
+              </section>
 
+              <button className="logout-button" onClick={() => navigate("/")}>
+                Cerrar sesión
+              </button>
             </aside>
             </>
         )
