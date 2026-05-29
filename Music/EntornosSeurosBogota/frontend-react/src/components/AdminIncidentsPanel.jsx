@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import reportsData from "../data/reportsData";
-
+import Pagination from "./Pagination";
 /*
   AdminIncidentsPanel:
   Muestra la relación entre reportes ciudadanos e informes oficiales policiales.
@@ -10,6 +10,9 @@ import reportsData from "../data/reportsData";
 const AdminIncidentsPanel = () => {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("Todos");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const incidentsPerPage = 5;
 
   const policeReports = JSON.parse(localStorage.getItem("policeReports")) || [];
 
@@ -29,6 +32,14 @@ const AdminIncidentsPanel = () => {
     statusFilter === "Todos"
       ? incidents
       : incidents.filter((incident) => incident.finalStatus === statusFilter);
+  const totalPages = Math.ceil(filteredIncidents.length / incidentsPerPage);
+
+  const startIndex = (currentPage - 1) * incidentsPerPage;
+
+  const paginatedIncidents = filteredIncidents.slice(
+    startIndex,
+    startIndex + incidentsPerPage,
+  );
 
   return (
     <section className="admin-incidents-panel">
@@ -43,7 +54,10 @@ const AdminIncidentsPanel = () => {
         <select
           className="admin-incidents-panel__filter"
           value={statusFilter}
-          onChange={(event) => setStatusFilter(event.target.value)}
+          onChange={(event) => {
+            setStatusFilter(event.target.value);
+            setCurrentPage(1);
+          }}
         >
           <option value="Todos">Todos</option>
           <option value="pendiente">Pendientes</option>
@@ -52,7 +66,7 @@ const AdminIncidentsPanel = () => {
       </div>
 
       <div className="admin-incidents-panel__list">
-        {filteredIncidents.map((incident) => (
+        {paginatedIncidents.map((incident) => (
           <article className="admin-incident-card" key={incident.id}>
             <div>
               <span
@@ -111,6 +125,13 @@ const AdminIncidentsPanel = () => {
           </article>
         ))}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(newPage) => {
+          setCurrentPage(newPage);
+        }}
+      />
     </section>
   );
 };

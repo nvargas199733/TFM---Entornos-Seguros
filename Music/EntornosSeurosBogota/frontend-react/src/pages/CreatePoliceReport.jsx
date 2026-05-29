@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import OfficialReportForm from "../components/OfficialReportForm";
-
+import ConfirmModal from "../components/ConfirmModal";
 import reportsData from "../data/reportsData";
 import currentPoliceData from "../data/currentPoliceData";
 
@@ -20,21 +20,17 @@ const CreatePoliceReport = () => {
   /*
     Buscamos el reporte ciudadano relacionado.
   */
-  const userReport = reportsData.find(
-    (report) => report.id === Number(id)
-  );
+  const userReport = reportsData.find((report) => report.id === Number(id));
 
   /*
     Estados del formulario.
   */
-  const [officialDescription, setOfficialDescription] =
-    useState("");
+  const [officialDescription, setOfficialDescription] = useState("");
 
-  const [actionsTaken, setActionsTaken] =
-    useState("");
+  const [actionsTaken, setActionsTaken] = useState("");
 
-  const [hasInjured, setHasInjured] =
-    useState("No");
+  const [hasInjured, setHasInjured] = useState("No");
+  const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
 
   /*
     Guardar informe oficial.
@@ -42,76 +38,42 @@ const CreatePoliceReport = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    setIsCloseModalOpen(true);
+  };
+
+  const confirmCloseIncident = () => {
     const newPoliceReport = {
       id: Date.now(),
-
       userReportId: userReport.id,
-
       policeId: currentPoliceData.id,
-
-      policeName:
-        `${currentPoliceData.names} ` +
-        `${currentPoliceData.lastNames}`,
-
+      policeName: `${currentPoliceData.names} ${currentPoliceData.lastNames}`,
       policeRank: currentPoliceData.rank,
-
-      badgeNumber:
-        currentPoliceData.badgeNumber,
-
+      badgeNumber: currentPoliceData.badgeNumber,
       incidentType: userReport.type,
-
       hasInjured,
-
       officialDescription,
-
       actionsTaken,
-
       createdAt: new Date().toISOString(),
     };
 
-    /*
-      Obtener informes guardados.
-    */
     const savedReports =
-      JSON.parse(
-        localStorage.getItem("policeReports")
-      ) || [];
+      JSON.parse(localStorage.getItem("policeReports")) || [];
 
-    /*
-      Guardar nuevo informe.
-    */
     localStorage.setItem(
       "policeReports",
-
-      JSON.stringify([
-        ...savedReports,
-        newPoliceReport,
-      ])
+      JSON.stringify([...savedReports, newPoliceReport]),
     );
 
-    /*
-      Obtener reportes atendidos.
-    */
     const attendedReports =
-      JSON.parse(
-        localStorage.getItem("attendedReports")
-      ) || [];
+      JSON.parse(localStorage.getItem("attendedReports")) || [];
 
-    /*
-      Guardar reporte como atendido.
-    */
     localStorage.setItem(
       "attendedReports",
-
-      JSON.stringify([
-        ...attendedReports,
-        userReport.id,
-      ])
+      JSON.stringify([...attendedReports, userReport.id]),
     );
 
-    /*
-      Regresar a lista de reportes.
-    */
+    setIsCloseModalOpen(false);
+
     navigate("/reportes");
   };
 
@@ -124,10 +86,18 @@ const CreatePoliceReport = () => {
 
   return (
     <div className="create-police-report">
+      <ConfirmModal
+        isOpen={isCloseModalOpen}
+        title="Confirmar cierre de incidente"
+        message="¿Deseas finalizar este incidente? Al confirmar, se guardará el informe oficial y el reporte dejará de aparecer como pendiente."
+        confirmText="Finalizar incidente"
+        cancelText="Cancelar"
+        onConfirm={confirmCloseIncident}
+        onCancel={() => setIsCloseModalOpen(false)}
+      />
       <Header />
 
       <main className="create-police-report__content">
-
         {/* Video fondo */}
         <video
           className="create-police-report__video"
@@ -136,10 +106,7 @@ const CreatePoliceReport = () => {
           loop
           playsInline
         >
-          <source
-            src={policeVideo}
-            type="video/mp4"
-          />
+          <source src={policeVideo} type="video/mp4" />
         </video>
 
         {/* Overlay */}
@@ -149,12 +116,8 @@ const CreatePoliceReport = () => {
         <OfficialReportForm
           userReport={userReport}
           currentPoliceData={currentPoliceData}
-          officialDescription={
-            officialDescription
-          }
-          setOfficialDescription={
-            setOfficialDescription
-          }
+          officialDescription={officialDescription}
+          setOfficialDescription={setOfficialDescription}
           actionsTaken={actionsTaken}
           setActionsTaken={setActionsTaken}
           hasInjured={hasInjured}

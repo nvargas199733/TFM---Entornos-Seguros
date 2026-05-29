@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import ConfirmModal from "../components/ConfirmModal";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import UsersTable from "../components/UsersTable";
 import "../styles/manage-users-admin.css";
-
+import Pagination from "../components/Pagination";
 const ManageUsersAdmin = () => {
   const navigate = useNavigate();
 
@@ -18,6 +18,10 @@ const ManageUsersAdmin = () => {
 
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("Todos");
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const usersPerPage = 5;
 
   const savedUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
 
@@ -33,22 +37,40 @@ const ManageUsersAdmin = () => {
     return matchesSearch && matchesRole;
   });
 
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  const startIndex = (currentPage - 1) * usersPerPage;
+
+  const paginatedUsers = filteredUsers.slice(
+    startIndex,
+    startIndex + usersPerPage,
+  );
+
   const handleDeleteUser = (userId) => {
-    const confirmDelete = window.confirm(
-      "¿Seguro que deseas eliminar este usuario?",
-    );
+    setUserToDelete(userId);
+  };
 
-    if (!confirmDelete) return;
-
-    const updatedUsers = savedUsers.filter((user) => user.id !== userId);
+  const confirmDeleteUser = () => {
+    const updatedUsers = savedUsers.filter((user) => user.id !== userToDelete);
 
     localStorage.setItem("adminUsers", JSON.stringify(updatedUsers));
+
+    setUserToDelete(null);
 
     window.location.reload();
   };
 
   return (
     <div className="manage-users-admin">
+      <ConfirmModal
+        isOpen={userToDelete !== null}
+        title="Eliminar usuario"
+        message="¿Seguro que deseas eliminar este usuario? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        onConfirm={confirmDeleteUser}
+        onCancel={() => setUserToDelete(null)}
+      />
       <Header navLinks={adminLinks} />
 
       <main className="manage-users-admin__content">
@@ -77,11 +99,16 @@ const ManageUsersAdmin = () => {
           </div>
 
           <UsersTable
-            users={filteredUsers}
+            users={paginatedUsers}
             handleEditUser={(userId) =>
               navigate(`/admin/editar-usuario/${userId}`)
             }
             handleDeleteUser={handleDeleteUser}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
           />
         </section>
       </main>

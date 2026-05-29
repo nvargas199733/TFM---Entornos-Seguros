@@ -25,7 +25,7 @@
 /* ---------- INFORME OFICIAL ---------- */
 
 .official-report-view {
-  background: white;
+  background: var(--color-card);
   border-radius: 24px;
   padding: 30px;
   box-shadow: 0 12px 30px rgba(13, 72, 118, 0.14);
@@ -44,7 +44,7 @@
 
 .official-report-view p {
   line-height: 1.8;
-  color: #334155;
+  color: var(--color-text);
 }
 
 .official-report-view--empty {

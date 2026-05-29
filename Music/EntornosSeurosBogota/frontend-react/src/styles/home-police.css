@@ -1,6 +1,6 @@
 .home-police {
   min-height: 100vh;
-  background-color: #f4f7fb;
+  background-color: var(--color-background);
 }
 
 .home-police__content {
@@ -480,4 +480,33 @@
   color: inherit;
 
   display: block;
+}
+.stats-panel__filter {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.stats-panel__filter select {
+  padding: 8px 12px;
+
+  background-color: var(--color-card);
+  color: var(--color-text);
+
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+
+  transition: all 0.3s ease;
+}
+.stats-panel__filter select:hover {
+  border-color: var(--color-secondary);
+}
+
+.stats-panel__filter select:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  box-shadow: 0 0 0 3px rgba(64, 141, 156, 0.2);
 }

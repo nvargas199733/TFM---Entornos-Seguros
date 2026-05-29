@@ -9,7 +9,7 @@
 
   padding: 16px 32px;
 
-  background-color: white;
+  background-color: var(--color-card);
 
   color: #1d4ed8;
 
@@ -87,7 +87,7 @@
 }
 
 .header__user-button:hover {
-  background-color: #334155;
+  background-color: var(--color-text);
 }
 
 /* =========================

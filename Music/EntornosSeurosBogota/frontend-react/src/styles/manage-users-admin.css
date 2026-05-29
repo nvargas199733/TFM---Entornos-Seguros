@@ -10,7 +10,7 @@
 }
 
 .manage-users-panel {
-  background: white;
+  background: var(--color-card);
   border-radius: 24px;
   padding: 34px;
   box-shadow: 0 12px 30px rgba(13, 72, 118, 0.14);

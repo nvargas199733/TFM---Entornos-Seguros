@@ -10,7 +10,6 @@ import logo from "../assets/logo.jpg";
 */
 
 const Header = ({ navLinks }) => {
-
   /*
     Links por defecto para el rol policía.
   */
@@ -18,6 +17,9 @@ const Header = ({ navLinks }) => {
     { label: "Inicio", path: "/" },
     { label: "Reportes", path: "/reportes" },
   ];
+  const toggleDarkMode = () => {
+    document.body.classList.toggle("dark-mode");
+  };
 
   /*
     Si recibe navLinks:
@@ -30,45 +32,26 @@ const Header = ({ navLinks }) => {
 
   return (
     <header className="header">
-
       {/* Logo y nombre */}
       <div className="header__brand">
+        <img className="header__logo" src={logo} alt="Logo Entornos Seguros" />
 
-        <img
-          className="header__logo"
-          src={logo}
-          alt="Logo Entornos Seguros"
-        />
-
-        <h1 className="header__title">
-          Entornos Seguros
-        </h1>
+        <h1 className="header__title">Entornos Seguros</h1>
       </div>
 
       {/* Navegación dinámica */}
       <nav className="header__nav">
-
         {links.map((link) => (
-          <Link
-            key={link.path}
-            to={link.path}
-            className="header__link"
-          >
+          <Link key={link.path} to={link.path} className="header__link">
             {link.label}
           </Link>
         ))}
-
       </nav>
 
       {/* Botón usuario */}
-      <button className="header__user">
-
-        <span className="header__user-icon">
-          👤
-        </span>
-
+      <button className="header__user" type="button" onClick={toggleDarkMode}>
+        🌙
       </button>
-
     </header>
   );
 };

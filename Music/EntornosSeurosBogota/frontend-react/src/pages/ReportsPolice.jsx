@@ -6,6 +6,7 @@ import reportsData from "../data/reportsData";
 import bannerImage from "../assets/banner-police.png";
 import "../styles/reports-police.css";
 import HeroBanner from "../components/HeroBanner";
+import Pagination from "../components/Pagination";
 
 /*
   ReportsPolice:
@@ -18,27 +19,37 @@ import HeroBanner from "../components/HeroBanner";
 
 const ReportsPolice = () => {
   const [filter, setFilter] = useState("Todos");
+  const [currentPage, setCurrentPage] = useState(1);
+  const reportsPerPage = 5;
   const attendedReports =
-  JSON.parse(localStorage.getItem("attendedReports")) || [];
+    JSON.parse(localStorage.getItem("attendedReports")) || [];
 
-/*
+  /*
   Primero mostramos solo reportes:
   - con status pendiente
   - que no estén registrados como atendidos en localStorage
 */
-const pendingReports = reportsData.filter(
-  (report) =>
-    report.status === "pendiente" &&
-    !attendedReports.includes(report.id)
-);
+  const pendingReports = reportsData.filter(
+    (report) =>
+      report.status === "pendiente" && !attendedReports.includes(report.id),
+  );
 
-/*
+  /*
   Luego aplicamos filtro por tipo.
 */
-const filteredReports =
-  filter === "Todos"
-    ? pendingReports
-    : pendingReports.filter((report) => report.type === filter);
+  const filteredReports =
+    filter === "Todos"
+      ? pendingReports
+      : pendingReports.filter((report) => report.type === filter);
+
+  const totalPages = Math.ceil(filteredReports.length / reportsPerPage);
+
+  const startIndex = (currentPage - 1) * reportsPerPage;
+
+  const paginatedReports = filteredReports.slice(
+    startIndex,
+    startIndex + reportsPerPage,
+  );
 
   return (
     <div className="reports-police">
@@ -60,7 +71,10 @@ const filteredReports =
             <select
               className="reports-police__filter"
               value={filter}
-              onChange={(event) => setFilter(event.target.value)}
+              onChange={(event) => {
+                setFilter(event.target.value);
+                setCurrentPage(1);
+              }}
             >
               <option value="Todos">Todos</option>
               <option value="Robo">Robo</option>
@@ -70,10 +84,15 @@ const filteredReports =
           </div>
 
           <div className="reports-police__list">
-            {filteredReports.map((report) => (
+            {paginatedReports.map((report) => (
               <ReportCard key={report.id} report={report} />
             ))}
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </section>
       </main>
 
