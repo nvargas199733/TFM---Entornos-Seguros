@@ -30,7 +30,7 @@ const renderPercentLabel = ({
       fill="#ffffff"
       textAnchor="middle"
       dominantBaseline="central"
-      fontSize={10}
+      fontSize={9}
       fontWeight={700}
     >
       {(percent * 100).toFixed(1)}%
@@ -51,7 +51,7 @@ const renderOuterLabel = ({ cx, cy, midAngle, outerRadius, name, value }) => {
       fill="#0d4876"
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
-      fontSize={10}
+      fontSize={9}
       fontWeight={700}
     >
       {name}: {value}

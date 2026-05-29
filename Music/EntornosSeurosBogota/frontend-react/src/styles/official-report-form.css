@@ -19,6 +19,7 @@
   margin-bottom: 18px;
   padding: 18px;
   border-radius: 16px;
+
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
 }
@@ -38,6 +39,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+
   color: var(--color-primary);
   font-weight: 700;
 }
@@ -45,10 +47,20 @@
 .official-report__label select,
 .official-report__label textarea {
   width: 100%;
-  border: 1px solid #dbe3ea;
+
+  border: 1px solid var(--color-border);
   border-radius: 14px;
+
   padding: 14px;
+
   font-family: "Poppins", sans-serif;
+
+  background-color: var(--color-card);
+  color: var(--color-text);
+}
+
+.official-report__label textarea::placeholder {
+  color: #94a3b8;
 }
 
 .official-report__label textarea {
@@ -61,8 +73,50 @@
   border: none;
   border-radius: 16px;
   padding: 16px;
-  background: linear-gradient(135deg, #0d4876, #408d9c);
+
+  background: linear-gradient(
+    135deg,
+    #0d4876,
+    #408d9c
+  );
+
   color: white;
   font-weight: 700;
   cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.official-report__button:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark-mode .official-report__section {
+  background-color: #273449;
+  border-color: #334155;
+}
+
+body.dark-mode .official-report__section p {
+  color: #f1f5f9;
+}
+
+body.dark-mode .official-report__label {
+  color: #7dd3fc;
+}
+
+body.dark-mode .official-report__label select,
+body.dark-mode .official-report__label textarea {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode
+  .official-report__label
+  textarea::placeholder {
+  color: #94a3b8;
 }

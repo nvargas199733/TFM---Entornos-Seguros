@@ -19,28 +19,54 @@ import Pagination from "../components/Pagination";
 
 const ReportsPolice = () => {
   const [filter, setFilter] = useState("Todos");
+  const [timeFilter, setTimeFilter] = useState("mes");
   const [currentPage, setCurrentPage] = useState(1);
   const reportsPerPage = 5;
-  const attendedReports =
-    JSON.parse(localStorage.getItem("attendedReports")) || [];
+  
 
   /*
   Primero mostramos solo reportes:
   - con status pendiente
   - que no estén registrados como atendidos en localStorage
 */
-  const pendingReports = reportsData.filter(
-    (report) =>
-      report.status === "pendiente" && !attendedReports.includes(report.id),
-  );
 
   /*
   Luego aplicamos filtro por tipo.
 */
-  const filteredReports =
+  const attendedReports =
+    JSON.parse(localStorage.getItem("attendedReports")) || [];
+
+  const pendingReports = reportsData.filter(
+    (report) =>
+      report.status === "pendiente" &&
+      !attendedReports.includes(report.id)
+  );
+
+  const now = new Date();
+
+  const reportsByTime = pendingReports.filter((report) => {
+    const reportDate = new Date(report.reportedAt);
+    const differenceHours = (now - reportDate) / (1000 * 60 * 60);
+
+    if (timeFilter === "24h") {
+      return differenceHours <= 24;
+    }
+
+    if (timeFilter === "semana") {
+      return differenceHours <= 24 * 7;
+    }
+
+    return differenceHours <= 24 * 30;
+  });
+
+  const reportsByType =
     filter === "Todos"
-      ? pendingReports
-      : pendingReports.filter((report) => report.type === filter);
+      ? reportsByTime
+      : reportsByTime.filter((report) => report.type === filter);
+
+  const filteredReports = [...reportsByType].sort(
+    (a, b) => new Date(b.reportedAt) - new Date(a.reportedAt)
+  );
 
   const totalPages = Math.ceil(filteredReports.length / reportsPerPage);
 
@@ -80,6 +106,18 @@ const ReportsPolice = () => {
               <option value="Robo">Robo</option>
               <option value="Accidente">Accidente</option>
               <option value="Vandalismo">Vandalismo</option>
+            </select>
+            <select
+              className="reports-police__filter"
+              value={timeFilter}
+              onChange={(event) => {
+                setTimeFilter(event.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="24h">Últimas 24 horas</option>
+              <option value="semana">Última semana</option>
+              <option value="mes">Último mes</option>
             </select>
           </div>
 

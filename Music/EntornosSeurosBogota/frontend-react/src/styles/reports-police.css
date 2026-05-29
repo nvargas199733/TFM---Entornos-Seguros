@@ -38,8 +38,9 @@
 
 .reports-police__toolbar {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 20px;
 }
 

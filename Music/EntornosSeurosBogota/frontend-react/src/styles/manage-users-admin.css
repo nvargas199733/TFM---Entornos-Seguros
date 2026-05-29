@@ -103,3 +103,36 @@
     margin-bottom: 14px;
   }
 }
+body.dark-mode .manage-users-panel {
+  background-color: #1e293b;
+}
+
+body.dark-mode .manage-users-panel__search,
+body.dark-mode .manage-users-panel__filter {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode .manage-users-panel__search::placeholder {
+  color: #94a3b8;
+}
+
+body.dark-mode .manage-users-table__header {
+  background-color: #273449;
+  color: #7dd3fc;
+}
+
+body.dark-mode .manage-users-table__row {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode .manage-users-table__row:nth-child(even) {
+  background-color: #1e293b;
+}
+
+body.dark-mode .manage-users-table__empty {
+  color: #cbd5e1;
+}

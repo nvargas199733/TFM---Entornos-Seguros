@@ -35,18 +35,15 @@
 .create-user-form input,
 .create-user-form select {
   padding: 14px;
-
-  border: 1px solid #dbe3ea;
-
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-
   font-family: "Poppins", sans-serif;
-
   font-size: 15px;
-
   outline: none;
-
   transition: 0.2s;
+
+  background-color: var(--color-card);
+  color: var(--color-text);
 }
 
 .create-user-form input:focus,
@@ -147,4 +144,31 @@
   .create-user-form__actions {
     flex-direction: column;
   }
+}
+body.dark-mode .create-user-form {
+  background-color: #1e293b;
+}
+
+body.dark-mode .create-user-form input,
+body.dark-mode .create-user-form select {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode .create-user-form input::placeholder {
+  color: #94a3b8;
+}
+
+body.dark-mode .create-user-form__password button {
+  background-color: #334155;
+  color: #f1f5f9;
+}
+
+body.dark-mode .create-user-form__cancel {
+  background-color: #475569;
+}
+
+body.dark-mode .create-user-form__submit {
+  background: linear-gradient(135deg, #0d4876, #408d9c);
 }

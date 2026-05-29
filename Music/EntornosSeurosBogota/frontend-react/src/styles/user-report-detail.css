@@ -72,22 +72,9 @@
 
 .user-report-card__section p {
   line-height: 1.7;
-
-  color: #334155;
+  color: var(--color-text);
 }
 
-/* Imagen mapa */
-.user-report-card__map {
-  width: 100%;
-
-  margin-top: 14px;
-
-  border-radius: 16px;
-
-  height: 180px;
-
-  object-fit: cover;
-}
 
 /* Evidencia */
 .user-report-card__evidence {

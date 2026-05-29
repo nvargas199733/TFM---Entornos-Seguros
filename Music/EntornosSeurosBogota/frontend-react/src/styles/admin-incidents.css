@@ -129,3 +129,45 @@
   font-weight: 700;
   cursor: pointer;
 }
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark-mode .admin-incident-card {
+  background-color: #273449;
+  border: 1px solid #334155;
+}
+
+body.dark-mode .admin-incident-card__title {
+  color: #7dd3fc;
+}
+
+body.dark-mode .admin-incident-card__text {
+  color: #f1f5f9;
+}
+
+body.dark-mode .admin-incidents-panel__description {
+  color: #cbd5e1;
+}
+
+body.dark-mode .admin-incidents-panel__filter {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode .admin-incidents-panel__filter:hover {
+  border-color: #408d9c;
+}
+
+body.dark-mode .admin-incident-card__official {
+  background-color: #1e293b;
+}
+
+body.dark-mode .admin-incident-card__official p {
+  color: #f1f5f9;
+}
+
+body.dark-mode .admin-incident-card__pending {
+  color: #f97316;
+}
