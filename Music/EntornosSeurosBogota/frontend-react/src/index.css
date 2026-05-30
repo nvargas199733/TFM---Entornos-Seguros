@@ -1,0 +1,74 @@
+/* =========================
+   IMPORTACIÓN DE FUENTE
+========================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+
+/* =========================
+   VARIABLES GLOBALES
+========================= */
+
+:root {
+
+  /* Colores principales del sistema */
+
+  --color-primary: #0d4876;
+
+  --color-secondary: #408d9c;
+
+  --color-background: #f4f7fb;
+
+  --color-white: #ffffff;
+
+  --color-text: #1e293b;
+
+}
+
+
+/* =========================
+   RESET GENERAL
+========================= */
+
+* {
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================
+   BODY
+========================= */
+
+body {
+
+  font-family: "Poppins", sans-serif;
+
+  background-color: var(--color-background);
+
+  color: var(--color-text);
+
+}
+
+:root {
+  --color-background: #f4f7fa;
+  --color-white: #ffffff;
+  --color-primary: #0d4876;
+  --color-secondary: #408d9c;
+  --color-text: #334155;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+}
+
+body.dark-mode {
+  --color-background: #0f172a;
+  --color-white: #1e293b;
+  --color-primary: #7dd3fc;
+  --color-secondary: #408d9c;
+  --color-text: #e2e8f0;
+  --color-card: #1e293b;
+  --color-border: #334155;
+}

@@ -1,51 +1,57 @@
+import { Link } from "react-router-dom";
 import "../styles/header.css";
-// Componente Header
-const Header = () => {
+import logo from "../assets/logo.jpg";
+
+/*
+  Header:
+  Componente reutilizable para navegación principal.
+
+  Ahora permite navegación dinámica según el rol.
+*/
+
+const Header = ({ navLinks }) => {
+  /*
+    Links por defecto para el rol policía.
+  */
+  const defaultLinks = [
+    { label: "Inicio", path: "/" },
+    { label: "Reportes", path: "/reportes" },
+  ];
+  const toggleDarkMode = () => {
+    document.body.classList.toggle("dark-mode");
+  };
+
+  /*
+    Si recibe navLinks:
+    usa esos links.
+
+    Si no:
+    usa los links por defecto.
+  */
+  const links = navLinks || defaultLinks;
+
   return (
     <header className="header">
-
       {/* Logo y nombre */}
       <div className="header__brand">
-        <span className="header__logo">🛡️</span>
+        <img className="header__logo" src={logo} alt="Logo Entornos Seguros" />
 
-        <h1 className="header__title">
-          Entornos Seguros
-        </h1>
+        <h1 className="header__title">Entornos Seguros</h1>
       </div>
 
-      {/* Navegación */}
+      {/* Navegación dinámica */}
       <nav className="header__nav">
-
-        <a
-          className="header__link header__link--active"
-          href="#inicio"
-        >
-          Inicio
-        </a>
-
-        <a
-          className="header__link"
-          href="#mapa"
-        >
-          Ver Mapa
-        </a>
-
-        <a
-          className="header__link"
-          href="#reportes"
-        >
-          Reportes
-        </a>
+        {links.map((link) => (
+          <Link key={link.path} to={link.path} className="header__link">
+            {link.label}
+          </Link>
+        ))}
       </nav>
 
       {/* Botón usuario */}
-      <button
-        className="header__user-button"
-        type="button"
-      >
-        👤
+      <button className="header__user" type="button" onClick={toggleDarkMode}>
+        🌙
       </button>
-
     </header>
   );
 };
