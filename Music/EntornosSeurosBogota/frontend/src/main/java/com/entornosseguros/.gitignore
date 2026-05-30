@@ -1,9 +1,0 @@
-target/
-bin/
-build/
-.gradle/
-.idea/
-*.class
-*.log
-.vscode/
-.mvn/wrapper/maven-wrapper.jar
