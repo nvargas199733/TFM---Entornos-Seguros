@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import "../styles/header.css";
 import logo from "../assets/logo.jpg";
+import { Moon, Sun } from "lucide-react";
+import { useState } from "react";
 
 /*
   Header:
@@ -17,8 +19,13 @@ const Header = ({ navLinks }) => {
     { label: "Inicio", path: "/" },
     { label: "Reportes", path: "/reportes" },
   ];
+  const [darkMode, setDarkMode] = useState(
+    document.body.classList.contains("dark-mode"),
+  );
+
   const toggleDarkMode = () => {
     document.body.classList.toggle("dark-mode");
+    setDarkMode(document.body.classList.contains("dark-mode"));
   };
 
   /*
@@ -49,8 +56,12 @@ const Header = ({ navLinks }) => {
       </nav>
 
       {/* Botón usuario */}
-      <button className="header__user" type="button" onClick={toggleDarkMode}>
-        🌙
+      <button
+        className="header__user-button"
+        type="button"
+        onClick={toggleDarkMode}
+      >
+        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
       </button>
     </header>
   );

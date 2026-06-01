@@ -171,3 +171,21 @@ body.dark-mode .admin-incident-card__official p {
 body.dark-mode .admin-incident-card__pending {
   color: #f97316;
 }
+.admin-incidents-panel__count {
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-right: 12px;
+  margin-bottom: 0;
+}
+
+.admin-incidents-panel__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-incidents-panel__filter {
+  min-width: 150px;
+}

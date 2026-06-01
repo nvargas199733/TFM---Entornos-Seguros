@@ -10,6 +10,7 @@ import Pagination from "./Pagination";
 const AdminIncidentsPanel = () => {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("Todos");
+  const [timeFilter, setTimeFilter] = useState("todos");
   const [currentPage, setCurrentPage] = useState(1);
 
   const incidentsPerPage = 5;
@@ -28,10 +29,27 @@ const AdminIncidentsPanel = () => {
     };
   });
 
-  const filteredIncidents =
+  const now = new Date();
+
+  const incidentsByStatus =
     statusFilter === "Todos"
       ? incidents
       : incidents.filter((incident) => incident.finalStatus === statusFilter);
+
+  const incidentsByTime = incidentsByStatus.filter((incident) => {
+    const reportDate = new Date(incident.reportedAt);
+    const differenceHours = (now - reportDate) / (1000 * 60 * 60);
+
+    if (timeFilter === "24h") return differenceHours <= 24;
+    if (timeFilter === "semana") return differenceHours <= 24 * 7;
+    if (timeFilter === "mes") return differenceHours <= 24 * 30;
+
+    return true;
+  });
+
+  const filteredIncidents = [...incidentsByTime].sort(
+    (a, b) => new Date(b.reportedAt) - new Date(a.reportedAt),
+  );
   const totalPages = Math.ceil(filteredIncidents.length / incidentsPerPage);
 
   const startIndex = (currentPage - 1) * incidentsPerPage;
@@ -51,6 +69,10 @@ const AdminIncidentsPanel = () => {
       </p>
 
       <div className="admin-incidents-panel__toolbar">
+        <p className="admin-incidents-panel__count">
+          {filteredIncidents.length} reportes encontrados
+        </p>
+
         <select
           className="admin-incidents-panel__filter"
           value={statusFilter}
@@ -62,6 +84,20 @@ const AdminIncidentsPanel = () => {
           <option value="Todos">Todos</option>
           <option value="pendiente">Pendientes</option>
           <option value="atendido">Atendidos</option>
+        </select>
+
+        <select
+          className="admin-incidents-panel__filter"
+          value={timeFilter}
+          onChange={(event) => {
+            setTimeFilter(event.target.value);
+            setCurrentPage(1);
+          }}
+        >
+          <option value="24h">Últimas 24 horas</option>
+          <option value="semana">Última semana</option>
+          <option value="mes">Último mes</option>
+          <option value="todos">Todos</option>
         </select>
       </div>
 
@@ -85,6 +121,10 @@ const AdminIncidentsPanel = () => {
 
               <p className="admin-incident-card__text">
                 <strong>Reportado por:</strong> {incident.reporterName}
+              </p>
+              <p className="admin-incident-card__text">
+                <strong>Fecha del reporte:</strong>{" "}
+                {new Date(incident.reportedAt).toLocaleString("es-EC")}
               </p>
             </div>
 

@@ -19,15 +19,12 @@ const AdminIncidentDetail = () => {
     { label: "Incidentes", path: "/admin/incidentes" },
   ];
 
-  const userReport = reportsData.find(
-    (report) => report.id === Number(id)
-  );
+  const userReport = reportsData.find((report) => report.id === Number(id));
 
-  const policeReports =
-    JSON.parse(localStorage.getItem("policeReports")) || [];
+  const policeReports = JSON.parse(localStorage.getItem("policeReports")) || [];
 
   const policeReport = policeReports.find(
-    (report) => report.userReportId === Number(id)
+    (report) => report.userReportId === Number(id),
   );
 
   if (!userReport) {
@@ -39,12 +36,10 @@ const AdminIncidentDetail = () => {
       <Header navLinks={adminLinks} />
 
       <main className="admin-incident-detail__content">
-        <h1 className="admin-incident-detail__title">
-          Detalle del incidente
-        </h1>
+        <h1 className="admin-incident-detail__title">Detalle del incidente</h1>
 
         <section className="admin-incident-detail__grid">
-          <UserReportCard report={userReport} />
+          <UserReportCard report={userReport} showGenerateButton={false} />
 
           <OfficialReportView policeReport={policeReport} />
         </section>

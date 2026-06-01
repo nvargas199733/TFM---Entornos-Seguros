@@ -13,7 +13,7 @@ const incidentIcons = {
   Vandalismo: "🧱",
 };
 
-const UserReportCard = ({ report }) => {
+const UserReportCard = ({ report, showGenerateButton = true }) => {
   const navigate = useNavigate();
   const icon = incidentIcons[report.type] || "⚠️";
 
@@ -28,6 +28,7 @@ const UserReportCard = ({ report }) => {
         <p>👤 {report.reporterName}</p>
         <p>🪪 {report.identification}</p>
         <p>📞 {report.phone}</p>
+        <p>📅 {new Date(report.reportedAt).toLocaleString("es-EC")}</p>
       </section>
 
       <section className="user-report-card__section">
@@ -56,6 +57,7 @@ const UserReportCard = ({ report }) => {
           className="user-report-card__evidence"
         />
       </section>
+      {showGenerateButton && (
 
       <button
         className="user-report-card__button"
@@ -63,7 +65,7 @@ const UserReportCard = ({ report }) => {
         onClick={() => navigate(`/reportes/${report.id}/generar-informe`)}
       >
         Generar informe
-      </button>
+      </button>)}
     </article>
   );
 };
