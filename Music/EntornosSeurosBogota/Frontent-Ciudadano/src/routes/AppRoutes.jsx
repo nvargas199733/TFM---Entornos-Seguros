@@ -7,6 +7,7 @@ import Profile from "../pages/profile/Profile";
 import CreateReport from "../pages/reports/CreateReport";
 import MyReports from "../pages/reports/MyReports";
 import ReportTypes from "../pages/reports/ReportTypes";
+import CaiMap from "../pages/map/CaiMap";
 
 function AppRoutes() {
   return (
@@ -45,6 +46,10 @@ function AppRoutes() {
         <Route 
           path="/tipos-reporte" 
           element={<ReportTypes />} 
+        />
+        <Route 
+          path="/mapa-cai" 
+          element={<CaiMap />} 
         />
 
       </Routes>
