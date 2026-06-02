@@ -6,7 +6,7 @@ import bannerImage from "../assets/banner-police.png";
 import NewsVideoSection from "../components/NewsVideoSection";
 import Footer from "../components/Footer";
 import HeroBanner from "../components/HeroBanner";
-
+import { MapPinned, FileText } from "lucide-react";
 
 const HomePolice = () => {
   return (
@@ -27,18 +27,17 @@ const HomePolice = () => {
             <div className="home-police__actions">
               <ActionCard
                 title="Ver Mapa"
-                icon="🗺️"
+                icon={<MapPinned size={46} strokeWidth={2.2} />}
                 description="Consulta incidentes geolocalizados y zonas de atención prioritaria."
               />
 
               <ActionCard
                 title="Informes"
-                icon="📋"
                 description="Revisa informes, registros y seguimiento de incidentes comunitarios."
-                link="/reportes"
+                icon={<FileText size={46} strokeWidth={2.2} />}
               />
             </div>
-            
+
             <NewsVideoSection />
           </div>
 

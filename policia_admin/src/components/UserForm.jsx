@@ -1,5 +1,5 @@
 import "../styles/user-form.css";
-
+import { Eye, EyeOff } from "lucide-react";
 
 const UserForm = ({
   formTitle,
@@ -104,8 +104,16 @@ const UserForm = ({
             required
           />
 
-          <button type="button" onClick={() => setShowPassword(!showPassword)}>
-            👁️
+          <button
+            type="button"
+            className="create-user__password-toggle"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <EyeOff size={18} strokeWidth={2.2} />
+            ) : (
+              <Eye size={18} strokeWidth={2.2} />
+            )}
           </button>
         </div>
       </label>
@@ -124,9 +132,14 @@ const UserForm = ({
 
           <button
             type="button"
+            className="create-user__password-toggle"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
           >
-            👁️
+            {showConfirmPassword ? (
+              <EyeOff size={18} strokeWidth={2.2} />
+            ) : (
+              <Eye size={18} strokeWidth={2.2} />
+            )}
           </button>
         </div>
       </label>

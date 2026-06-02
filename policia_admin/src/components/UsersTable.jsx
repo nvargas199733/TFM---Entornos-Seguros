@@ -1,3 +1,5 @@
+import { Pencil, Trash2 } from "lucide-react";
+
 const UsersTable = ({
   users,
   handleEditUser,
@@ -27,7 +29,7 @@ const UsersTable = ({
                 className="manage-users-table__edit"
                 onClick={() => handleEditUser(user.id)}
               >
-                ✏️
+                <Pencil size={18} strokeWidth={2.2} />
               </button>
 
               <button
@@ -35,7 +37,7 @@ const UsersTable = ({
                 className="manage-users-table__delete"
                 onClick={() => handleDeleteUser(user.id)}
               >
-                🗑️
+                <Trash2 size={18} strokeWidth={2.2} />
               </button>
             </div>
           </div>

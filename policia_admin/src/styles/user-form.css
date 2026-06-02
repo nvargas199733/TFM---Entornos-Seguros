@@ -172,3 +172,26 @@ body.dark-mode .create-user-form__cancel {
 body.dark-mode .create-user-form__submit {
   background: linear-gradient(135deg, #0d4876, #408d9c);
 }
+.create-user__password-toggle {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  background: rgba(64, 141, 156, 0.15);
+  color: #7dd3fc;
+
+  transition: all 0.25s ease;
+}
+
+.create-user__password-toggle:hover {
+  background: rgba(64, 141, 156, 0.25);
+  transform: scale(1.05);
+}
