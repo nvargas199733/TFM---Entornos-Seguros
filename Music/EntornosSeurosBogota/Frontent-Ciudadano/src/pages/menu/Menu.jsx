@@ -69,7 +69,15 @@ function MenuPage() {
                   <User size={24} />
                   Perfil
                 </button>
-              </section>
+                
+                <button
+                  className="menu-card"
+                  onClick={() => navigate("/mapa-cai")}
+                >
+                  <MapPinned size={70} />
+                  <span>Mapa de los CAI</span>
+                </button>                
+              </section>           
 
               <button className="logout-button" onClick={() => navigate("/")}>
                 Cerrar sesión
@@ -121,6 +129,14 @@ function MenuPage() {
         <User size={70} />
         <span>Perfil</span>
         </button>
+
+        <button
+          className="sidebar-item"
+          onClick={() => navigate("/mapa-cai")}
+        >
+        <MapPinned size={24} />
+          Mapa de los CAI
+        </button>   
 
       </section>
 
