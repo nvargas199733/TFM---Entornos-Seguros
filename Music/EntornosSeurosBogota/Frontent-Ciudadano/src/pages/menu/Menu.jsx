@@ -50,10 +50,13 @@ function MenuPage() {
               </section>
 
               <section className="sidebar-items">
-                <button className="sidebar-item" onClick={() => navigate("/menu")}>
+                <button
+                  className="sidebar-item"
+                  onClick={() => navigate("/mapa-cai")}
+                >
                   <MapPinned size={24} />
                   Mapa de los CAI
-                </button>
+                </button>               
 
                 <button className="sidebar-item" onClick={() => navigate("/tipos-reporte")}>
                   <FileText size={24} />
@@ -69,14 +72,7 @@ function MenuPage() {
                   <User size={24} />
                   Perfil
                 </button>
-                
-                <button
-                  className="menu-card"
-                  onClick={() => navigate("/mapa-cai")}
-                >
-                  <MapPinned size={70} />
-                  <span>Mapa de los CAI</span>
-                </button>                
+
               </section>           
 
               <button className="logout-button" onClick={() => navigate("/")}>
@@ -101,10 +97,13 @@ function MenuPage() {
       {/* Grid botones */}
       <section className="menu-grid">
 
-        <button className="menu-card">
+        <button
+          className="menu-card"
+          onClick={() => navigate("/mapa-cai")}
+        >
           <MapPinned size={70} />
           <span>Mapa de los CAI</span>
-        </button>
+        </button>  
 
         <button
             className="menu-card"
@@ -129,14 +128,6 @@ function MenuPage() {
         <User size={70} />
         <span>Perfil</span>
         </button>
-
-        <button
-          className="sidebar-item"
-          onClick={() => navigate("/mapa-cai")}
-        >
-        <MapPinned size={24} />
-          Mapa de los CAI
-        </button>   
 
       </section>
 

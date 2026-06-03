@@ -586,14 +586,8 @@ function CaiMap() {
 
           <div className="cai-page__title-block">
             <h1>Mapa de los CAI</h1>
-            <p>Bogotá · Seguridad ciudadana</p>
           </div>
 
-          <img
-            src="/Logo E.S.png"
-            alt="Entornos Seguros"
-            className="cai-header-logo"
-          />
         </header>
 
         <section className="cai-summary-card">

@@ -45,10 +45,11 @@
 
 .cai-page__title-block h1 {
   margin: 0;
-  font-size: clamp(30px, 7vw, 48px);
-  font-weight: 850;
-  letter-spacing: 4px;
+  font-size: clamp(26px, 6vw, 38px);
+  font-weight: 700;
+  letter-spacing: 0px;
   line-height: 1.1;
+  text-align: center;
 }
 
 .cai-page__title-block p {
@@ -57,13 +58,6 @@
   font-size: clamp(16px, 3vw, 22px);
 }
 
-.cai-header-logo {
-  width: 230px;
-  max-width: 32vw;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.12));
-}
 
 .cai-summary-card {
   width: calc(100% - 48px);
@@ -559,13 +553,6 @@
     padding: 24px 24px 78px;
   }
 
-  .cai-header-logo {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: 220px;
-    max-width: 70%;
-    margin-top: 10px;
-  }
 
   .cai-summary-card {
     grid-template-columns: auto 1fr;
