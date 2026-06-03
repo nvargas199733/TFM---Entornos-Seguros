@@ -1,0 +1,173 @@
+.admin-incidents {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+.admin-incidents__content {
+  width: min(1150px, 92%);
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+
+.admin-incidents-panel {
+  background: var(--color-card);
+  border-radius: 24px;
+  padding: 34px;
+  box-shadow: 0 12px 30px rgba(13, 72, 118, 0.14);
+}
+
+.admin-incidents-panel__title {
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+
+.admin-incidents-panel__description {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 24px;
+}
+
+.admin-incidents-panel__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.admin-incidents-panel__filter {
+  padding: 12px 16px;
+  border: 1px solid #dbe3ea;
+  border-radius: 14px;
+  font-family: "Poppins", sans-serif;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.admin-incidents-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-incident-card {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+  padding: 22px;
+  border-radius: 18px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-incident-card__status {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.admin-incident-card__status--pendiente {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.admin-incident-card__status--atendido {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.admin-incident-card__title {
+  color: var(--color-primary);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.admin-incident-card__text {
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.admin-incident-card__official {
+  background: var(--color-card);
+  border-radius: 16px;
+  padding: 18px;
+  color: var(--color-text);
+}
+
+.admin-incident-card__official p {
+  line-height: 1.7;
+}
+
+.admin-incident-card__pending {
+  color: #92400e;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .admin-incident-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-incidents-panel__toolbar {
+    justify-content: stretch;
+  }
+
+  .admin-incidents-panel__filter {
+    width: 100%;
+  }
+}
+.admin-incident-card__detail-button {
+  margin-top: 14px;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #0d4876, #408d9c);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark-mode .admin-incident-card {
+  background-color: #273449;
+  border: 1px solid #334155;
+}
+
+body.dark-mode .admin-incident-card__title {
+  color: #7dd3fc;
+}
+
+body.dark-mode .admin-incident-card__text {
+  color: #f1f5f9;
+}
+
+body.dark-mode .admin-incidents-panel__description {
+  color: #cbd5e1;
+}
+
+body.dark-mode .admin-incidents-panel__filter {
+  background-color: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+
+body.dark-mode .admin-incidents-panel__filter:hover {
+  border-color: #408d9c;
+}
+
+body.dark-mode .admin-incident-card__official {
+  background-color: #1e293b;
+}
+
+body.dark-mode .admin-incident-card__official p {
+  color: #f1f5f9;
+}
+
+body.dark-mode .admin-incident-card__pending {
+  color: #f97316;
+}

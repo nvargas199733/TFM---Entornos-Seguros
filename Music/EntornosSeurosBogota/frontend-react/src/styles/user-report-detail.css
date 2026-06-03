@@ -1,0 +1,124 @@
+.user-report-detail {
+  min-height: 100vh;
+
+  background-color: var(--color-background);
+}
+
+/* Fondo tipo video */
+.user-report-detail__content {
+  position: relative;
+  padding: 40px 20px;
+  overflow: hidden;
+  min-height: calc(100vh - 120px);
+}
+
+.user-report-detail__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-report-detail__video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+/* Overlay centrado */
+.user-report-detail__overlay {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+/* Card principal */
+.user-report-card {
+  width: min(650px, 100%);
+
+  background-color: var(--color-card);
+  border-radius: 24px;
+
+  padding: 36px;
+
+  box-shadow: 0 12px 30px rgba(13, 72, 118, 0.16);
+}
+
+/* Header */
+.user-report-card__header {
+  margin-bottom: 28px;
+
+  text-align: center;
+}
+
+.user-report-card__title {
+  color: var(--color-primary);
+
+  font-size: 34px;
+}
+
+/* Secciones */
+.user-report-card__section {
+  margin-bottom: 28px;
+}
+
+.user-report-card__section h3 {
+  margin-bottom: 12px;
+
+  color: var(--color-primary);
+}
+
+.user-report-card__section p {
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+
+/* Evidencia */
+.user-report-card__evidence {
+  width: 100%;
+
+  margin-top: 14px;
+
+  border-radius: 16px;
+
+  max-height: 260px;
+
+  object-fit: cover;
+}
+
+/* Botón */
+.user-report-card__button {
+  width: 100%;
+
+  border: none;
+
+  padding: 16px;
+
+  border-radius: 16px;
+
+  text-decoration: none;
+
+  background: linear-gradient(135deg, #0d4876, #408d9c);
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-report-card {
+    padding: 24px;
+  }
+
+  .user-report-card__title {
+    font-size: 28px;
+  }
+}
