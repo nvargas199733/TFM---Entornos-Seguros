@@ -1,0 +1,143 @@
+.report-types-container {
+  min-height: 100vh;
+  background-color: #f4f8fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.report-types-card {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f7fbff;
+}
+
+.report-types-header {
+  height: 100px;
+  background-color: #0d4876;
+  color: white;
+  padding: 24px 22px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.report-types-header h1 {
+  margin: 0;
+  font-size: clamp(24px, 5vw, 34px);
+  font-weight: 700;
+}
+
+.report-types-back {
+  position: absolute;
+  left: 22px;
+  top: 24px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.report-types-content {
+  padding: 34px 22px;
+}
+
+.report-types-content h2 {
+  color: #0d4876;
+  text-align: center;
+  font-size: clamp(26px, 6vw, 38px);
+  font-weight: 700;
+  margin: 0;
+}
+
+.title-line {
+  width: 70px;
+  height: 6px;
+  background-color: #1d6ed8;
+  border-radius: 20px;
+  margin: 24px auto 34px;
+}
+
+.report-type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.report-type-item {
+  width: 100%;
+  border: none;
+  border-radius: 22px;
+  background-color: white;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 76px 1fr 28px;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(13, 72, 118, 0.08);
+  text-align: left;
+}
+
+.report-type-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.report-type-icon.blue {
+  background-color: #1d5ed8;
+}
+
+.report-type-icon.sky {
+  background-color: #29a5f2;
+}
+
+.report-type-icon.red {
+  background-color: #ff4d4d;
+}
+
+.report-type-icon.green {
+  background-color: #50c943;
+}
+
+.report-type-icon.teal {
+  background-color: #16b9a8;
+}
+
+.report-type-text h3 {
+  color: #0d4876;
+  font-size: clamp(18px, 4vw, 24px);
+  margin: 0 0 6px;
+}
+
+.report-type-text p {
+  color: #5f6f85;
+  font-size: clamp(14px, 3vw, 18px);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.report-type-arrow {
+  color: #7c8794;
+}
+
+@media (min-width: 768px) {
+  .report-types-container {
+    padding: 30px;
+  }
+
+  .report-types-card {
+    max-width: 560px;
+    min-height: 900px;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+}

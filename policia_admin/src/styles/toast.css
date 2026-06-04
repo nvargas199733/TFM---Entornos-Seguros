@@ -1,0 +1,23 @@
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  padding: 14px 20px;
+  border-radius: 14px;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(13, 72, 118, 0.2);
+}
+
+.toast--success {
+  background: linear-gradient(135deg, #0d4876, #408d9c);
+}
+
+.toast--error {
+  background: #dc2626;
+}
+
+.toast--warning {
+  background: #f59e0b;
+}
