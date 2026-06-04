@@ -122,3 +122,8 @@
     font-size: 28px;
   }
 }
+.user-report-card__section p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

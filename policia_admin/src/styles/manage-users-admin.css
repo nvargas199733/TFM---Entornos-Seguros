@@ -136,3 +136,34 @@ body.dark-mode .manage-users-table__row:nth-child(even) {
 body.dark-mode .manage-users-table__empty {
   color: #cbd5e1;
 }
+.manage-users-table__edit,
+.manage-users-table__delete {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.manage-users-table__edit {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.manage-users-table__delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.manage-users-table__edit:hover,
+.manage-users-table__delete:hover {
+  transform: scale(1.08);
+}

@@ -24,8 +24,11 @@ const ManageUsersAdmin = () => {
   const usersPerPage = 5;
 
   const savedUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
+  const sortedUsers = [...savedUsers].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  );
 
-  const filteredUsers = savedUsers.filter((user) => {
+  const filteredUsers = sortedUsers.filter((user) => {
     const searchText = search.toLowerCase();
 
     const matchesSearch =

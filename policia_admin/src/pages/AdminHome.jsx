@@ -1,3 +1,5 @@
+import { UserPlus, Users } from "lucide-react";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import HeroBanner from "../components/HeroBanner";
@@ -6,16 +8,15 @@ import StatsPanel from "../components/StatsPanel";
 import NewsVideoSection from "../components/NewsVideoSection";
 
 import bannerImage from "../assets/banner-police.png";
-
 import "../styles/admin-home.css";
 
 const AdminHome = () => {
   const adminLinks = [
-  { label: "Inicio", path: "/admin" },
-  { label: "Crear usuario", path: "/admin/crear-usuario" },
-  { label: "Gestión de usuario", path: "/admin/gestion-usuarios" },
-  { label: "Incidentes", path: "/admin/incidentes" },
-];
+    { label: "Inicio", path: "/admin" },
+    { label: "Crear usuario", path: "/admin/crear-usuario" },
+    { label: "Gestión de usuario", path: "/admin/gestion-usuarios" },
+    { label: "Incidentes", path: "/admin/incidentes" },
+  ];
 
   return (
     <div className="admin-home">
@@ -33,14 +34,14 @@ const AdminHome = () => {
             <div className="admin-home__actions">
               <ActionCard
                 title="Crear usuario"
-                icon="👤"
+                icon={<UserPlus size={52} strokeWidth={2.2} />}
                 description="Registra nuevos usuarios para el sistema Entornos Seguros."
                 link="/admin/crear-usuario"
               />
 
               <ActionCard
                 title="Gestión de usuario"
-                icon="📋"
+                icon={<Users size={52} strokeWidth={2.2} />}
                 description="Consulta, administra y actualiza usuarios registrados."
                 link="/admin/gestion-usuarios"
               />

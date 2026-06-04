@@ -2,12 +2,11 @@ import Header from "../components/Header";
 import "../styles/home-police.css";
 import ActionCard from "../components/ActionCard";
 import StatsPanel from "../components/StatsPanel";
-import InfoCard from "../components/InfoCard";
 import bannerImage from "../assets/banner-police.png";
 import NewsVideoSection from "../components/NewsVideoSection";
 import Footer from "../components/Footer";
 import HeroBanner from "../components/HeroBanner";
-
+import { MapPinned, FileText } from "lucide-react";
 
 const HomePolice = () => {
   return (
@@ -28,32 +27,17 @@ const HomePolice = () => {
             <div className="home-police__actions">
               <ActionCard
                 title="Ver Mapa"
-                icon="🗺️"
+                icon={<MapPinned size={46} strokeWidth={2.2} />}
                 description="Consulta incidentes geolocalizados y zonas de atención prioritaria."
               />
 
               <ActionCard
                 title="Informes"
-                icon="📋"
                 description="Revisa informes, registros y seguimiento de incidentes comunitarios."
-                link="/reportes"
+                icon={<FileText size={46} strokeWidth={2.2} />}
               />
             </div>
 
-            {/* MISIÓN Y VISIÓN */}
-            <section className="home-police__info">
-              <InfoCard
-                icon="🎯"
-                title="Misión"
-                description="Crear entornos seguros mediante la identificación, gestión y seguimiento oportuno de incidentes en la comunidad."
-              />
-
-              <InfoCard
-                icon="👁️"
-                title="Visión"
-                description="Ser una plataforma líder en seguridad comunitaria, orientada a la prevención de incidentes y al fortalecimiento de la confianza ciudadana."
-              />
-            </section>
             <NewsVideoSection />
           </div>
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import UserForm from "../components/UserForm";
 import Toast from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { Eye, EyeOff } from "lucide-react";
 
 import "../styles/create-user-admin.css";
 
