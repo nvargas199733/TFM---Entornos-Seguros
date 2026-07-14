@@ -1,374 +1,157 @@
+# Entornos Seguros - Plataforma de Reporte Ciudadano
 
+Proyecto academico (TFM) orientado a la gestion de incidentes ciudadanos con integracion entre aplicaciones frontend y backend basado en microservicios.
 
-##  Arquitectura del Proyecto
+## Estado del proyecto
 
-```
-EntornosSeurosBogota/
-├── backend/                          # API REST + WebSocket (Spring Boot)
-│   ├── src/main/java/com/entornosseguros/
-│   │   ├── api/                      # Configuración de APIs
-│   │   ├── config/                   # Configuraciones de la app
-│   │   ├── controller/               # Controladores REST
-│   │   ├── dto/                      # Data Transfer Objects
-│   │   ├── entity/                   # Entidades JPA
-│   │   ├── exception/                # Excepciones personalizadas
-│   │   ├── repository/               # Repositorios JPA
-│   │   ├── security/                 # Configuración de seguridad (JWT)
-│   │   ├── service/                  # Lógica de negocio
-│   │   └── websocket/                # Configuración de WebSocket
-│   ├── src/main/resources/
-│   │   ├── application.properties     # Configuración principal
-│   │   ├── application-dev.properties # Configuración desarrollo
-│   │   ├── application-prod.properties# Configuración producción
-│   │   └── db/migration/             # Scripts de migración (Flyway)
-│   └── pom.xml
-│
-├── frontend/                         # Aplicación Desktop JavaFX
-│   ├── src/main/java/com/entornosseguros/
-│   │   ├── app/                      # Clase principal y configuración
-│   │   ├── controller/               # Controladores de vistas
-│   │   ├── model/                    # Modelos de datos
-│   │   ├── service/                  # Servicios (API REST, WebSocket)
-│   │   └── ui/
-│   │       ├── components/           # Componentes reutilizables
-│   │       ├── scenes/               # Escenas/Vistas principales
-│   │       ├── styles/               # Temas CSS
-│   │       └── utils/                # Utilidades UI
-│   ├── src/main/resources/
-│   │   ├── css/                      # Estilos CSS (Glassmorphism, Dark Mode)
-│   │   ├── fxml/                     # Archivos FXML
-│   │   ├── images/                   # Imágenes y banners
-│   │   └── icons/                    # Iconografía SVG
-│   └── pom.xml
-│
-├── database/
-│   ├── schema/                       # Schema inicial
-│   ├── migrations/                   # Scripts de migración Flyway
-│   └── scripts/                      # Scripts de carga inicial
-│
-├── docs/                             # Documentación
-│   ├── API.md
-│   ├── ARCHITECTURE.md
-│   ├── SETUP.md
-│   ├── DATABASE.md
-│   └── UI_UX.md
-│
-├── config/                           # Configuraciones generales
-├── docker-compose.yml                # Orquestación de servicios
-├── .env.example                      # Variables de entorno (ejemplo)
-├── .gitignore
-└── README.md
-```
+- Frontend: implementado en React + Vite (actualmente en JavaScript/JSX).
+- Backend: Definido con arquitectura de 3 microservicios en Java (Spring Boot) con Gradle.
+- Persistencia objetivo: PostgreSQL con estrategia schema per service.
 
-## 🛠️ Tech Stack
+## Arquitectura objetivo
 
-### Backend
-- **Framework**: Spring Boot 3.2.0
-- **Base de Datos**: PostgreSQL 16
-- **Cache**: Redis 7
-- **Autenticación**: JWT (JSON Web Tokens)
-- **WebSocket**: Spring WebSocket para notificaciones en tiempo real
-- **ORM**: JPA + Hibernate
-- **Migración**: Flyway
-- **Mapas**: Google Maps API
+El backend se divide en tres microservicios con responsabilidades separadas:
+
+1. auth-user-service: autenticacion, usuarios y roles.
+2. incident-service: registro, clasificacion, estado y seguimiento de incidentes.
+3. police-report-service: registro formal de atencion policial.
+
+### Estrategia de persistencia
+
+- Base de datos: PostgreSQL.
+- Enfoque: un esquema por microservicio dentro de una misma instancia.
+- Esquemas previstos:
+  - auth_user
+  - incident
+  - police_report
+
+Esto mantiene propiedad de datos por servicio sin elevar innecesariamente la complejidad operativa del TFM.
+
+## Frontends actuales en el repositorio
+
+El workspace contiene dos dominios funcionales principales de UI:
+
+- Ciudadano: flujo de registro/login, reporte, perfil y mapa.
+- Policia/Admin: flujo operativo policial, reportes oficiales y gestion administrativa.
+
+Tambien existen carpetas duplicadas/homologas que estan siendo consolidadas durante la evolucion del proyecto.
+
+## Stack final previsto
 
 ### Frontend
-- **Framework**: JavaFX 21
-- **UI Components**: ControlsFX
-- **Cliente REST**: Spring WebFlux
-- **WebSocket Client**: SockJS
-- **Procesamiento JSON**: Jackson
-- **Testing**: TestFX, JUnit
 
-### DevOps
-- **Containerización**: Docker
-- **Orquestación**: Docker Compose
-- **CI/CD**: GitHub Actions (preparado)
+- React 19
+- Vite 8
+- React Router
+- TypeScript (migracion progresiva desde JSX)
+- Recharts (metricas y paneles)
+- Leaflet / React-Leaflet (mapas)
 
-## 🎨 Diseño Visual
+### Backend
 
-### Paleta de Colores
-```
-Azul Oscuro Institucional:    #001F3F
-Azul Turquesa Tecnológico:    #00BCD4
-Blanco Limpio:                #FFFFFF
-Gris Suave:                   #F5F5F5
-Gris Oscuro:                  #333333
-Rojo Emergencia:              #E74C3C
-Verde Aceptado:               #27AE60
-Amarillo Alerta:              #F39C12
-```
-
-### Tipografía
-- **Títulos**: Poppins (Bold, 700)
-- **Subtítulos**: Inter (SemiBold, 600)
-- **Cuerpo**: Montserrat (Regular, 400)
-- **Código**: JetBrains Mono
-
-
-
-### Requisitos Previos
 - Java 17+
-- Maven 3.8+
-- Docker y Docker Compose
-- PostgreSQL 16 (opcional si usas Docker)
-- IDE: IntelliJ IDEA, VS Code o Eclipse
+- Spring Boot 3+
+- Spring Web (REST)
+- Spring Security + JWT
+- Spring Data JPA
+- Gradle
 
-### 1. Clonar o Descargar el Proyecto
-```bash
-cd EntornosSeurosBogota
-```
+### Datos y plataforma
 
-### 2. Configurar Variables de Entorno
-```bash
-cp .env.example .env
-# Editar .env con tus valores
-```
-
-### 3. Iniciar Servicios con Docker
-```bash
-docker-compose up -d
-```
-
-Esto inicia:
-- PostgreSQL en puerto 5432
-- PgAdmin en puerto 5050 (usuario: admin@entornosseguros.gov.co)
-- Redis en puerto 6379
-- Backend API en puerto 8080
-
-### 4. Compilar Backend
-```bash
-cd backend
-mvn clean install
-mvn spring-boot:run
-```
-
-### 5. Compilar Frontend
-```bash
-cd frontend
-mvn clean install
-mvn javafx:run
-```
-
-##  Documentación Detallada
-
-- **[SETUP.md](docs/SETUP.md)** - Guía completa de instalación
-- **[API.md](docs/API.md)** - Documentación de endpoints REST
-- **[DATABASE.md](docs/DATABASE.md)** - Esquema y modelo de datos
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Arquitectura de software
-- **[UI_UX.md](docs/UI_UX.md)** - Guía de componentes y estilos
-
-##  Funcionalidades Principales
-
-### 1. Sistema de Autenticación
-- Login con JWT
-- Registro de usuarios
-- Recuperación de contraseña
-- Roles y permisos (Super Admin, Admin, Ciudadano, Policía)
-
-### 2. Reportes de Incidentes
-- Tipos: Robo, Hurto, Vandalismo, Violencia, Emergencia médica, etc.
-- Adjuntar fotos y videos
-- Geolocalización automática
-- Reportes anónimos
-- Nivel de urgencia
-
-### 3. Mapas Interactivos
-- Visualización de incidentes en tiempo real
-- Heatmaps de criminalidad
-- Búsqueda de CAI más cercano
-- Marcadores animados
-
-### 4. Dashboard Administrativo
-- Gráficas profesionales (incidentes, zonas, horarios)
-- Estadísticas en tiempo real
-- Gestión de usuarios
-- Control de incidentes
-
-### 5. Panel de Policía/Autoridades
-- Vista de reportes activos
-- Actualización de estados
-- Comunicación directa
-- Navegación GPS
-
-### 6. Notificaciones en Tiempo Real
-- WebSocket para alertas instantáneas
-- Sonidos de emergencia (opcional)
-- Notificaciones de escritorio
-
-##  Base de Datos
-
-### Tablas Principales
-- `users` - Usuarios del sistema
-- `incidents` - Reportes de incidentes
-- `cai` - Centros de Atención Inmediata
-- `roles` - Roles y permisos
-- `notifications` - Historial de notificaciones
-- `media` - Armacentamiento de fotos/videos
-
-Ver [DATABASE.md](docs/DATABASE.md) para detalles completos.
-
-
-
-##  API REST (Ejemplos)
-
-```bash
-# Autenticación
-POST /api/v1/auth/login
-POST /api/v1/auth/register
-POST /api/v1/auth/refresh-token
-
-# Reportes
-GET /api/v1/incidents
-POST /api/v1/incidents
-GET /api/v1/incidents/{id}
-PUT /api/v1/incidents/{id}
-DELETE /api/v1/incidents/{id}
-
-# Usuarios (Admin)
-GET /api/v1/users
-POST /api/v1/users
-PUT /api/v1/users/{id}
-DELETE /api/v1/users/{id}
-
-# Estadísticas
-GET /api/v1/analytics/incidents-by-zone
-GET /api/v1/analytics/heatmap
-GET /api/v1/analytics/trends
-```
-
-##  Testing
-
-```bash
-# Backend
-cd backend
-mvn test
-
-# Frontend (TestFX)
-cd frontend
-mvn test
-```
-
-##  Deployment con Docker
-
-```bash
-# Build de imagen personalizada
-docker build -t entornos-seguros-backend:latest ./backend
-docker build -t entornos-seguros-frontend:latest ./frontend
-
-# Push a registry
-docker push entornos-seguros-backend:latest
-```
-
-## 📞 Contacto y Soporte
-
-- **Email**: soporte@entornosseguros.gov.co
-- **Teléfono**: Línea 123
-- **GitHub Issues**: [Reportar problemas](https://github.com/entornos-seguros/issues)
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 👥 Equipo de Desarrollo
-
-**Entornos Seguros Bogotá** fue desarrollado
-
----
-
-
-
-
-
-```bash
-# 1. Configurar variables de entorno
-cp .env.example .env
-
-# 2. Iniciar servicios
-docker-compose up -d
-
-# 3. ¡Listo! Backend en http://localhost:8080/api
-```
-
-### 📖 Documentación Principal
-
-| Documento | Descripción |
-|-----------|-----------|
-| [SETUP.md](docs/SETUP.md) | Guía completa de instalación |
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Diseño del sistema (40+ KB) |
-| [DATABASE.md](docs/DATABASE.md) | Esquema ER y optimizaciones |
-| [API.md](docs/API.md) | 30+ endpoints documentados |
-| [UI_UX.md](docs/UI_UX.md) | Especificaciones de diseño |
-| [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | Árbol completo del proyecto |
-| [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) | Resumen ejecutivo |
-
-###  Credenciales Iniciales
-
-```
-Super Admin:     admin@entornosseguros.gov.co / Admin123!
-Admin:           admin.general@entornosseguros.gov.co / Admin123!
-Ciudadano:       ciudadano@entornosseguros.gov.co / Admin123!
-Policía:         policia@entornosseguros.gov.co / Admin123!
-```
-
-###  Estructura del Proyecto
-
-```
-EntornosSeurosBogota/
-├── backend/                    # API REST Spring Boot
-├── frontend/                   # Aplicación JavaFX
-├── database/                   # Scripts SQL
-├── docs/                       # Documentación
-├── docker-compose.yml          # Servicios
-├── .env.example               # Variables de entorno
-├── CONTRIBUTING.md            # Guía de contribución
-└── PROJECT_SUMMARY.md         # Resumen ejecutivo
-```
-
-###  Características Principales
-
-**Seguridad**
-- JWT Authentication
-- Role-based Access Control (4 roles)
-- CORS configurado
-- BCrypt password hashing
-
-**Base de Datos**
 - PostgreSQL 16
-- 11 tablas con relaciones
-- Índices optimizados
-- Migraciones Flyway v1 y v2
+- Redis 7 (cache y soporte operativo)
+- Docker + Docker Compose
 
-**APIs**
-- 30+ endpoints RESTful
-- WebSocket para tiempo real
-- Documentación completa
-- Error handling robusto
+### Calidad y soporte
 
-**Interfaz**
-- Componentes JavaFX premium
-- Estilos modernos con CSS3
-- Responsive design
-- Dark mode preparado
+- ESLint (frontend)
+- Pruebas unitarias e integracion (frontend y backend)
+- Documentacion tecnica en carpeta docs
 
-### 🎯 Próximos Pasos
+## Estructura base del repositorio (actual)
 
-1. **Leer** [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) para overview
-2. **Seguir** [SETUP.md](docs/SETUP.md) para instalar
-3. **Explorar** [ARCHITECTURE.md](docs/ARCHITECTURE.md) para entender el diseño
-4. **Consultar** [API.md](docs/API.md) para endpoints
-5. **Revisar** [CONTRIBUTING.md](CONTRIBUTING.md) antes de commits
+```text
+TFM---Entornos-Seguros/
+|- frontend-ciudadano/              # Frontend ciudadano (activo)
+|- frontend-policia-admin/          # Frontend policia/admin (activo)
+|- docs/                # Documentacion tecnica
+|- docker-compose.yml   # Servicios de infraestructura
+|- README.md
+```
 
----
+## Ejecucion local del frontend
 
-**Fabricado con ❤️ en Bogotá D.C. - 2026**
+Cada frontend React se ejecuta de forma independiente.
+
+1. Instalar dependencias:
+
+```bash
+cd frontend-ciudadano
+npm install
+```
+
+o
+
+```bash
+cd frontend-policia-admin
+npm install
+```
+
+2. Iniciar en desarrollo:
+
+```bash
+npm run dev
+```
+
+## Infraestructura con Docker
+
+La configuracion actual de Docker Compose contempla:
+
+- PostgreSQL
+- PgAdmin
+- Redis
+- Servicio backend (cuando la carpeta backend este disponible en esta rama)
+
+Comando:
+
+```bash
+docker compose up -d
+```
+
+## Integracion frontend-backend (objetivo)
+
+La integracion se realizara de forma incremental para minimizar riesgos:
+
+1. auth-user-service
+- login, registro, sesion, roles y gestion de usuarios.
+
+2. incident-service
+- crear incidente, listar, detalle, evidencia y cambios de estado.
+
+3. police-report-service
+- generar y consultar reporte policial asociado a incidente.
+
+## Migracion a TypeScript
+
+La migracion de JSX a TypeScript se hara por etapas, empezando por:
+
+- capa de servicios API,
+- modelos de datos,
+- pantallas de mayor criticidad de negocio.
+
+Este enfoque evita bloqueos y permite integrar backend en paralelo.
+
+## Documentacion complementaria
+
+- docs/API.md
+- docs/ARCHITECTURE.md
+- docs/DATABASE.md
+- docs/SETUP.md
+- PROJECT_STRUCTURE.md
+- PROJECT_SUMMARY.md
+
+## Licencia
+
+MIT. Ver archivo LICENSE.
+
+Fabricado con ❤️ en Bogotá D.C. - 2026

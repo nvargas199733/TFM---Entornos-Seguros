@@ -1,0 +1,84 @@
+.register-container {
+  min-height: 100vh;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.register-content {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.register-title {
+  font-size: clamp(32px, 7vw, 56px);
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 24px;
+}
+
+.register-logo {
+  width: 75%;
+  max-width: 320px;
+  margin-bottom: 42px;
+}
+
+.register-button {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 20px;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+}
+
+.create-account {
+  background-color: #0d4876;
+}
+
+.login-button {
+  background-color: #408d9c;
+}
+
+@media (min-width: 768px) {
+  .register-content {
+    max-width: 700px;
+  }
+
+  .register-logo {
+    max-width: 420px;
+  }
+
+  .register-button {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .register-container {
+    padding: 18px;
+  }
+
+  .register-logo {
+    width: 82%;
+  }
+
+  .register-button {
+    padding: 16px;
+  }
+
+  .terms-box input {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+  }
+}
