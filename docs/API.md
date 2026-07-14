@@ -56,6 +56,9 @@ Base sugerida: /api/v1/incidents
 - PUT /incidents/{id}
 - GET /incidents/{id}/history
 - POST /incidents/{id}/evidences
+- PATCH /incidents/{id}/status
+- GET /incidents/catalogs/types
+- GET /incidents/catalogs/statuses
 
 ### Incident create request
 
