@@ -59,7 +59,7 @@ Backend:
 - CORS allowed origins
 
 Frontend:
-- URL base por microservicio
+- URL base por microservicio (ejemplo: VITE_AUTH_API_BASE_URL=http://localhost:8081/api/v1/auth)
 - flags de entorno dev/prod
 
 ## 5) Verificacion rapida

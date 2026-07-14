@@ -1,13 +1,37 @@
 import "./RegisterForm.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { register } from "../../services/authService";
 
 function RegisterForm() {
+  const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
+  const [cedula, setCedula] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefono, setTelefono] = useState("");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  function splitFullName(value) {
+    const normalized = value.trim().replace(/\s+/g, " ");
+    const parts = normalized.split(" ");
+
+    if (parts.length < 2) {
+      return { nombres: normalized, apellidos: "-" };
+    }
+
+    const middle = Math.ceil(parts.length / 2);
+    return {
+      nombres: parts.slice(0, middle).join(" "),
+      apellidos: parts.slice(middle).join(" ")
+    };
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -16,8 +40,26 @@ function RegisterForm() {
     }
 
     setError("");
+    setIsSubmitting(true);
 
-    alert("Formulario enviado correctamente");
+    const { nombres, apellidos } = splitFullName(fullName);
+
+    try {
+      await register({
+        cedula,
+        nombres,
+        apellidos,
+        telefono,
+        email,
+        password
+      });
+
+      navigate("/menu");
+    } catch (serviceError) {
+      setError(serviceError.message || "No se pudo completar el registro");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -35,18 +77,24 @@ function RegisterForm() {
           <input
             type="text"
             placeholder="Nombre completo"
+            value={fullName}
+            onChange={(event) => setFullName(event.target.value)}
             required
           />
 
           <input
-            type="number"
+            type="text"
             placeholder="Cédula"
+            value={cedula}
+            onChange={(event) => setCedula(event.target.value.replace(/\D/g, ""))}
             required
           />
 
           <input
             type="email"
             placeholder="Correo electrónico"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             required
           />
 
@@ -58,6 +106,10 @@ function RegisterForm() {
             inputMode="numeric"
             maxLength="10"
             minLength="10"
+            value={telefono}
+            onChange={(event) =>
+              setTelefono(event.target.value.replace(/\D/g, "").slice(0, 10))
+            }
             required
             />
           <input
@@ -96,7 +148,7 @@ function RegisterForm() {
             }
 
           <button type="submit">
-            Registrarse
+            {isSubmitting ? "Registrando..." : "Registrarse"}
           </button>
 
         </form>
