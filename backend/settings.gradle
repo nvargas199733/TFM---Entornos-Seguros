@@ -1,0 +1,5 @@
+rootProject.name = "entornos-seguros-backend"
+
+include("auth-user-service")
+include("incident-service")
+include("police-report-service")

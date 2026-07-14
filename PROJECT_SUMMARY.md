@@ -24,7 +24,7 @@ Plataforma para registro y seguimiento de incidentes ciudadanos, con atencion po
 ## Stack final
 
 - Frontend: React, Vite, React Router, TypeScript (migracion progresiva).
-- Backend: Java 17+, Spring Boot, Spring Security JWT, Spring Data JPA, Gradle.
+- Backend: Java 21+, Spring Boot, Spring Security JWT, Spring Data JPA, Gradle.
 - Datos: PostgreSQL, Redis.
 - Operacion: Docker, Docker Compose.
 

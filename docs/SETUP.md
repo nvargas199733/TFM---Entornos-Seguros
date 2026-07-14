@@ -4,7 +4,7 @@
 
 - Node.js 20+
 - npm 10+
-- Java 17+
+- Java 21+
 - Gradle 8+
 - Docker y Docker Compose
 
@@ -26,7 +26,7 @@ Servicios esperados:
 ### Ciudadano
 
 ```bash
-cd ciudadano
+cd frontend-ciudadano
 npm install
 npm run dev
 ```
@@ -34,23 +34,22 @@ npm run dev
 ### Policia/Admin
 
 ```bash
-cd frontend-react
+cd frontend-policia-admin
 npm install
 npm run dev
 ```
 
 ## 3) Ejecutar backend (microservicios)
 
-Ejemplo por servicio:
+Desde la carpeta backend:
 
 ```bash
-cd backend/auth-user-service
-./gradlew bootRun
+gradle :auth-user-service:bootRun
 ```
 
 Repetir para:
-- backend/incident-service
-- backend/police-report-service
+- gradle :incident-service:bootRun
+- gradle :police-report-service:bootRun
 
 ## 4) Variables de entorno recomendadas
 

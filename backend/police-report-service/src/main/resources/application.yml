@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: police-report-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/entornos_seguros_db}
+    username: ${DB_USERNAME:entornos_user}
+    password: ${DB_PASSWORD:TuContrasenaSegura123!}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: police_report
+
+server:
+  port: ${SERVER_PORT:8083}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

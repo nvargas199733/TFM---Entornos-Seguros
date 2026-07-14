@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: incident-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/entornos_seguros_db}
+    username: ${DB_USERNAME:entornos_user}
+    password: ${DB_PASSWORD:TuContrasenaSegura123!}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: incident
+
+server:
+  port: ${SERVER_PORT:8082}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

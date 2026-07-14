@@ -49,7 +49,7 @@ Tambien existen carpetas duplicadas/homologas que estan siendo consolidadas dura
 
 ### Backend
 
-- Java 17+
+- Java 21+
 - Spring Boot 3+
 - Spring Web (REST)
 - Spring Security + JWT
@@ -74,6 +74,7 @@ Tambien existen carpetas duplicadas/homologas que estan siendo consolidadas dura
 TFM---Entornos-Seguros/
 |- frontend-ciudadano/              # Frontend ciudadano (activo)
 |- frontend-policia-admin/          # Frontend policia/admin (activo)
+|- backend/                         # Backend monorepo (3 microservicios)
 |- docs/                # Documentacion tecnica
 |- docker-compose.yml   # Servicios de infraestructura
 |- README.md
@@ -110,7 +111,7 @@ La configuracion actual de Docker Compose contempla:
 - PostgreSQL
 - PgAdmin
 - Redis
-- Servicio backend (cuando la carpeta backend este disponible en esta rama)
+- Servicio backend (en evolucion; microservicios en carpeta backend)
 
 Comando:
 
@@ -131,6 +132,20 @@ La integracion se realizara de forma incremental para minimizar riesgos:
 3. police-report-service
 - generar y consultar reporte policial asociado a incidente.
 
+## Backend monorepo (estado actual)
+
+Se creo la estructura base del backend en Java + Gradle con tres microservicios:
+
+- backend/auth-user-service
+- backend/incident-service
+- backend/police-report-service
+
+Cada servicio tiene:
+
+- clase principal Spring Boot
+- configuracion application.yml
+- endpoint basico de health por dominio
+
 ## Migracion a TypeScript
 
 La migracion de JSX a TypeScript se hara por etapas, empezando por:
@@ -145,7 +160,6 @@ Este enfoque evita bloqueos y permite integrar backend en paralelo.
 
 - docs/API.md
 - docs/ARCHITECTURE.md
-- docs/DATABASE.md
 - docs/SETUP.md
 - PROJECT_STRUCTURE.md
 - PROJECT_SUMMARY.md
