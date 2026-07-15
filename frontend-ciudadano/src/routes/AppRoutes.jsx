@@ -6,6 +6,7 @@ import MenuPage from "../pages/menu/Menu";
 import Profile from "../pages/profile/Profile";
 import CreateReport from "../pages/reports/CreateReport";
 import MyReports from "../pages/reports/MyReports";
+import ReportDetail from "../pages/reports/ReportDetail";
 import ReportTypes from "../pages/reports/ReportTypes";
 import CaiMap from "../pages/map/CaiMap";
 
@@ -42,6 +43,10 @@ function AppRoutes() {
         <Route 
           path="/mis-reportes" 
           element={<MyReports />} 
+        />
+        <Route 
+          path="/mis-reportes/:id" 
+          element={<ReportDetail />} 
         />
         <Route 
           path="/tipos-reporte" 

@@ -1,4 +1,5 @@
 import "./MyReports.css";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -11,45 +12,88 @@ import {
   ShieldCheck,
   Flag
 } from "lucide-react";
+import { fetchMyIncidents, getCurrentSessionUser } from "../../services/reportService";
 
 function MyReports() {
   const navigate = useNavigate();
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const reports = [
-    {
-      id: 1,
-      fecha: "19 mayo 2026 - 09:30 a.m.",
-      localidad: "Engativá",
-      descripcion:
-        "Se presenta un grupo de personas consumiendo sustancias en el parque y causando disturbios.",
-      estado: "Pendiente",
-      tipo: "warning"
-    },
-    {
-      id: 2,
-      fecha: "18 mayo 2026 - 04:15 p.m.",
-      localidad: "Suba",
-      descripcion:
-        "Robo de bicicleta en vía pública cerca del centro comercial.",
-      estado: "Atendido",
-      tipo: "success"
-    },
-    {
-      id: 3,
-      fecha: "15 mayo 2026 - 11:20 a.m.",
-      localidad: "Teusaquillo",
-      descripcion:
-        "Vehículo mal estacionado bloqueando la entrada del garaje.",
-      estado: "Atendido",
-      tipo: "success"
-    }
-  ];
+  useEffect(() => {
+    let active = true;
+
+    const loadReports = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const currentUser = getCurrentSessionUser();
+
+        if (!currentUser?.id) {
+          throw new Error("Debes iniciar sesión para ver tus reportes");
+        }
+
+        const incidents = await fetchMyIncidents(currentUser.id);
+
+        if (active) {
+          setReports(incidents);
+        }
+      } catch (loadError) {
+        if (active) {
+          setError(loadError.message || "No se pudieron cargar los reportes");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadReports();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const getIcon = (tipo) => {
     if (tipo === "warning") return <Car size={36} />;
     if (tipo === "success") return <ShieldCheck size={36} />;
     return <Flag size={36} />;
   };
+
+  const formatDate = (value) => {
+    if (!value) return "Sin fecha";
+
+    return new Date(value).toLocaleString("es-EC", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const badgeType = (status) => {
+    return status === "atendido" || status === "cerrado" ? "success" : "warning";
+  };
+
+  if (loading) {
+    return (
+      <main className="myreports-container">
+        <section className="myreports-card">Cargando reportes...</section>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="myreports-container">
+        <section className="myreports-card">{error}</section>
+      </main>
+    );
+  }
 
   return (
     <main className="myreports-container">
@@ -73,8 +117,8 @@ function MyReports() {
         <section className="reports-list">
           {reports.map((report) => (
             <article className="report-card" key={report.id}>
-              <div className={`report-main-icon ${report.tipo}`}>
-                {getIcon(report.tipo)}
+              <div className={`report-main-icon ${badgeType(report.status)}`}>
+                {getIcon(badgeType(report.status))}
               </div>
 
               <div className="report-info">
@@ -82,15 +126,15 @@ function MyReports() {
                   <Calendar size={22} />
                   <div>
                     <span>Fecha</span>
-                    <p>{report.fecha}</p>
+                    <p>{formatDate(report.reportedAt)}</p>
                   </div>
                 </div>
 
                 <div className="report-row">
                   <MapPin size={22} />
                   <div>
-                    <span>Localidad</span>
-                    <p>{report.localidad}</p>
+                    <span>Referencia</span>
+                    <p>{report.location}</p>
                   </div>
                 </div>
 
@@ -98,20 +142,20 @@ function MyReports() {
                   <FileText size={22} />
                   <div>
                     <span>Descripción</span>
-                    <p>{report.descripcion}</p>
+                    <p>{report.description}</p>
                   </div>
                 </div>
               </div>
 
               <div className="report-status-area">
-                <div className={`status-badge ${report.tipo}`}>
+                <div className={`status-badge ${badgeType(report.status)}`}>
                   <span className="status-dot"></span>
-                  {report.estado}
+                  {report.status}
                 </div>
 
                 <button
                   className="details-button"
-                  onClick={() => alert(`Detalle del reporte ${report.id}`)}
+                  onClick={() => navigate(`/mis-reportes/${report.id}`)}
                 >
                   Más detalles
                   <ChevronRight size={22} />
