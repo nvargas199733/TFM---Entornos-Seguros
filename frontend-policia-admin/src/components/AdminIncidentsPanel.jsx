@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import reportsData from "../data/reportsData";
 import Pagination from "./Pagination";
+import { fetchIncidents, fetchPoliceReportsByIncident } from "../services/policeApi";
 /*
   AdminIncidentsPanel:
   Muestra la relación entre reportes ciudadanos e informes oficiales policiales.
@@ -12,22 +12,53 @@ const AdminIncidentsPanel = () => {
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [timeFilter, setTimeFilter] = useState("todos");
   const [currentPage, setCurrentPage] = useState(1);
+  const [incidents, setIncidents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const incidentsPerPage = 5;
 
-  const policeReports = JSON.parse(localStorage.getItem("policeReports")) || [];
+  useEffect(() => {
+    let active = true;
 
-  const incidents = reportsData.map((userReport) => {
-    const policeReport = policeReports.find(
-      (report) => report.userReportId === userReport.id,
-    );
+    const loadIncidents = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-    return {
-      ...userReport,
-      policeReport,
-      finalStatus: policeReport ? "atendido" : userReport.status,
+        const backendIncidents = await fetchIncidents();
+        const incidentsWithReports = await Promise.all(
+          backendIncidents.map(async (incident) => {
+            const policeReports = await fetchPoliceReportsByIncident(incident.id);
+
+            return {
+              ...incident,
+              policeReport: policeReports[0] || null,
+              finalStatus: incident.status,
+            };
+          }),
+        );
+
+        if (active) {
+          setIncidents(incidentsWithReports);
+        }
+      } catch (loadError) {
+        if (active) {
+          setError(loadError.message || "No se pudieron cargar los incidentes");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
     };
-  });
+
+    loadIncidents();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const now = new Date();
 
@@ -58,6 +89,14 @@ const AdminIncidentsPanel = () => {
     startIndex,
     startIndex + incidentsPerPage,
   );
+
+  if (loading) {
+    return <section className="admin-incidents-panel">Cargando incidentes...</section>;
+  }
+
+  if (error) {
+    return <section className="admin-incidents-panel">{error}</section>;
+  }
 
   return (
     <section className="admin-incidents-panel">

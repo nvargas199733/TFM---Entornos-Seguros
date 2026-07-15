@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import OfficialReportForm from "../components/OfficialReportForm";
 import ConfirmModal from "../components/ConfirmModal";
-import reportsData from "../data/reportsData";
 import currentPoliceData from "../data/currentPoliceData";
+import {
+  fetchIncidentById,
+  finalizePoliceAttention,
+  resolveIncidentStatusId,
+} from "../services/policeApi";
 
 import policeVideo from "../assets/policia.mp4";
 
@@ -18,11 +22,6 @@ const CreatePoliceReport = () => {
   const navigate = useNavigate();
 
   /*
-    Buscamos el reporte ciudadano relacionado.
-  */
-  const userReport = reportsData.find((report) => report.id === Number(id));
-
-  /*
     Estados del formulario.
   */
   const [officialDescription, setOfficialDescription] = useState("");
@@ -31,6 +30,40 @@ const CreatePoliceReport = () => {
 
   const [hasInjured, setHasInjured] = useState("No");
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
+  const [userReport, setUserReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    const loadIncident = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const incident = await fetchIncidentById(Number(id));
+
+        if (active) {
+          setUserReport(incident);
+        }
+      } catch (loadError) {
+        if (active) {
+          setError(loadError.message || "No se pudo cargar el incidente");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadIncident();
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
 
   /*
     Guardar informe oficial.
@@ -42,45 +75,44 @@ const CreatePoliceReport = () => {
   };
 
   const confirmCloseIncident = () => {
-    const newPoliceReport = {
-      id: Date.now(),
-      userReportId: userReport.id,
-      policeId: currentPoliceData.id,
-      policeName: `${currentPoliceData.names} ${currentPoliceData.lastNames}`,
-      policeRank: currentPoliceData.rank,
-      badgeNumber: currentPoliceData.badgeNumber,
-      incidentType: userReport.type,
-      hasInjured,
-      officialDescription,
-      actionsTaken,
-      createdAt: new Date().toISOString(),
+    const finalize = async () => {
+      try {
+        const attendedStatusId = await resolveIncidentStatusId("ATENDIDO");
+
+        await finalizePoliceAttention({
+          idIncidente: userReport.id,
+          idUsuarioPolicia: currentPoliceData.id,
+          huboHeridos: hasInjured === "Sí",
+          descripcionAtencion: `Descripcion oficial: ${officialDescription}\n\nAcciones tomadas: ${actionsTaken}`,
+          idEstadoAtendido: attendedStatusId,
+          idEstadoResponsable: currentPoliceData.id,
+          observacion: "Informe policial registrado desde frontend policial",
+        });
+
+        setIsCloseModalOpen(false);
+        navigate("/reportes");
+      } catch (saveError) {
+        setError(saveError.message || "No se pudo guardar el informe policial");
+      }
     };
 
-    const savedReports =
-      JSON.parse(localStorage.getItem("policeReports")) || [];
-
-    localStorage.setItem(
-      "policeReports",
-      JSON.stringify([...savedReports, newPoliceReport]),
-    );
-
-    const attendedReports =
-      JSON.parse(localStorage.getItem("attendedReports")) || [];
-
-    localStorage.setItem(
-      "attendedReports",
-      JSON.stringify([...attendedReports, userReport.id]),
-    );
-
-    setIsCloseModalOpen(false);
-
-    navigate("/reportes");
+    finalize();
   };
+
+  const displayReport = useMemo(() => userReport, [userReport]);
 
   /*
     Validación.
   */
-  if (!userReport) {
+  if (loading) {
+    return <p>Buscando incidente...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  if (!displayReport) {
     return <p>Reporte no encontrado.</p>;
   }
 
@@ -114,7 +146,7 @@ const CreatePoliceReport = () => {
 
         {/* Formulario oficial */}
         <OfficialReportForm
-          userReport={userReport}
+          userReport={displayReport}
           currentPoliceData={currentPoliceData}
           officialDescription={officialDescription}
           setOfficialDescription={setOfficialDescription}

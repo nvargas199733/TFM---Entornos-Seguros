@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ReportCard from "../components/ReportCard";
-import reportsData from "../data/reportsData";
 import bannerImage from "../assets/banner-police.png";
 import "../styles/reports-police.css";
 import HeroBanner from "../components/HeroBanner";
 import Pagination from "../components/Pagination";
+import { fetchIncidents } from "../services/policeApi";
 
 /*
   ReportsPolice:
@@ -21,30 +21,45 @@ const ReportsPolice = () => {
   const [filter, setFilter] = useState("Todos");
   const [timeFilter, setTimeFilter] = useState("mes");
   const [currentPage, setCurrentPage] = useState(1);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const reportsPerPage = 5;
-  
 
-  /*
-  Primero mostramos solo reportes:
-  - con status pendiente
-  - que no estén registrados como atendidos en localStorage
-*/
+  useEffect(() => {
+    let active = true;
 
-  /*
-  Luego aplicamos filtro por tipo.
-*/
-  const attendedReports =
-    JSON.parse(localStorage.getItem("attendedReports")) || [];
+    const loadReports = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-  const pendingReports = reportsData.filter(
-    (report) =>
-      report.status === "pendiente" &&
-      !attendedReports.includes(report.id)
-  );
+        const incidents = await fetchIncidents();
+
+        if (active) {
+          setReports(incidents.filter((report) => report.status === "pendiente"));
+        }
+      } catch (loadError) {
+        if (active) {
+          setError(loadError.message || "No se pudieron cargar los reportes");
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadReports();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const now = new Date();
 
-  const reportsByTime = pendingReports.filter((report) => {
+  const reportsByTime = reports.filter((report) => {
     const reportDate = new Date(report.reportedAt);
     const differenceHours = (now - reportDate) / (1000 * 60 * 60);
 
@@ -89,6 +104,10 @@ const ReportsPolice = () => {
         />
 
         <section className="reports-police__panel">
+          {loading && <p className="reports-police__count">Cargando reportes...</p>}
+
+          {error && <p className="reports-police__count">{error}</p>}
+
           <div className="reports-police__toolbar">
             <p className="reports-police__count">
               {filteredReports.length} reportes pendientes
