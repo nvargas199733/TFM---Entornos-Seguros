@@ -1,66 +1,86 @@
-/*
-  StatsPanel:
-  Panel contenedor para las estadísticas del dashboard.
-
-  Ahora calcula los datos directamente desde reportsData.js.
-*/
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import StatsCard from "./StatsCard";
 import IncidentChart from "./IncidentChart";
 import WeeklyChart from "./WeeklyChart";
-import reportsData from "../data/reportsData";
+import { fetchIncidents, fetchPoliceReportsByIncident } from "../services/policeApi";
 
 const StatsPanel = () => {
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [typeFilter, setTypeFilter] = useState("Todos");
-  const policeReports = JSON.parse(localStorage.getItem("policeReports")) || [];
+  const [reportsWithFinalStatus, setReportsWithFinalStatus] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const reportsWithFinalStatus = reportsData.map((report) => {
-    const hasPoliceReport = policeReports.some(
-      (policeReport) => policeReport.userReportId === report.id,
-    );
+  useEffect(() => {
+    let active = true;
 
-    return {
-      ...report,
-      finalStatus: hasPoliceReport ? "atendido" : report.status,
+    const loadStats = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        const incidents = await fetchIncidents();
+        const enriched = await Promise.all(
+          incidents.map(async (incident) => {
+            const policeReports = await fetchPoliceReportsByIncident(incident.id);
+
+            return {
+              ...incident,
+              finalStatus: policeReports.length > 0 ? "atendido" : incident.status,
+            };
+          }),
+        );
+
+        if (active) {
+          setReportsWithFinalStatus(enriched);
+        }
+      } catch (loadError) {
+        if (active) {
+          setError(loadError.message || "No se pudieron cargar estadísticas");
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
     };
-  });
+
+    loadStats();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const filteredReports =
     statusFilter === "Todos"
       ? reportsWithFinalStatus
       : reportsWithFinalStatus.filter(
           (report) => report.finalStatus === statusFilter,
         );
+
+  const availableTypes = useMemo(() => {
+    return Array.from(
+      new Set(reportsWithFinalStatus.map((report) => report.type).filter(Boolean)),
+    ).sort((a, b) => a.localeCompare(b));
+  }, [reportsWithFinalStatus]);
+
   const weeklyFilteredReports =
     typeFilter === "Todos"
       ? filteredReports
       : filteredReports.filter((report) => report.type === typeFilter);
-  /*
-    Total general de reportes registrados.
-  */
+
   const totalReports = filteredReports.length;
 
-  const incidentData = [
-    {
-      name: "Robos",
-      value: filteredReports.filter((report) => report.type === "Robo").length,
-    },
-    {
-      name: "Accidentes",
-      value: filteredReports.filter((report) => report.type === "Accidente")
-        .length,
-    },
-    {
-      name: "Vandalismo",
-      value: filteredReports.filter((report) => report.type === "Vandalismo")
-        .length,
-    },
-  ];
+  const incidentData = availableTypes.length > 0
+    ? availableTypes.map((type) => ({
+        name: type,
+        value: filteredReports.filter((report) => report.type === type).length,
+      }))
+    : [
+        { name: "Sin datos", value: 1 },
+      ];
 
-  /*
-    Reportes de los últimos 7 días.
-    Esto servirá para el gráfico semanal.
-  */
   const weeklyReports = weeklyFilteredReports.filter((report) => {
     const reportDate = new Date(report.reportedAt);
     const today = new Date();
@@ -72,6 +92,9 @@ const StatsPanel = () => {
 
   return (
     <aside className="stats-panel">
+      {isLoading && <p>Cargando estadísticas...</p>}
+      {error && <p>{error}</p>}
+
       <StatsCard
         title="Total de incidentes"
         value={totalReports}
@@ -106,9 +129,9 @@ const StatsPanel = () => {
                 onChange={(event) => setTypeFilter(event.target.value)}
               >
                 <option value="Todos">Todos</option>
-                <option value="Robo">Robos</option>
-                <option value="Accidente">Accidentes</option>
-                <option value="Vandalismo">Vandalismo</option>
+                {availableTypes.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
               </select>
             </div>
 

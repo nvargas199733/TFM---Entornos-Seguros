@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import UserForm from "../components/UserForm";
 import Toast from "../components/Toast";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { Eye, EyeOff } from "lucide-react";
+import {
+  createAdminUser,
+  fetchAdminUserById,
+  updateAdminUser,
+} from "../services/adminUsersApi";
 
 import "../styles/create-user-admin.css";
 
@@ -20,13 +24,11 @@ const CreateUserAdmin = () => {
     { label: "Incidentes", path: "/admin/incidentes" },
   ];
 
-  const savedUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
-  const userToEdit = savedUsers.find((user) => user.id === Number(id));
-  const isEditing = Boolean(userToEdit);
+  const isEditing = Boolean(id);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditing);
 
   const [toast, setToast] = useState({
     message: "",
@@ -34,14 +36,53 @@ const CreateUserAdmin = () => {
   });
 
   const [formData, setFormData] = useState({
-    identification: userToEdit?.identification || "",
-    fullName: userToEdit?.fullName || "",
-    phone: userToEdit?.phone || "",
-    email: userToEdit?.email || "",
-    role: userToEdit?.role || "",
+    identification: "",
+    fullName: "",
+    phone: "",
+    email: "",
+    role: "",
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    if (!isEditing) return;
+
+    let active = true;
+
+    const loadUser = async () => {
+      try {
+        setIsLoading(true);
+
+        const user = await fetchAdminUserById(Number(id));
+
+        if (active) {
+          setFormData((current) => ({
+            ...current,
+            identification: user.identification || "",
+            fullName: user.fullName || "",
+            phone: user.phone || "",
+            email: user.email || "",
+            role: user.role || "",
+          }));
+        }
+      } catch (loadError) {
+        if (active) {
+          showToast(loadError.message || "No se pudo cargar el usuario", "error");
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      active = false;
+    };
+  }, [id, isEditing]);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -123,63 +164,30 @@ const CreateUserAdmin = () => {
     return true;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!validateForm()) return;
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
       if (isEditing) {
-        const updatedUsers = savedUsers.map((user) =>
-          user.id === Number(id)
-            ? {
-                ...user,
-                identification: formData.identification,
-                fullName: formData.fullName,
-                phone: formData.phone,
-                email: formData.email,
-                role: formData.role,
-                updatedAt: new Date().toISOString(),
-              }
-            : user
-        );
-
-        localStorage.setItem("adminUsers", JSON.stringify(updatedUsers));
-
-        setIsLoading(false);
+        await updateAdminUser(Number(id), formData);
         showToast("Usuario actualizado correctamente.", "success");
-
-        setTimeout(() => {
-          navigate("/admin/gestion-usuarios");
-        }, 1000);
-
-        return;
+      } else {
+        await createAdminUser(formData);
+        showToast("Usuario creado correctamente.", "success");
       }
-
-      const newUser = {
-        id: Date.now(),
-        identification: formData.identification,
-        fullName: formData.fullName,
-        phone: formData.phone,
-        email: formData.email,
-        role: formData.role,
-        createdAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem(
-        "adminUsers",
-        JSON.stringify([...savedUsers, newUser])
-      );
-
-      setIsLoading(false);
-      showToast("Usuario creado correctamente.", "success");
 
       setTimeout(() => {
         navigate("/admin/gestion-usuarios");
       }, 1000);
-    }, 1500);
+    } catch (saveError) {
+      showToast(saveError.message || "No se pudo guardar el usuario.", "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {

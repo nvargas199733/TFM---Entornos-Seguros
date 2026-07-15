@@ -18,8 +18,26 @@ Plataforma para registro y seguimiento de incidentes ciudadanos, con atencion po
 ## Estado actual
 
 - Frontend activo en React + Vite.
-- Integracion backend orientada por servicios y contratos API.
+- Integracion backend funcional en los dos frontends, con consumo de endpoints reales por microservicio.
 - Persistencia con PostgreSQL usando schema per service.
+
+## Cobertura funcional actual
+
+1. frontend-ciudadano
+- Registro, login y consulta de sesion (auth-user-service).
+- Creacion de incidentes, evidencia, consulta de historial y estados (incident-service).
+- Consulta de CAI y CAI mas cercano (auth-user-service).
+
+2. frontend-policia-admin
+- Consulta de incidentes y detalle (incident-service).
+- Generacion de reporte policial y cierre operativo (police-report-service + incident-service).
+- Gestion de usuarios admin (auth-user-service).
+
+## Brechas funcionales (pendientes)
+
+1. Modulo "personas buscadas" funciona con dataset local (sin microservicio propio).
+2. Datos del policia autenticado en el panel policial/admin siguen con mock local.
+3. Tipos de reporte en UI ciudadana siguen definidos en frontend (lista fija), no desde catalogo dinamico en esa pantalla.
 
 ## Stack final
 

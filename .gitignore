@@ -256,6 +256,15 @@ generated/
 **/build/
 *.class
 
+# JVM crash dumps
+hs_err_pid*
+replay_pid*
+
+# Java IDE / workspace files
+.classpath
+.project
+.settings/
+
 # Keep Gradle wrapper binaries if generated
 !**/gradle/wrapper/gradle-wrapper.jar
 !**/gradlew

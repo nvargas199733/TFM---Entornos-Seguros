@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import Header from "../components/Header";
@@ -6,6 +6,8 @@ import Footer from "../components/Footer";
 import UsersTable from "../components/UsersTable";
 import "../styles/manage-users-admin.css";
 import Pagination from "../components/Pagination";
+import { deleteAdminUser, fetchAdminUsers } from "../services/adminUsersApi";
+
 const ManageUsersAdmin = () => {
   const navigate = useNavigate();
 
@@ -20,11 +22,44 @@ const ManageUsersAdmin = () => {
   const [roleFilter, setRoleFilter] = useState("Todos");
   const [userToDelete, setUserToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const usersPerPage = 5;
 
-  const savedUsers = JSON.parse(localStorage.getItem("adminUsers")) || [];
-  const sortedUsers = [...savedUsers].sort(
+  useEffect(() => {
+    let active = true;
+
+    const loadUsers = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        const backendUsers = await fetchAdminUsers();
+
+        if (active) {
+          setUsers(backendUsers);
+        }
+      } catch (loadError) {
+        if (active) {
+          setError(loadError.message || "No se pudieron cargar los usuarios");
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadUsers();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const sortedUsers = [...users].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
   );
 
@@ -53,14 +88,17 @@ const ManageUsersAdmin = () => {
     setUserToDelete(userId);
   };
 
-  const confirmDeleteUser = () => {
-    const updatedUsers = savedUsers.filter((user) => user.id !== userToDelete);
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
 
-    localStorage.setItem("adminUsers", JSON.stringify(updatedUsers));
+    try {
+      await deleteAdminUser(userToDelete);
 
-    setUserToDelete(null);
-
-    window.location.reload();
+      setUsers((current) => current.filter((user) => user.id !== userToDelete));
+      setUserToDelete(null);
+    } catch (deleteError) {
+      setError(deleteError.message || "No se pudo eliminar el usuario");
+    }
   };
 
   return (
@@ -79,6 +117,9 @@ const ManageUsersAdmin = () => {
       <main className="manage-users-admin__content">
         <section className="manage-users-panel">
           <h1 className="manage-users-panel__title">Gestión de usuarios</h1>
+
+          {isLoading && <p>Cargando usuarios...</p>}
+          {error && <p>{error}</p>}
 
           <div className="manage-users-panel__toolbar">
             <input

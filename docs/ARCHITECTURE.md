@@ -9,7 +9,7 @@ La solucion se organiza en dos frontends React y un backend de tres microservici
 ### Frontends
 
 - ciudadano: experiencia para usuarios ciudadanos.
-- frontend-react: experiencia para policia y administracion.
+- policia-admin: experiencia para policia y administracion.
 
 ### Backend (microservicios)
 
@@ -48,7 +48,7 @@ La solucion se organiza en dos frontends React y un backend de tres microservici
 
 - Los frontends consumen APIs REST por microservicio.
 - La capa de integracion se concentra en src/services.
-- La migracion a TypeScript se realiza de forma progresiva, priorizando servicios y modelos para reducir riesgo visual.
+- El consumo de servicios en ambos frontends ya cubre flujos principales de autenticacion, incidentes, CAI, reporte policial y gestion de usuarios.
 
 ## Catálogos Auxiliares
 

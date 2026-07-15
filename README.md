@@ -119,9 +119,9 @@ Comando:
 docker compose up -d
 ```
 
-## Integracion frontend-backend (objetivo)
+## Integracion frontend-backend (estado actual)
 
-La integracion se realizara de forma incremental para minimizar riesgos:
+La integracion ya esta operativa y se mantiene de forma incremental:
 
 1. auth-user-service
 - login, registro, sesion, roles y gestion de usuarios.
@@ -132,9 +132,22 @@ La integracion se realizara de forma incremental para minimizar riesgos:
 3. police-report-service
 - generar y consultar reporte policial asociado a incidente.
 
+### Cobertura actual por frontend
+
+1. frontend-ciudadano
+- Login, registro y perfil de sesion.
+- Creacion de incidente y carga de evidencia por URL.
+- Consulta de mis reportes, detalle e historial.
+- Consulta de CAI y CAI mas cercano.
+
+2. frontend-policia-admin
+- Listado y detalle de incidentes.
+- Creacion de informe policial y cambio de estado del incidente.
+- Gestion administrativa de usuarios (CRUD logico).
+
 ## Backend monorepo (estado actual)
 
-Se creo la estructura base del backend en Java + Gradle con tres microservicios:
+El backend en Java + Gradle tiene tres microservicios funcionales:
 
 - backend/auth-user-service
 - backend/incident-service
@@ -144,7 +157,8 @@ Cada servicio tiene:
 
 - clase principal Spring Boot
 - configuracion application.yml
-- endpoint basico de health por dominio
+- endpoints de health por dominio
+- controladores REST de negocio activos
 
 ## Migracion a TypeScript
 

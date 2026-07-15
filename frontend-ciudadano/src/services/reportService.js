@@ -115,3 +115,10 @@ export async function fetchIncidentHistory(id) {
 export async function fetchIncidentStatuses() {
 	return request("/catalogs/statuses");
 }
+
+export async function addIncidentEvidence(idIncidente, payload) {
+	return request(`/${idIncidente}/evidences`, {
+		method: "POST",
+		body: JSON.stringify(payload),
+	});
+}

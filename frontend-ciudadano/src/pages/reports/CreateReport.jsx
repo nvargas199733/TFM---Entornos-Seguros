@@ -14,6 +14,7 @@ import {
   UserSearch
 } from "lucide-react";
 import {
+  addIncidentEvidence,
   createIncident,
   getCurrentSessionUser,
   resolveIncidentTypeId
@@ -37,6 +38,8 @@ function CreateReport() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [evidenceUrl, setEvidenceUrl] = useState("");
+  const [evidenceName, setEvidenceName] = useState("");
 
   const currentUser = useMemo(() => getCurrentSessionUser(), []);
 
@@ -116,7 +119,7 @@ function CreateReport() {
       setError("");
       setSuccess("");
 
-      await createIncident({
+      const createdIncident = await createIncident({
         idUsuario: currentUser.id,
         idTipoIncidente: typeId,
         descripcion: description.trim(),
@@ -125,6 +128,14 @@ function CreateReport() {
         direccionReferencia: locationReference.trim() || null
       });
 
+      if (evidenceUrl.trim()) {
+        await addIncidentEvidence(createdIncident.id, {
+          tipoArchivo: "imagen",
+          urlArchivo: evidenceUrl.trim(),
+          nombreArchivo: (evidenceName || "evidencia-ciudadana").trim(),
+        });
+      }
+
       setSuccess("Reporte enviado correctamente");
       navigate("/mis-reportes");
     } catch (submitError) {
@@ -132,6 +143,29 @@ function CreateReport() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleAttachEvidenceFromUrl = () => {
+    const url = window.prompt("Pega la URL pública de la imagen de evidencia:", evidenceUrl);
+    if (!url) return;
+
+    const trimmedUrl = url.trim();
+
+    try {
+      const parsed = new URL(trimmedUrl);
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        throw new Error("URL no soportada");
+      }
+    } catch {
+      setError("La URL de evidencia no es válida");
+      return;
+    }
+
+    const suggestedName = trimmedUrl.split("/").pop() || "evidencia-ciudadana";
+
+    setEvidenceUrl(trimmedUrl);
+    setEvidenceName(suggestedName);
+    setError("");
   };
 
   return (
@@ -201,9 +235,9 @@ function CreateReport() {
               <span>Tomar Foto</span>
             </button>
 
-            <button type="button" className="evidence-option" disabled>
+            <button type="button" className="evidence-option" onClick={handleAttachEvidenceFromUrl}>
               <Image size={34} />
-              <span>Agregar Imagen</span>
+              <span>{evidenceUrl ? "Imagen vinculada" : "Agregar Imagen"}</span>
             </button>
 
             <button type="button" className="evidence-option" onClick={handleUseCurrentLocation}>
@@ -211,6 +245,12 @@ function CreateReport() {
               <span>Ubicación Actual</span>
             </button>
           </section>
+
+          {evidenceUrl && (
+            <p className="counter" style={{ marginTop: 8 }}>
+              Evidencia lista: {evidenceName}
+            </p>
+          )}
 
           <section className="map-preview">
             <div className="map-circle"></div>

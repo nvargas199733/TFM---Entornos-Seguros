@@ -76,7 +76,7 @@ const IncidentChart = ({ data }) => {
             labelLine={false}
           >
             {data.map((item, index) => (
-              <Cell key={item.name} fill={colors[index]} />
+              <Cell key={item.name} fill={colors[index % colors.length]} />
             ))}
           </Pie>
 
