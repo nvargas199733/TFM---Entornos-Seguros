@@ -7,10 +7,12 @@ spring:
     password: ${DB_PASSWORD:TuContrasenaSegura123!}
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         default_schema: police_report
+        hbm2ddl:
+          create_namespaces: true
 
 server:
   port: ${SERVER_PORT:8083}
