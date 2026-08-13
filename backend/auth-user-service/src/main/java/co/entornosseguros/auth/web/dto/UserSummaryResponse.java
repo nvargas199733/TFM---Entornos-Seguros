@@ -4,6 +4,7 @@ public record UserSummaryResponse(
     Long id,
     String email,
     String fullName,
+    String phone,
     String role
 ) {
 }

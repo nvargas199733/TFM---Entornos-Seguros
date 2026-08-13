@@ -53,18 +53,34 @@ public class IncidentEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private OffsetDateTime fechaActualizacion;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
+
     @PrePersist
     void onCreate() {
         OffsetDateTime now = OffsetDateTime.now();
         if (fechaReporte == null) {
             fechaReporte = now;
         }
-        fechaActualizacion = now;
+        if (fechaActualizacion == null) {
+            fechaActualizacion = now;
+        }
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        if (updatedAt == null) {
+            updatedAt = now;
+        }
     }
 
     @PreUpdate
     void onUpdate() {
-        fechaActualizacion = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
+        fechaActualizacion = now;
+        updatedAt = now;
     }
 
     public Long getId() {
@@ -145,5 +161,21 @@ public class IncidentEntity {
 
     public void setFechaActualizacion(OffsetDateTime fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -39,11 +40,29 @@ public class IncidentStatusHistoryEntity {
     @Column(name = "fecha_cambio", nullable = false)
     private OffsetDateTime fechaCambio;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
+
     @PrePersist
     void onCreate() {
+        OffsetDateTime now = OffsetDateTime.now();
         if (fechaCambio == null) {
-            fechaCambio = OffsetDateTime.now();
+            fechaCambio = now;
         }
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        if (updatedAt == null) {
+            updatedAt = now;
+        }
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = OffsetDateTime.now();
     }
 
     public Long getId() {
@@ -92,5 +111,21 @@ public class IncidentStatusHistoryEntity {
 
     public void setFechaCambio(OffsetDateTime fechaCambio) {
         this.fechaCambio = fechaCambio;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

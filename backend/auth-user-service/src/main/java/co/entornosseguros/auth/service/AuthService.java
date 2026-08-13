@@ -245,7 +245,8 @@ public class AuthService {
         return new UserSummaryResponse(
             user.getId(),
             user.getCorreo(),
-            user.getNombres() + " " + user.getApellidos(),
+            (user.getNombres() + " " + user.getApellidos()).trim(),
+            user.getTelefono(),
             user.getRol().getNombre()
         );
     }

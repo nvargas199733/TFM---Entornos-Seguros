@@ -16,7 +16,7 @@ import { fetchMyIncidents, getCurrentSessionUser } from "../../services/reportSe
 
 function MyReports() {
   const navigate = useNavigate();
-  const [reports, setReports] = useState([]);
+  const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -29,19 +29,29 @@ function MyReports() {
         setError("");
 
         const currentUser = getCurrentSessionUser();
+        const userId = currentUser?.id;
 
-        if (!currentUser?.id) {
-          throw new Error("Debes iniciar sesión para ver tus reportes");
+        if (!userId && userId !== 0) {
+          throw new Error("Tu sesión no permite consultar los reportes. Inicia sesión nuevamente.");
         }
 
-        const incidents = await fetchMyIncidents(currentUser.id);
+        const nextIncidents = await fetchMyIncidents(userId);
 
         if (active) {
-          setReports(incidents);
+          setIncidents(nextIncidents);
         }
       } catch (loadError) {
         if (active) {
-          setError(loadError.message || "No se pudieron cargar los reportes");
+          setIncidents([]);
+          setError(
+            loadError?.message === "No fue posible conectar con el servicio de reportes."
+              ? "No fue posible conectar con el servicio de reportes."
+              : loadError?.message === "Tu sesión no permite consultar los reportes. Inicia sesión nuevamente."
+                ? "Tu sesión no permite consultar los reportes. Inicia sesión nuevamente."
+                : loadError?.message === "Ocurrió un error al consultar tus reportes."
+                  ? "Ocurrió un error al consultar tus reportes."
+                  : "Ocurrió un error al consultar tus reportes."
+          );
         }
       } finally {
         if (active) {
@@ -82,7 +92,29 @@ function MyReports() {
   if (loading) {
     return (
       <main className="myreports-container">
-        <section className="myreports-card">Cargando reportes...</section>
+        <section className="myreports-card">
+          <header className="myreports-header">
+            <button
+              className="myreports-icon-button"
+              onClick={() => navigate("/menu")}
+              type="button"
+              aria-label="Volver al menú"
+            >
+              <ArrowLeft size={30} />
+            </button>
+
+            <h1>Mis Reportes</h1>
+
+            <button className="myreports-icon-button notification" type="button" aria-label="Notificaciones">
+              <Bell size={30} />
+              <span></span>
+            </button>
+          </header>
+
+          <div className="myreports-empty-state myreports-empty-state--loading">
+            <p>Consultando tus reportes...</p>
+          </div>
+        </section>
       </main>
     );
   }
@@ -90,7 +122,29 @@ function MyReports() {
   if (error) {
     return (
       <main className="myreports-container">
-        <section className="myreports-card">{error}</section>
+        <section className="myreports-card">
+          <header className="myreports-header">
+            <button
+              className="myreports-icon-button"
+              onClick={() => navigate("/menu")}
+              type="button"
+              aria-label="Volver al menú"
+            >
+              <ArrowLeft size={30} />
+            </button>
+
+            <h1>Mis Reportes</h1>
+
+            <button className="myreports-icon-button notification" type="button" aria-label="Notificaciones">
+              <Bell size={30} />
+              <span></span>
+            </button>
+          </header>
+
+          <div className="myreports-empty-state">
+            <p className="myreports-empty-state__message">{error}</p>
+          </div>
+        </section>
       </main>
     );
   }
@@ -102,68 +156,87 @@ function MyReports() {
           <button
             className="myreports-icon-button"
             onClick={() => navigate("/menu")}
+            type="button"
+            aria-label="Volver al menú"
           >
             <ArrowLeft size={30} />
           </button>
 
           <h1>Mis Reportes</h1>
 
-          <button className="myreports-icon-button notification">
+          <button className="myreports-icon-button notification" type="button" aria-label="Notificaciones">
             <Bell size={30} />
             <span></span>
           </button>
         </header>
 
-        <section className="reports-list">
-          {reports.map((report) => (
-            <article className="report-card" key={report.id}>
-              <div className={`report-main-icon ${badgeType(report.status)}`}>
-                {getIcon(badgeType(report.status))}
-              </div>
+        {incidents.length === 0 ? (
+          <div className="myreports-empty-state" role="status" aria-live="polite">
+            <div className="myreports-empty-state__content">
+              <h2>Aún no tienes reportes registrados</h2>
+              <p>Cuando registres un incidente, podrás consultar aquí su estado y seguimiento.</p>
+              <button
+                className="myreports-create-button"
+                type="button"
+                onClick={() => navigate("/generar-reporte")}
+              >
+                Crear un reporte
+              </button>
+            </div>
+          </div>
+        ) : (
+          <section className="reports-list">
+            {incidents.map((report) => (
+              <article className="report-card" key={report.id}>
+                <div className={`report-main-icon ${badgeType(report.status)}`}>
+                  {getIcon(badgeType(report.status))}
+                </div>
 
-              <div className="report-info">
-                <div className="report-row">
-                  <Calendar size={22} />
-                  <div>
-                    <span>Fecha</span>
-                    <p>{formatDate(report.reportedAt)}</p>
+                <div className="report-info">
+                  <div className="report-row">
+                    <Calendar size={22} />
+                    <div>
+                      <span>Fecha</span>
+                      <p>{formatDate(report.reportedAt)}</p>
+                    </div>
+                  </div>
+
+                  <div className="report-row">
+                    <MapPin size={22} />
+                    <div>
+                      <span>Referencia</span>
+                      <p>{report.location}</p>
+                    </div>
+                  </div>
+
+                  <div className="report-row">
+                    <FileText size={22} />
+                    <div>
+                      <span>Descripción</span>
+                      <p>{report.description}</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="report-row">
-                  <MapPin size={22} />
-                  <div>
-                    <span>Referencia</span>
-                    <p>{report.location}</p>
+                <div className="report-status-area">
+                  <div className={`status-badge ${badgeType(report.status)}`}>
+                    <span className="status-dot"></span>
+                    {report.status}
                   </div>
-                </div>
 
-                <div className="report-row">
-                  <FileText size={22} />
-                  <div>
-                    <span>Descripción</span>
-                    <p>{report.description}</p>
-                  </div>
+                  <button
+                    className="details-button"
+                    onClick={() => navigate(`/mis-reportes/${report.id}`)}
+                    type="button"
+                  >
+                    Más detalles
+                    <ChevronRight size={22} />
+                  </button>
                 </div>
-              </div>
-
-              <div className="report-status-area">
-                <div className={`status-badge ${badgeType(report.status)}`}>
-                  <span className="status-dot"></span>
-                  {report.status}
-                </div>
-
-                <button
-                  className="details-button"
-                  onClick={() => navigate(`/mis-reportes/${report.id}`)}
-                >
-                  Más detalles
-                  <ChevronRight size={22} />
-                </button>
-              </div>
-            </article>
-          ))}
-        </section>
+              </article>
+            ))}
+          </section>
+        )}
       </section>
     </main>
   );

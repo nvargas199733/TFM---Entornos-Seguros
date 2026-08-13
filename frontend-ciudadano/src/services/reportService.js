@@ -24,29 +24,41 @@ function getAuthHeaders() {
 }
 
 async function request(path = "", options = {}) {
-	const response = await fetch(`${INCIDENT_API_BASE_URL}${path}`, {
-		headers: {
-			"Content-Type": "application/json",
-			...getAuthHeaders(),
-			...(options.headers || {})
-		},
-		...options,
-	});
-
-	let payload = null;
-
 	try {
-		payload = await response.json();
-	} catch {
-		payload = null;
-	}
+		const response = await fetch(`${INCIDENT_API_BASE_URL}${path}`, {
+			headers: {
+				"Content-Type": "application/json",
+				...getAuthHeaders(),
+				...(options.headers || {})
+			},
+			...options,
+		});
 
-	if (!response.ok) {
-		const message = payload?.message || `Error ${response.status}: ${response.statusText}`;
-		throw new Error(message);
-	}
+		let payload = null;
 
-	return payload;
+		try {
+			payload = await response.json();
+		} catch {
+			payload = null;
+		}
+
+		if (!response.ok) {
+			const message = payload?.message || payload?.error || `Error ${response.status}: ${response.statusText}`;
+			const error = new Error(message);
+			error.status = response.status;
+			throw error;
+		}
+
+		return payload;
+	} catch (error) {
+		if (error instanceof TypeError || error.message === "Failed to fetch") {
+			const networkError = new Error("No fue posible conectar con el servicio de reportes.");
+			networkError.status = 0;
+			throw networkError;
+		}
+
+		throw error;
+	}
 }
 
 function normalizeIncident(incident) {
@@ -75,7 +87,20 @@ export function getCurrentSessionUser() {
 }
 
 export async function fetchIncidentTypes() {
-	return request("/catalogs/types");
+	const result = await request("/catalogs/types");
+	const types = Array.isArray(result)
+		? result
+		: Array.isArray(result?.content)
+			? result.content
+			: [];
+
+	return types
+		.filter((type) => type && (type.estadoActivo === true || type.estadoActivo === "true"))
+		.map((type) => ({
+			...type,
+			idTipoIncidente: Number(type.idTipoIncidente),
+			estadoActivo: type.estadoActivo === true || type.estadoActivo === "true"
+		}));
 }
 
 export async function resolveIncidentTypeId(typeName) {
@@ -86,7 +111,7 @@ export async function resolveIncidentTypeId(typeName) {
 		throw new Error(`No se encontró el tipo de incidente ${typeName}`);
 	}
 
-	return matchedType.id;
+	return matchedType.idTipoIncidente;
 }
 
 export async function createIncident(payload) {
@@ -99,8 +124,22 @@ export async function createIncident(payload) {
 }
 
 export async function fetchMyIncidents(idUsuario) {
-	const incidents = await request(`?idUsuario=${encodeURIComponent(idUsuario)}`);
-	return incidents.map(normalizeIncident);
+	if (!idUsuario && idUsuario !== 0) {
+		throw new Error("No se recibió un identificador de usuario válido.");
+	}
+
+	const result = await request(`?idUsuario=${encodeURIComponent(idUsuario)}`);
+	const incidents = Array.isArray(result)
+		? result
+		: Array.isArray(result?.content)
+			? result.content
+			: null;
+
+	if (!Array.isArray(incidents)) {
+		throw new Error("Ocurrió un error al consultar tus reportes.");
+	}
+
+	return incidents.map(normalizeIncident).filter(Boolean);
 }
 
 export async function fetchIncidentById(id) {

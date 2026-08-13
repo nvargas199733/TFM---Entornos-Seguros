@@ -2,9 +2,15 @@ package co.entornosseguros.incident.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import co.entornosseguros.incident.domain.IncidentEntity;
 import co.entornosseguros.incident.domain.IncidentEvidenceEntity;
@@ -16,6 +22,7 @@ import co.entornosseguros.incident.repository.IncidentRepository;
 import co.entornosseguros.incident.repository.IncidentStatusHistoryRepository;
 import co.entornosseguros.incident.repository.IncidentStatusRepository;
 import co.entornosseguros.incident.repository.IncidentTypeRepository;
+import co.entornosseguros.incident.security.AuthenticatedUser;
 import co.entornosseguros.incident.web.dto.ChangeIncidentStatusRequest;
 import co.entornosseguros.incident.web.dto.CreateEvidenceRequest;
 import co.entornosseguros.incident.web.dto.CreateIncidentRequest;
@@ -29,6 +36,7 @@ import co.entornosseguros.incident.web.dto.IncidentTypeResponse;
 public class IncidentService {
 
     private static final String DEFAULT_INITIAL_STATUS = "PENDIENTE";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IncidentService.class);
 
     private final IncidentRepository incidentRepository;
     private final IncidentTypeRepository incidentTypeRepository;
@@ -52,6 +60,8 @@ public class IncidentService {
 
     @Transactional
     public IncidentResponse createIncident(CreateIncidentRequest request) {
+        validateOwnerRequest(request);
+
         IncidentTypeEntity type = incidentTypeRepository.findById(request.idTipoIncidente())
             .orElseThrow(() -> new IllegalArgumentException("Tipo de incidente no existe"));
 
@@ -151,6 +161,39 @@ public class IncidentService {
                 entity.getDescripcion()
             ))
             .toList();
+    }
+
+    private void validateOwnerRequest(CreateIncidentRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getAuthorities() == null) {
+            throw new AccessDeniedException("No autorizado para crear incidentes");
+        }
+
+        boolean isUsuario = authentication.getAuthorities().stream()
+            .anyMatch(authority -> "ROLE_USUARIO".equals(authority.getAuthority()));
+
+        if (!isUsuario) {
+            return;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof AuthenticatedUser authenticatedUser)) {
+            throw new AccessDeniedException("No fue posible identificar al usuario autenticado");
+        }
+
+        Long authUserId = authenticatedUser.id();
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(
+                "Owner validation authenticatedId={} requestId={}",
+                authUserId,
+                request.idUsuario()
+            );
+        }
+
+        if (!Objects.equals(authUserId, request.idUsuario())) {
+            throw new AccessDeniedException("No tienes permiso para crear incidentes para otro usuario");
+        }
     }
 
     private IncidentEntity findIncident(Long id) {

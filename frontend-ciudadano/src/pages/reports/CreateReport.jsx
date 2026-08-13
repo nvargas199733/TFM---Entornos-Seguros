@@ -1,147 +1,148 @@
 import "./CreateReport.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Send,
-  Camera,
-  Image,
-  MapPin,
-  ShieldAlert,
-  PersonStanding,
-  Car,
-  House,
-  UserSearch
-} from "lucide-react";
-import {
-  addIncidentEvidence,
-  createIncident,
-  getCurrentSessionUser,
-  resolveIncidentTypeId
-} from "../../services/reportService";
+import { ArrowLeft, Send, Camera, Image, MapPin, ShieldAlert } from "lucide-react";
+import { clearSession } from "../../services/authService";
+import { createIncident, getCurrentSessionUser } from "../../services/reportService";
 
 function CreateReport() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const selectedReport = location.state || {
-    title: "Generar Reporte",
-    color: "blue"
-  };
+  const currentUser = getCurrentSessionUser();
+  const selectedIncidentType = location.state?.incidentType || null;
 
   const [description, setDescription] = useState("");
   const [locationReference, setLocationReference] = useState("");
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [typeId, setTypeId] = useState(null);
-  const [isLoadingType, setIsLoadingType] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [evidenceUrl, setEvidenceUrl] = useState("");
   const [evidenceName, setEvidenceName] = useState("");
 
-  const currentUser = useMemo(() => getCurrentSessionUser(), []);
-
   useEffect(() => {
-    let active = true;
-
-    const loadType = async () => {
-      try {
-        setIsLoadingType(true);
-        setError("");
-
-        const incidentTypeId = await resolveIncidentTypeId(selectedReport.title);
-
-        if (active) {
-          setTypeId(incidentTypeId);
-        }
-      } catch (loadError) {
-        if (active) {
-          setError(loadError.message || "No se pudo resolver el tipo de reporte");
-        }
-      } finally {
-        if (active) {
-          setIsLoadingType(false);
-        }
-      }
-    };
-
-    if (selectedReport.title !== "Generar Reporte") {
-      loadType();
-    } else {
-      setIsLoadingType(false);
+    if (!selectedIncidentType || !Number.isInteger(Number(selectedIncidentType.idTipoIncidente))) {
+      navigate("/tipos-reporte", { replace: true });
     }
-
-    return () => {
-      active = false;
-    };
-  }, [selectedReport.title]);
+  }, [navigate, selectedIncidentType]);
 
   const counter = `${description.length}/1000`;
 
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setError("Tu navegador no soporta geolocalización");
+      setSubmitError("Tu navegador no soporta geolocalización.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude: currentLatitude, longitude: currentLongitude } = position.coords;
+        const currentLatitude = Number(position.coords.latitude);
+        const currentLongitude = Number(position.coords.longitude);
+
         setLatitude(currentLatitude);
         setLongitude(currentLongitude);
-        setLocationReference(
-          `Lat ${currentLatitude.toFixed(6)}, Lon ${currentLongitude.toFixed(6)}`
-        );
-        setError("");
+        setLocationReference(`Lat ${currentLatitude.toFixed(6)}, Lon ${currentLongitude.toFixed(6)}`);
+        setSubmitError("");
       },
       () => {
-        setError("No se pudo obtener la ubicación actual");
+        setSubmitError("No se pudo obtener la ubicación actual.");
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
-  const handleSubmit = async () => {
-    if (!currentUser) {
-      setError("Debes iniciar sesión para crear un reporte");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const userId = currentUser?.id;
+
+    if (!userId && userId !== 0) {
+      clearSession();
+      navigate("/login");
       return;
     }
 
-    if (!typeId) {
-      setError("No se pudo identificar el tipo de reporte");
+    if (!selectedIncidentType || !Number.isInteger(Number(selectedIncidentType.idTipoIncidente))) {
+      navigate("/tipos-reporte");
+      return;
+    }
+
+    if (!description.trim()) {
+      setSubmitError("Escribe una descripción del incidente.");
+      return;
+    }
+
+    if (
+      latitude === null ||
+      longitude === null ||
+      !Number.isFinite(Number(latitude)) ||
+      !Number.isFinite(Number(longitude)) ||
+      Number(latitude) < -90 ||
+      Number(latitude) > 90 ||
+      Number(longitude) < -180 ||
+      Number(longitude) > 180
+    ) {
+      setSubmitError("Debes indicar una ubicación válida para registrar el incidente.");
       return;
     }
 
     try {
-      setIsSubmitting(true);
-      setError("");
-      setSuccess("");
+      setSubmitting(true);
+      setSubmitError("");
 
-      const createdIncident = await createIncident({
-        idUsuario: currentUser.id,
-        idTipoIncidente: typeId,
+      await createIncident({
+        idUsuario: Number(userId),
+        idTipoIncidente: Number(selectedIncidentType.idTipoIncidente),
         descripcion: description.trim(),
-        latitud: latitude,
-        longitud: longitude,
+        latitud: Number(latitude),
+        longitud: Number(longitude),
         direccionReferencia: locationReference.trim() || null
       });
 
-      if (evidenceUrl.trim()) {
-        await addIncidentEvidence(createdIncident.id, {
-          tipoArchivo: "imagen",
-          urlArchivo: evidenceUrl.trim(),
-          nombreArchivo: (evidenceName || "evidencia-ciudadana").trim(),
-        });
+      navigate("/mis-reportes");
+    } catch (submitErrorObject) {
+      const status = submitErrorObject?.status;
+      const normalizedMessage = submitErrorObject?.message || "Ocurrió un error al registrar el reporte.";
+
+      if (status === 401) {
+        clearSession();
+        navigate("/login");
+        return;
       }
 
-      setSuccess("Reporte enviado correctamente");
-      navigate("/mis-reportes");
-    } catch (submitError) {
-      setError(submitError.message || "No se pudo enviar el reporte");
+      if (status === 403) {
+        setSubmitError("No tienes permiso para realizar esta operación.");
+        return;
+      }
+
+      if (status === 400) {
+        setSubmitError("Revisa los datos ingresados e intenta nuevamente.");
+        return;
+      }
+
+      if (status === 500) {
+        setSubmitError("Ocurrió un error al registrar el reporte.");
+        return;
+      }
+
+      if (status === 0) {
+        setSubmitError("No fue posible conectar con el servicio de reportes.");
+        return;
+      }
+
+      if (normalizedMessage.includes("ya no está disponible") || normalizedMessage.includes("no existe")) {
+        setSubmitError("El tipo de incidente seleccionado ya no está disponible.");
+        return;
+      }
+
+      if (normalizedMessage.includes("error al registrar")) {
+        setSubmitError("Ocurrió un error al registrar el reporte.");
+        return;
+      }
+
+      setSubmitError(normalizedMessage || "Ocurrió un error al registrar el reporte.");
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
@@ -157,7 +158,7 @@ function CreateReport() {
         throw new Error("URL no soportada");
       }
     } catch {
-      setError("La URL de evidencia no es válida");
+      setSubmitError("La URL de evidencia no es válida.");
       return;
     }
 
@@ -165,38 +166,51 @@ function CreateReport() {
 
     setEvidenceUrl(trimmedUrl);
     setEvidenceName(suggestedName);
-    setError("");
+    setSubmitError("");
   };
+
+  if (!selectedIncidentType || !Number.isInteger(Number(selectedIncidentType.idTipoIncidente))) {
+    return null;
+  }
 
   return (
     <main className="create-report-container">
       <section className="create-report-card">
         <header className="report-header">
-          <button className="report-icon-button" onClick={() => navigate("/menu")}>
+          <button className="report-icon-button" onClick={() => navigate("/menu")} type="button" aria-label="Volver al menú">
             <ArrowLeft size={28} />
           </button>
 
-          <h1>{selectedReport.title}</h1>
+          <h1>Generar Reporte</h1>
 
-          <button className="report-icon-button">
+          <button className="report-icon-button" type="button" aria-label="Enviar reporte">
             <Send size={28} />
           </button>
         </header>
 
         <section className="selected-report-icon-section">
-          <div className={`selected-report-icon ${selectedReport.color}`}>
-            {selectedReport.title === "Emergencia de Seguridad" && <ShieldAlert size={42} />}
-            {selectedReport.title === "Robo a persona" && <PersonStanding size={42} />}
-            {selectedReport.title === "Robo de vehículo" && <Car size={42} />}
-            {selectedReport.title === "Robo a casa" && <House size={42} />}
-            {selectedReport.title === "Actividad sospechosa" && <UserSearch size={42} />}
+          <div className="selected-report-icon blue">
+            <ShieldAlert size={42} />
           </div>
         </section>
-        
-        <section className="report-content">
-          <label className="report-label">Descripción / Detalle</label>
 
+        <form className="report-content" onSubmit={handleSubmit}>
+          <div className="selected-type-readonly">
+            <span className="report-label">Tipo de incidente</span>
+            <strong>{selectedIncidentType.nombre}</strong>
+            {selectedIncidentType.descripcion && <p>{selectedIncidentType.descripcion}</p>}
+            <button
+              type="button"
+              className="report-change-type"
+              onClick={() => navigate("/tipos-reporte")}
+            >
+              Cambiar tipo
+            </button>
+          </div>
+
+          <label className="report-label" htmlFor="description">Descripción / Detalle</label>
           <textarea
+            id="description"
             className="report-textarea"
             placeholder="Escribe aquí lo que está sucediendo..."
             maxLength="1000"
@@ -207,8 +221,9 @@ function CreateReport() {
 
           <p className="counter">{counter}</p>
 
-          <label className="report-label">Referencia de ubicación</label>
+          <label className="report-label" htmlFor="locationReference">Referencia de ubicación</label>
           <input
+            id="locationReference"
             className="report-textarea"
             style={{ minHeight: 48, padding: "0 16px" }}
             type="text"
@@ -223,9 +238,7 @@ function CreateReport() {
             </p>
           )}
 
-          {isLoadingType && <p className="counter">Cargando tipo de reporte...</p>}
-          {error && <p className="counter">{error}</p>}
-          {success && <p className="counter">{success}</p>}
+          {submitError && <p className="counter">{submitError}</p>}
 
           <h2 className="evidence-title">Agregar evidencia</h2>
 
@@ -267,14 +280,13 @@ function CreateReport() {
 
           <button
             className="send-report-button"
-            type="button"
-            onClick={handleSubmit}
-            disabled={isSubmitting || isLoadingType}
+            type="submit"
+            disabled={submitting}
           >
             <Send size={26} />
-            {isSubmitting ? "Enviando..." : "Enviar Reporte"}
+            {submitting ? "Enviando reporte..." : "Enviar Reporte"}
           </button>
-        </section>
+        </form>
       </section>
     </main>
   );

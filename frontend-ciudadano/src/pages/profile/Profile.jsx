@@ -1,4 +1,5 @@
 import "./Profile.css";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -7,13 +8,67 @@ import {
   Camera,
   Mail,
   Phone,
-  Calendar,
-  MapPin,
   Save
 } from "lucide-react";
+import { clearSession, getMe, getSession } from "../../services/authService";
+
+const emptyForm = {
+  fullName: "",
+  email: "",
+  phone: ""
+};
 
 function Profile() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [form, setForm] = useState(emptyForm);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadProfile() {
+      const session = getSession();
+
+      if (!session?.token) {
+        clearSession();
+        setError("La sesión no está disponible. Inicia sesión nuevamente.");
+        setLoading(false);
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const user = await getMe();
+
+        if (!isMounted) return;
+
+        setForm({
+          fullName: user?.fullName || "",
+          email: user?.email || "",
+          phone: user?.phone || ""
+        });
+        setError("");
+      } catch (loadError) {
+        if (!isMounted) return;
+
+        clearSession();
+        setError("La sesión no está disponible. Inicia sesión nuevamente.");
+        navigate("/login");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
+
   return (
     <main className="profile-container">
       <section className="profile-card">
@@ -35,69 +90,53 @@ function Profile() {
             <User size={64} />
           </div>
 
-          <button className="camera-button">
+          <button className="camera-button" type="button">
             <Camera size={22} />
           </button>
         </section>
 
         <section className="profile-info">
-          <h2>Actualizar datos</h2>
-          <p>Mantén tu información actualizada</p>
+          <h2>Información de perfil</h2>
+          <p>Consulta los datos actuales de tu cuenta</p>
 
-          <form className="profile-form">
-            <label className="profile-field">
-              <User size={24} />
-              <div>
-                <span>Nombre completo</span>
-                <input type="text" defaultValue="Natalia Vargas" required />
-              </div>
-            </label>
+          {loading ? (
+            <p>Cargando perfil...</p>
+          ) : error ? (
+            <p className="password-error">{error}</p>
+          ) : (
+            <form className="profile-form">
+              <label className="profile-field">
+                <User size={24} />
+                <div>
+                  <span>Nombre completo</span>
+                  <input type="text" value={form.fullName} readOnly />
+                </div>
+              </label>
 
-            <label className="profile-field">
-              <Mail size={24} />
-              <div>
-                <span>Correo electrónico</span>
-                <input type="email" defaultValue="natalia.vargas@gmail.com" required />
-              </div>
-            </label>
+              <label className="profile-field">
+                <Mail size={24} />
+                <div>
+                  <span>Correo electrónico</span>
+                  <input type="email" value={form.email} readOnly />
+                </div>
+              </label>
 
-            <label className="profile-field">
-              <Phone size={24} />
-              <div>
-                <span>Celular</span>
-                <input
-                  type="text"
-                  defaultValue="3188072075"
-                  pattern="[0-9]{10}"
-                  minLength="10"
-                  maxLength="10"
-                  inputMode="numeric"
-                  required
-                />
-              </div>
-            </label>
+              {form.phone ? (
+                <label className="profile-field">
+                  <Phone size={24} />
+                  <div>
+                    <span>Celular</span>
+                    <input type="text" value={form.phone} readOnly />
+                  </div>
+                </label>
+              ) : null}
 
-            <label className="profile-field">
-              <Calendar size={24} />
-              <div>
-                <span>Fecha de nacimiento</span>
-                <input type="date" defaultValue="1997-04-03" required />
-              </div>
-            </label>
-
-            <label className="profile-field">
-              <MapPin size={24} />
-              <div>
-                <span>Dirección</span>
-                <input type="text" defaultValue="Cra. 16 # 15-28, Bogotá" />
-              </div>
-            </label>
-
-            <button type="submit" className="save-button">
-              <Save size={24} />
-              Guardar cambios
-            </button>
-          </form>
+              <button type="button" className="save-button" disabled>
+                <Save size={24} />
+                La actualización del perfil estará disponible próximamente
+              </button>
+            </form>
+          )}
         </section>
       </section>
     </main>

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +43,17 @@ public class ApiExceptionHandler {
             "status", 400,
             "error", "Bad Request",
             "message", ex.getMessage(),
+            "path", request.getRequestURI()
+        ));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+            "timestamp", OffsetDateTime.now().toString(),
+            "status", 500,
+            "error", "Internal Server Error",
+            "message", "No fue posible guardar el incidente.",
             "path", request.getRequestURI()
         ));
     }
