@@ -1,15 +1,23 @@
 import "./CreateReport.css";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Camera, Image, MapPin, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Send, Camera, Image, MapPin } from "lucide-react";
 import { clearSession } from "../../services/authService";
-import { createIncident, getCurrentSessionUser } from "../../services/reportService";
+import { addIncidentEvidence, createIncident, getCurrentSessionUser } from "../../services/reportService";
+import { resolveIncidentTypeVisual } from "../../data/reportTypes";
 
 function CreateReport() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = getCurrentSessionUser();
-  const selectedIncidentType = location.state?.incidentType || null;
+  const selectedIncidentType = location.state?.selectedType || location.state?.incidentType || null;
+  const selectedIncidentTypeId = Number(selectedIncidentType?.idTipoIncidente);
+  const selectedIncidentTypeName = selectedIncidentType?.nombreTipo || selectedIncidentType?.nombre || "";
+  const selectedVisual = resolveIncidentTypeVisual({
+    visualKey: selectedIncidentType?.visualKey,
+    nombre: selectedIncidentTypeName
+  });
+  const SelectedTypeIcon = selectedVisual.Icon;
 
   const [description, setDescription] = useState("");
   const [locationReference, setLocationReference] = useState("");
@@ -19,12 +27,13 @@ function CreateReport() {
   const [submitError, setSubmitError] = useState("");
   const [evidenceUrl, setEvidenceUrl] = useState("");
   const [evidenceName, setEvidenceName] = useState("");
+  const [createdIncidentId, setCreatedIncidentId] = useState(null);
 
   useEffect(() => {
-    if (!selectedIncidentType || !Number.isInteger(Number(selectedIncidentType.idTipoIncidente))) {
+    if (!selectedIncidentType || !Number.isInteger(selectedIncidentTypeId)) {
       navigate("/tipos-reporte", { replace: true });
     }
-  }, [navigate, selectedIncidentType]);
+  }, [navigate, selectedIncidentType, selectedIncidentTypeId]);
 
   const counter = `${description.length}/1000`;
 
@@ -62,7 +71,7 @@ function CreateReport() {
       return;
     }
 
-    if (!selectedIncidentType || !Number.isInteger(Number(selectedIncidentType.idTipoIncidente))) {
+    if (!selectedIncidentType || !Number.isInteger(selectedIncidentTypeId)) {
       navigate("/tipos-reporte");
       return;
     }
@@ -90,14 +99,39 @@ function CreateReport() {
       setSubmitting(true);
       setSubmitError("");
 
-      await createIncident({
-        idUsuario: Number(userId),
-        idTipoIncidente: Number(selectedIncidentType.idTipoIncidente),
-        descripcion: description.trim(),
-        latitud: Number(latitude),
-        longitud: Number(longitude),
-        direccionReferencia: locationReference.trim() || null
-      });
+      let incidentId = createdIncidentId;
+
+      if (!incidentId) {
+        const createdIncident = await createIncident({
+          idUsuario: Number(userId),
+          idTipoIncidente: selectedIncidentTypeId,
+          descripcion: description.trim(),
+          latitud: Number(latitude),
+          longitud: Number(longitude),
+          direccionReferencia: locationReference.trim() || null
+        });
+
+        incidentId = createdIncident?.idIncidente;
+        setCreatedIncidentId(incidentId);
+      }
+
+      if (evidenceUrl) {
+        if (!incidentId) {
+          setSubmitError("El reporte fue creado, pero no fue posible guardar la evidencia.");
+          return;
+        }
+
+        try {
+          await addIncidentEvidence(incidentId, {
+            tipoArchivo: "imagen",
+            urlArchivo: evidenceUrl,
+            nombreArchivo: evidenceName || "evidencia-remota"
+          });
+        } catch {
+          setSubmitError("El reporte fue creado, pero no fue posible guardar la evidencia.");
+          return;
+        }
+      }
 
       navigate("/mis-reportes");
     } catch (submitErrorObject) {
@@ -157,19 +191,23 @@ function CreateReport() {
       if (!["http:", "https:"].includes(parsed.protocol)) {
         throw new Error("URL no soportada");
       }
+
+      if (trimmedUrl.length > 255) {
+        throw new Error("URL demasiado larga");
+      }
     } catch {
       setSubmitError("La URL de evidencia no es válida.");
       return;
     }
 
-    const suggestedName = trimmedUrl.split("/").pop() || "evidencia-ciudadana";
+    const suggestedName = (new URL(trimmedUrl).pathname.split("/").pop() || "evidencia-remota").slice(0, 150);
 
     setEvidenceUrl(trimmedUrl);
     setEvidenceName(suggestedName);
     setSubmitError("");
   };
 
-  if (!selectedIncidentType || !Number.isInteger(Number(selectedIncidentType.idTipoIncidente))) {
+  if (!selectedIncidentType || !Number.isInteger(selectedIncidentTypeId)) {
     return null;
   }
 
@@ -189,16 +227,16 @@ function CreateReport() {
         </header>
 
         <section className="selected-report-icon-section">
-          <div className="selected-report-icon blue">
-            <ShieldAlert size={42} />
+          <div className={`selected-report-icon ${selectedVisual.colorClass}`}>
+            <SelectedTypeIcon size={42} />
           </div>
         </section>
 
         <form className="report-content" onSubmit={handleSubmit}>
           <div className="selected-type-readonly">
             <span className="report-label">Tipo de incidente</span>
-            <strong>{selectedIncidentType.nombre}</strong>
-            {selectedIncidentType.descripcion && <p>{selectedIncidentType.descripcion}</p>}
+            <strong>{selectedIncidentTypeName}</strong>
+            <p>{selectedVisual.description}</p>
             <button
               type="button"
               className="report-change-type"
@@ -243,9 +281,9 @@ function CreateReport() {
           <h2 className="evidence-title">Agregar evidencia</h2>
 
           <section className="evidence-buttons">
-            <button type="button" className="evidence-option" disabled>
+            <button type="button" className="evidence-option" disabled aria-disabled="true" title="La carga directa de fotografías aún no está disponible.">
               <Camera size={34} />
-              <span>Tomar Foto</span>
+              <span>Tomar foto no disponible</span>
             </button>
 
             <button type="button" className="evidence-option" onClick={handleAttachEvidenceFromUrl}>

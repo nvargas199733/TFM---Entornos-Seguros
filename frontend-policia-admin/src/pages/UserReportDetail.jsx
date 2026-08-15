@@ -8,7 +8,7 @@ import UserReportCard from "../components/UserReportCard";
 import "../styles/user-report-detail.css";
 import { useParams } from "react-router-dom";
 import policeVideo from "../assets/policia.mp4";
-import { fetchIncidentById } from "../services/policeApi";
+import { fetchIncidentById, fetchIncidentEvidences } from "../services/policeApi";
 
 /*
   UserReportDetail:
@@ -20,6 +20,9 @@ const UserReportDetail = () => {
   const { id } = useParams();
 
   const [report, setReport] = useState(null);
+  const [evidences, setEvidences] = useState([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(true);
+  const [evidenceError, setEvidenceError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -35,6 +38,22 @@ const UserReportDetail = () => {
 
         if (active) {
           setReport(incident);
+        }
+
+        try {
+          const nextEvidences = await fetchIncidentEvidences(Number(id));
+          if (active) {
+            setEvidences(Array.isArray(nextEvidences) ? nextEvidences : []);
+          }
+        } catch {
+          if (active) {
+            setEvidences([]);
+            setEvidenceError("No fue posible cargar la evidencia del incidente.");
+          }
+        } finally {
+          if (active) {
+            setEvidenceLoading(false);
+          }
         }
       } catch (loadError) {
         if (active) {
@@ -83,7 +102,12 @@ const UserReportDetail = () => {
 
         <div className="user-report-detail__video-overlay"></div>
         <div className="user-report-detail__overlay">
-          <UserReportCard report={report} />
+          <UserReportCard
+            report={report}
+            evidences={evidences}
+            evidenceLoading={evidenceLoading}
+            evidenceError={evidenceError}
+          />
         </div>
       </main>
 

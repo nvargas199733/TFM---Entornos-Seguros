@@ -1,4 +1,4 @@
-package co.entornosseguros.incident.config;
+package co.entornosseguros.policereport.config;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import co.entornosseguros.incident.security.JwtAuthenticationFilter;
+import co.entornosseguros.policereport.security.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -30,22 +30,20 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/incidents/catalogs/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/v1/incidents/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/v1/incidents").hasRole("USUARIO")
-                .requestMatchers(HttpMethod.PATCH, "/api/v1/incidents/**").hasRole("POLICIA")
+                .requestMatchers(HttpMethod.POST, "/api/v1/police-reports").hasAnyRole("POLICIA", "ADMIN")
+                .requestMatchers("/api/v1/police-reports/**").authenticated()
                 .anyRequest().authenticated()
             )
             .build();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource(@Value("${cors.allowed-origins:http://localhost:5173}") String originsRaw) {
-        List<String> origins = List.of(originsRaw.split(","));
-
+    CorsConfigurationSource corsConfigurationSource(@Value("${cors.allowed-origins}") String originsRaw) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(origins.stream().map(String::trim).filter(s -> !s.isBlank()).toList());
-        configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(
+            List.of(originsRaw.split(",")).stream().map(String::trim).filter(value -> !value.isBlank()).toList()
+        );
+        configuration.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
 

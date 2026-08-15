@@ -6,29 +6,61 @@ const POLICE_REPORT_API_BASE_URL =
 	import.meta.env.VITE_POLICE_REPORT_API_BASE_URL ||
 	"http://localhost:8083/api/v1/police-reports";
 
-const DEFAULT_EVIDENCE_IMAGE =
-	"https://images.unsplash.com/photo-1516321318423-f06f85e504b3";
+import { clearSession, getSession } from "./authService";
+
+function getIncidentAuthHeaders() {
+	const token = getSession()?.token;
+	if (typeof token !== "string" || !token.trim()) {
+		const error = new Error("No hay una sesión válida para consultar los reportes.");
+		error.status = 401;
+		throw error;
+	}
+
+	return { Authorization: `Bearer ${token}` };
+}
 
 async function request(baseUrl, path = "", options = {}) {
-	const response = await fetch(`${baseUrl}${path}`, {
-		headers: {
-			"Content-Type": "application/json",
-			...(options.headers || {})
-		},
-		...options
-	});
+	let response;
+	const { headers: requestHeaders, ...requestOptions } = options;
 
+	try {
+		response = await fetch(`${baseUrl}${path}`, {
+			...requestOptions,
+			headers: {
+				"Content-Type": "application/json",
+				"Accept": "application/json",
+				...(requestHeaders || {})
+			}
+		});
+	} catch {
+		const error = new Error("No fue posible conectar con el servicio de informes.");
+		error.status = 0;
+		throw error;
+	}
+
+	const contentType = response.headers.get("Content-Type") || "";
 	let payload = null;
 
 	try {
-		payload = await response.json();
+		payload = contentType.includes("application/json")
+			? await response.json()
+			: await response.text();
 	} catch {
 		payload = null;
 	}
 
 	if (!response.ok) {
-		const message = payload?.message || `Error ${response.status}: ${response.statusText}`;
-		throw new Error(message);
+		const message = typeof payload === "object" && payload !== null
+			? payload.message
+			: payload || `Error ${response.status}: ${response.statusText}`;
+		const error = new Error(message);
+		error.status = response.status;
+
+		if (response.status === 401) {
+			clearSession();
+		}
+
+		throw error;
 	}
 
 	return payload;
@@ -40,14 +72,13 @@ function normalizeIncident(incident) {
 	return {
 		id: incident.idIncidente,
 		type: incident.tipoIncidente,
+		estadoIncidente: incident.estadoIncidente,
 		status: incident.estadoIncidente?.toLowerCase?.() || incident.estadoIncidente,
 		reportedAt: incident.fechaReporte,
 		description: incident.descripcion,
 		location: incident.direccionReferencia || "Sin referencia",
-		reporterName: `Usuario ${incident.idUsuario}`,
+		reporterName: `Reportante #${incident.idUsuario}`,
 		identification: `ID ${incident.idUsuario}`,
-		phone: "No disponible",
-		evidenceImage: DEFAULT_EVIDENCE_IMAGE,
 		idUsuario: incident.idUsuario,
 		idTipoIncidente: incident.idTipoIncidente,
 		idEstadoIncidente: incident.idEstadoIncidente,
@@ -76,27 +107,42 @@ function normalizePoliceReport(report) {
 }
 
 export async function fetchIncidents() {
-	const incidents = await request(INCIDENT_API_BASE_URL);
+	const incidents = await request(INCIDENT_API_BASE_URL, "", {
+		headers: getIncidentAuthHeaders()
+	});
 	return incidents.map(normalizeIncident);
 }
 
 export async function fetchIncidentById(id) {
-	const incident = await request(INCIDENT_API_BASE_URL, `/${id}`);
+	const incident = await request(INCIDENT_API_BASE_URL, `/${id}`, {
+		headers: getIncidentAuthHeaders()
+	});
 	return normalizeIncident(incident);
 }
 
 export async function fetchIncidentStatuses() {
-	return request(INCIDENT_API_BASE_URL, "/catalogs/statuses");
+	return request(INCIDENT_API_BASE_URL, "/catalogs/statuses", {
+		headers: getIncidentAuthHeaders()
+	});
+}
+
+export async function fetchIncidentEvidences(id) {
+	return request(INCIDENT_API_BASE_URL, `/${id}/evidences`, {
+		headers: getIncidentAuthHeaders()
+	});
 }
 
 export async function fetchPoliceReportsByIncident(idIncidente) {
-	const reports = await request(POLICE_REPORT_API_BASE_URL, `/by-incident/${idIncidente}`);
+	const reports = await request(POLICE_REPORT_API_BASE_URL, `/by-incident/${idIncidente}`, {
+		headers: getIncidentAuthHeaders()
+	});
 	return reports.map(normalizePoliceReport);
 }
 
 export async function createPoliceReport(payload) {
 	const report = await request(POLICE_REPORT_API_BASE_URL, "", {
 		method: "POST",
+		headers: getIncidentAuthHeaders(),
 		body: JSON.stringify(payload)
 	});
 
@@ -106,6 +152,7 @@ export async function createPoliceReport(payload) {
 export async function updateIncidentStatus(idIncidente, payload) {
 	const incident = await request(INCIDENT_API_BASE_URL, `/${idIncidente}/status`, {
 		method: "PATCH",
+		headers: getIncidentAuthHeaders(),
 		body: JSON.stringify(payload)
 	});
 
@@ -147,5 +194,5 @@ export async function resolveIncidentStatusId(statusName) {
 		throw new Error(`No se encontro el estado ${statusName}`);
 	}
 
-	return match.id;
+	return match.idEstadoIncidente;
 }

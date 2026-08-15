@@ -13,28 +13,35 @@ import CreateUserAdmin from "./pages/CreateUserAdmin";
 import ManageUsersAdmin from "./pages/ManageUsersAdmin";
 import AdminIncidents from "./pages/AdminIncidents";
 import AdminIncidentDetail from "./pages/AdminIncidentDetail";
+import LoginPolice from "./pages/LoginPolice";
+import ProtectedRoute from "./components/ProtectedRoute";
+import MapPolice from "./pages/MapPolice";
 
 const App = () => {
   return (
     <Routes>
-      {/* Inicio */}
-      <Route path="/" element={<HomePolice />} />
+      <Route path="/login" element={<LoginPolice />} />
 
-      {/* Reportes */}
-      <Route path="/reportes" element={<ReportsPolice />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<HomePolice />} />
 
-      <Route path="/reportes/:id" element={<UserReportDetail />} />
+        <Route path="/reportes" element={<ReportsPolice />} />
 
-      <Route
-        path="/reportes/:id/generar-informe"
-        element={<CreatePoliceReport />}
-      />
-      <Route path="/admin" element={<AdminHome />} />
-      <Route path="/admin/crear-usuario" element={<CreateUserAdmin />} />
-      <Route path="/admin/gestion-usuarios" element={<ManageUsersAdmin />} />
-      <Route path="/admin/editar-usuario/:id" element={<CreateUserAdmin />} />
-      <Route path="/admin/incidentes" element={<AdminIncidents />} />
-      <Route path="/admin/incidentes/:id" element={<AdminIncidentDetail />} />
+        <Route path="/mapa" element={<MapPolice />} />
+
+        <Route path="/reportes/:id" element={<UserReportDetail />} />
+
+        <Route
+          path="/reportes/:id/generar-informe"
+          element={<CreatePoliceReport />}
+        />
+        <Route path="/admin" element={<AdminHome />} />
+        <Route path="/admin/crear-usuario" element={<CreateUserAdmin />} />
+        <Route path="/admin/gestion-usuarios" element={<ManageUsersAdmin />} />
+        <Route path="/admin/editar-usuario/:id" element={<CreateUserAdmin />} />
+        <Route path="/admin/incidentes" element={<AdminIncidents />} />
+        <Route path="/admin/incidentes/:id" element={<AdminIncidentDetail />} />
+      </Route>
     </Routes>
   );
 };

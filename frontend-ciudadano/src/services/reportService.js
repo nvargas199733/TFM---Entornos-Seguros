@@ -66,6 +66,7 @@ function normalizeIncident(incident) {
 
 	return {
 		id: incident.idIncidente,
+		idIncidente: incident.idIncidente,
 		idUsuario: incident.idUsuario,
 		idTipoIncidente: incident.idTipoIncidente,
 		type: incident.tipoIncidente,
@@ -160,4 +161,8 @@ export async function addIncidentEvidence(idIncidente, payload) {
 		method: "POST",
 		body: JSON.stringify(payload),
 	});
+}
+
+export async function fetchIncidentEvidences(idIncidente) {
+	return request(`/${idIncidente}/evidences`);
 }

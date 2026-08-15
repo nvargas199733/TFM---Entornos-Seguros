@@ -7,15 +7,14 @@ import {
   Calendar,
   MapPin,
   FileText,
-  ChevronRight,
-  Car,
-  ShieldCheck,
-  Flag
+  ChevronRight
 } from "lucide-react";
 import { fetchMyIncidents, getCurrentSessionUser } from "../../services/reportService";
+import { resolveIncidentTypeVisual } from "../../data/reportTypes";
 
 function MyReports() {
   const navigate = useNavigate();
+  const currentUserId = getCurrentSessionUser()?.id;
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,8 +27,7 @@ function MyReports() {
         setLoading(true);
         setError("");
 
-        const currentUser = getCurrentSessionUser();
-        const userId = currentUser?.id;
+        const userId = currentUserId;
 
         if (!userId && userId !== 0) {
           throw new Error("Tu sesión no permite consultar los reportes. Inicia sesión nuevamente.");
@@ -42,16 +40,35 @@ function MyReports() {
         }
       } catch (loadError) {
         if (active) {
+          const status = loadError?.status;
           setIncidents([]);
-          setError(
-            loadError?.message === "No fue posible conectar con el servicio de reportes."
-              ? "No fue posible conectar con el servicio de reportes."
-              : loadError?.message === "Tu sesión no permite consultar los reportes. Inicia sesión nuevamente."
-                ? "Tu sesión no permite consultar los reportes. Inicia sesión nuevamente."
-                : loadError?.message === "Ocurrió un error al consultar tus reportes."
-                  ? "Ocurrió un error al consultar tus reportes."
-                  : "Ocurrió un error al consultar tus reportes."
-          );
+
+          if (status === 401) {
+            setError("Tu sesión expiró. Inicia sesión nuevamente.");
+            return;
+          }
+
+          if (status === 403) {
+            setError("No tienes permiso para consultar estos reportes.");
+            return;
+          }
+
+          if (status === 500) {
+            setError("Ocurrió un error al consultar los reportes.");
+            return;
+          }
+
+          if (status === 0) {
+            setError("No fue posible conectar con el servicio de reportes.");
+            return;
+          }
+
+          if (loadError?.message === "Tu sesión no permite consultar los reportes. Inicia sesión nuevamente.") {
+            setError("Tu sesión expiró. Inicia sesión nuevamente.");
+            return;
+          }
+
+          setError("Ocurrió un error al consultar los reportes.");
         }
       } finally {
         if (active) {
@@ -65,22 +82,21 @@ function MyReports() {
     return () => {
       active = false;
     };
-  }, []);
-
-  const getIcon = (tipo) => {
-    if (tipo === "warning") return <Car size={36} />;
-    if (tipo === "success") return <ShieldCheck size={36} />;
-    return <Flag size={36} />;
-  };
+  }, [currentUserId]);
 
   const formatDate = (value) => {
-    if (!value) return "Sin fecha";
+    if (!value) return "Fecha no disponible";
 
-    return new Date(value).toLocaleString("es-EC", {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "Fecha no disponible";
+    }
+
+    return date.toLocaleString("es-EC", {
       day: "2-digit",
       month: "long",
       year: "numeric",
-      hour: "2-digit",
+      hour: "numeric",
       minute: "2-digit",
     });
   };
@@ -178,7 +194,7 @@ function MyReports() {
               <button
                 className="myreports-create-button"
                 type="button"
-                onClick={() => navigate("/generar-reporte")}
+                onClick={() => navigate("/tipos-reporte")}
               >
                 Crear un reporte
               </button>
@@ -186,55 +202,60 @@ function MyReports() {
           </div>
         ) : (
           <section className="reports-list">
-            {incidents.map((report) => (
-              <article className="report-card" key={report.id}>
-                <div className={`report-main-icon ${badgeType(report.status)}`}>
-                  {getIcon(badgeType(report.status))}
-                </div>
+            {incidents.map((report) => {
+              const visual = resolveIncidentTypeVisual({ nombre: report.type });
+              const TypeIcon = visual.Icon;
 
-                <div className="report-info">
-                  <div className="report-row">
-                    <Calendar size={22} />
-                    <div>
-                      <span>Fecha</span>
-                      <p>{formatDate(report.reportedAt)}</p>
+              return (
+                <article className="report-card" key={report.id}>
+                  <div className={`report-main-icon ${visual.colorClass}`}>
+                    <TypeIcon size={36} />
+                  </div>
+
+                  <div className="report-info">
+                    <div className="report-row">
+                      <Calendar size={22} />
+                      <div>
+                        <span>Fecha</span>
+                        <p>{formatDate(report.reportedAt)}</p>
+                      </div>
+                    </div>
+
+                    <div className="report-row">
+                      <MapPin size={22} />
+                      <div>
+                        <span>Referencia</span>
+                        <p>{report.location}</p>
+                      </div>
+                    </div>
+
+                    <div className="report-row">
+                      <FileText size={22} />
+                      <div>
+                        <span>Descripción</span>
+                        <p>{report.description}</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="report-row">
-                    <MapPin size={22} />
-                    <div>
-                      <span>Referencia</span>
-                      <p>{report.location}</p>
+                  <div className="report-status-area">
+                    <div className={`status-badge ${badgeType(report.status)}`}>
+                      <span className="status-dot"></span>
+                      {report.status}
                     </div>
-                  </div>
 
-                  <div className="report-row">
-                    <FileText size={22} />
-                    <div>
-                      <span>Descripción</span>
-                      <p>{report.description}</p>
-                    </div>
+                    <button
+                      className="details-button"
+                      onClick={() => navigate(`/mis-reportes/${report.id}`)}
+                      type="button"
+                    >
+                      Más detalles
+                      <ChevronRight size={22} />
+                    </button>
                   </div>
-                </div>
-
-                <div className="report-status-area">
-                  <div className={`status-badge ${badgeType(report.status)}`}>
-                    <span className="status-dot"></span>
-                    {report.status}
-                  </div>
-
-                  <button
-                    className="details-button"
-                    onClick={() => navigate(`/mis-reportes/${report.id}`)}
-                    type="button"
-                  >
-                    Más detalles
-                    <ChevronRight size={22} />
-                  </button>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </section>
         )}
       </section>

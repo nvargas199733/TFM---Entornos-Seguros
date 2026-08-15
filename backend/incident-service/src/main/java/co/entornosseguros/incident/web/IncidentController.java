@@ -55,6 +55,11 @@ public class IncidentController {
         return incidentService.getHistory(id);
     }
 
+    @GetMapping("/{id}/evidences")
+    public List<EvidenceResponse> evidence(@PathVariable Long id) {
+        return incidentService.getEvidence(id);
+    }
+
     @PostMapping("/{id}/evidences")
     @ResponseStatus(HttpStatus.CREATED)
     public EvidenceResponse addEvidence(@PathVariable Long id, @Valid @RequestBody CreateEvidenceRequest request) {

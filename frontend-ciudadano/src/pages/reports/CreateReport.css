@@ -225,6 +225,10 @@
   background-color: #16b9a8;
 }
 
+.selected-report-icon.neutral {
+  background-color: #5e7087;
+}
+
 .selected-type-readonly {
   display: flex;
   flex-direction: column;

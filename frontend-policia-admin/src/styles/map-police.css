@@ -1,0 +1,28 @@
+.map-police {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+.map-police__content {
+  width: min(1180px, 92%);
+  min-height: 60vh;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+.map-police__placeholder {
+  padding: 32px;
+  border-radius: 20px;
+  background-color: var(--color-white);
+  box-shadow: 0 10px 24px rgba(13, 72, 118, 0.12);
+}
+
+.map-police__placeholder h1 {
+  margin: 0 0 10px;
+  color: var(--color-primary);
+}
+
+.map-police__placeholder p {
+  margin: 0;
+  color: #64748b;
+}

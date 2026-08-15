@@ -111,6 +111,10 @@
   background-color: #16b9a8;
 }
 
+.report-type-icon.neutral {
+  background-color: #5e7087;
+}
+
 .report-type-text h3 {
   color: #0d4876;
   font-size: clamp(18px, 4vw, 24px);

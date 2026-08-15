@@ -1,16 +1,9 @@
 import "./ReportTypes.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  ChevronRight,
-  ShieldAlert,
-  PersonStanding,
-  Car,
-  House,
-  UserSearch
-} from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { fetchIncidentTypes } from "../../services/reportService";
+import { resolveIncidentTypeVisual, toIncidentTypeNavigationState } from "../../data/reportTypes";
 
 function ReportTypes() {
   const navigate = useNavigate();
@@ -49,22 +42,6 @@ function ReportTypes() {
     };
   }, []);
 
-  const getIcon = (name) => {
-    if (name === "Emergencia de Seguridad") return <ShieldAlert size={34} />;
-    if (name === "Robo a persona") return <PersonStanding size={34} />;
-    if (name === "Robo de vehículo") return <Car size={34} />;
-    if (name === "Robo a casa") return <House size={34} />;
-    return <UserSearch size={34} />;
-  };
-
-  const getColor = (name) => {
-    if (name === "Emergencia de Seguridad") return "blue";
-    if (name === "Robo a persona") return "sky";
-    if (name === "Robo de vehículo") return "red";
-    if (name === "Robo a casa") return "green";
-    return "teal";
-  };
-
   return (
     <main className="report-types-container">
       <section className="report-types-card">
@@ -92,35 +69,36 @@ function ReportTypes() {
             <p className="report-types-message">No hay tipos de incidente disponibles en este momento.</p>
           ) : (
             <div className="report-type-list">
-              {reportTypes.map((item) => (
-                <button
-                  key={item.idTipoIncidente}
-                  className="report-type-item"
-                  type="button"
-                  onClick={() =>
-                    navigate("/generar-reporte", {
-                      state: {
-                        incidentType: {
-                          idTipoIncidente: item.idTipoIncidente,
-                          nombre: item.nombre,
-                          descripcion: item.descripcion
+              {reportTypes.map((item) => {
+                const visual = resolveIncidentTypeVisual(item);
+                const TypeIcon = visual.Icon;
+
+                return (
+                  <button
+                    key={item.idTipoIncidente}
+                    className="report-type-item"
+                    type="button"
+                    onClick={() =>
+                      navigate("/generar-reporte", {
+                        state: {
+                          selectedType: toIncidentTypeNavigationState(item)
                         }
-                      }
-                    })
-                  }
-                >
-                  <div className={`report-type-icon ${getColor(item.nombre)}`}>
-                    {getIcon(item.nombre)}
-                  </div>
+                      })
+                    }
+                  >
+                    <div className={`report-type-icon ${visual.colorClass}`}>
+                      <TypeIcon size={34} />
+                    </div>
 
-                  <div className="report-type-text">
-                    <h3>{item.nombre}</h3>
-                    <p>{item.descripcion}</p>
-                  </div>
+                    <div className="report-type-text">
+                      <h3>{item.nombre}</h3>
+                      <p>{visual.description || item.descripcion}</p>
+                    </div>
 
-                  <ChevronRight size={28} className="report-type-arrow" />
-                </button>
-              ))}
+                    <ChevronRight size={28} className="report-type-arrow" />
+                  </button>
+                );
+              })}
             </div>
           )}
         </section>

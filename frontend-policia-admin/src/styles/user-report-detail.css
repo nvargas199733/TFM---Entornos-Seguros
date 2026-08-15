@@ -89,6 +89,36 @@
   object-fit: cover;
 }
 
+.user-report-card__evidence-list {
+  display: grid;
+  gap: 16px;
+}
+
+.user-report-card__evidence-item {
+  margin: 0;
+}
+
+.user-report-card__evidence-item figcaption {
+  margin-top: 8px;
+  color: var(--color-text);
+}
+
+.user-report-card__evidence-item a {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.user-report-card__evidence-unavailable {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed #9aaaba;
+  border-radius: 16px;
+  color: #64748b;
+}
+
 /* Botón */
 .user-report-card__button {
   width: 100%;

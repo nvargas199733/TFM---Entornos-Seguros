@@ -112,6 +112,12 @@
   box-shadow: 0 16px 32px rgba(13, 72, 118, 0.18);
 }
 
+.action-card__link:focus-visible {
+  outline: 3px solid rgba(0, 140, 145, 0.45);
+  outline-offset: 4px;
+  border-radius: 20px;
+}
+
 /* Ícono */
 
 .action-card__icon {

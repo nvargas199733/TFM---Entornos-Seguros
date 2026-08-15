@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
+import co.entornosseguros.incident.service.IncidentNotFoundException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -42,6 +43,17 @@ public class ApiExceptionHandler {
             "timestamp", OffsetDateTime.now().toString(),
             "status", 400,
             "error", "Bad Request",
+            "message", ex.getMessage(),
+            "path", request.getRequestURI()
+        ));
+    }
+
+    @ExceptionHandler(IncidentNotFoundException.class)
+    public ResponseEntity<?> handleNotFound(IncidentNotFoundException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+            "timestamp", OffsetDateTime.now().toString(),
+            "status", 404,
+            "error", "Not Found",
             "message", ex.getMessage(),
             "path", request.getRequestURI()
         ));

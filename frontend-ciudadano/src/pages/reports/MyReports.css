@@ -127,19 +127,34 @@
   align-items: center;
 }
 
-.report-main-icon.warning {
-  background-color: #fff1cc;
-  color: #f0a500;
-}
-
-.report-main-icon.success {
-  background-color: #d9f7df;
-  color: #20a941;
-}
-
-.report-main-icon.finished {
+.report-main-icon.blue {
   background-color: #dcecff;
-  color: #1d6ed8;
+  color: #1d5ed8;
+}
+
+.report-main-icon.sky {
+  background-color: #dff3ff;
+  color: #29a5f2;
+}
+
+.report-main-icon.red {
+  background-color: #ffe4e4;
+  color: #ff4d4d;
+}
+
+.report-main-icon.green {
+  background-color: #e2f7df;
+  color: #50c943;
+}
+
+.report-main-icon.teal {
+  background-color: #ddf4f0;
+  color: #16b9a8;
+}
+
+.report-main-icon.neutral {
+  background-color: #e7ecf2;
+  color: #5e7087;
 }
 
 .report-info {

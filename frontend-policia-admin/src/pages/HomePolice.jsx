@@ -29,12 +29,14 @@ const HomePolice = () => {
                 title="Ver Mapa"
                 icon={<MapPinned size={46} strokeWidth={2.2} />}
                 description="Consulta incidentes geolocalizados y zonas de atención prioritaria."
+                link="/mapa"
               />
 
               <ActionCard
                 title="Informes"
                 description="Revisa informes, registros y seguimiento de incidentes comunitarios."
                 icon={<FileText size={46} strokeWidth={2.2} />}
+                link="/reportes"
               />
             </div>
 

@@ -1,0 +1,65 @@
+.login-police {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #eef4f8;
+}
+
+.login-police__form {
+  width: min(100%, 400px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 32px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(13, 72, 118, 0.14);
+  color: #0d4876;
+}
+
+.login-police__icon {
+  color: #008c91;
+}
+
+.login-police__form h1 {
+  margin: 0 0 14px;
+  font-size: 1.8rem;
+}
+
+.login-police__form input {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #c8d4de;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.login-police__form input:focus-visible,
+.login-police__form button:focus-visible {
+  outline: 3px solid rgba(0, 140, 145, 0.35);
+  outline-offset: 2px;
+}
+
+.login-police__form button {
+  min-height: 46px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #0d4876;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-police__form button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.login-police__error {
+  margin: 6px 0 0;
+  color: #b42318;
+  line-height: 1.4;
+}

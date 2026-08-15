@@ -2,7 +2,7 @@ import "../styles/official-report-form.css";
 
 const OfficialReportForm = ({
   userReport,
-  currentPoliceData,
+  policeUser,
   officialDescription,
   setOfficialDescription,
   actionsTaken,
@@ -10,6 +10,8 @@ const OfficialReportForm = ({
   hasInjured,
   setHasInjured,
   handleSubmit,
+  submitting,
+  error,
 }) => {
   return (
     <form className="official-report" onSubmit={handleSubmit}>
@@ -17,29 +19,17 @@ const OfficialReportForm = ({
 
       <section className="official-report__section">
         <p>
-          <strong>Número de informe:</strong> RP-
-          {String(userReport.id).padStart(6, "0")}
-        </p>
-        <p>
-          <strong>Fecha y hora de atención:</strong>{" "}
-          {new Date().toLocaleString()}
+          <strong>Referencia del incidente:</strong> {userReport.id}
         </p>
       </section>
 
       <section className="official-report__section">
         <h2>Datos del policía</h2>
         <p>
-          <strong>Nombre:</strong> {currentPoliceData.names}{" "}
-          {currentPoliceData.lastNames}
+          <strong>Nombre:</strong> {policeUser.fullName}
         </p>
         <p>
-          <strong>Rango:</strong> {currentPoliceData.rank}
-        </p>
-        <p>
-          <strong>Placa:</strong> {currentPoliceData.badgeNumber}
-        </p>
-        <p>
-          <strong>Correo:</strong> {currentPoliceData.email}
+          <strong>Correo:</strong> {policeUser.email}
         </p>
       </section>
 
@@ -88,8 +78,10 @@ const OfficialReportForm = ({
         </label>
       </section>
 
-      <button className="official-report__button" type="submit">
-        Enviar y finalizar
+      {error && <div className="official-report__error" role="alert">{error}</div>}
+
+      <button className="official-report__button" type="submit" disabled={submitting}>
+        {submitting ? "Enviando..." : "Enviar y finalizar"}
       </button>
     </form>
   );

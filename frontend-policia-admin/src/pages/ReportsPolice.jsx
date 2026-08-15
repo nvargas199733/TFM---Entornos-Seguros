@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ReportCard from "../components/ReportCard";
@@ -18,6 +19,7 @@ import { fetchIncidents } from "../services/policeApi";
 */
 
 const ReportsPolice = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("Todos");
   const [timeFilter, setTimeFilter] = useState("mes");
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,11 +39,38 @@ const ReportsPolice = () => {
         const incidents = await fetchIncidents();
 
         if (active) {
-          setReports(incidents.filter((report) => report.status === "pendiente"));
+          setReports(
+            incidents.filter(
+              (incident) => String(incident.estadoIncidente || "").toUpperCase() === "PENDIENTE",
+            ),
+          );
         }
       } catch (loadError) {
         if (active) {
-          setError(loadError.message || "No se pudieron cargar los reportes");
+          const status = loadError?.status;
+
+          if (status === 401) {
+            setError("No hay una sesión válida para consultar los reportes.");
+            navigate("/login", { replace: true });
+            return;
+          }
+
+          if (status === 403) {
+            setError("No tienes permiso para consultar los reportes.");
+            return;
+          }
+
+          if (status === 500) {
+            setError("Ocurrió un error al consultar los reportes.");
+            return;
+          }
+
+          if (loadError instanceof TypeError || loadError?.message === "Failed to fetch") {
+            setError("No fue posible conectar con el servicio de incidentes.");
+            return;
+          }
+
+          setError("Ocurrió un error al consultar los reportes.");
         }
       } finally {
         if (active) {
@@ -55,7 +84,7 @@ const ReportsPolice = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [navigate]);
 
   const now = new Date();
 

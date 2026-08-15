@@ -5,11 +5,11 @@
   La información viene desde reportsData.js.
 */
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   User,
   IdCard,
-  Phone,
   CalendarDays,
   ShieldAlert,
   CarFront,
@@ -34,8 +34,15 @@ const getIncidentIcon = (type) => {
   }
 };
 
-const UserReportCard = ({ report, showGenerateButton = true }) => {
+const UserReportCard = ({
+  report,
+  evidences = [],
+  evidenceLoading = false,
+  evidenceError = "",
+  showGenerateButton = true
+}) => {
   const navigate = useNavigate();
+  const [failedEvidenceIds, setFailedEvidenceIds] = useState(new Set());
 
   return (
     <article className="user-report-card">
@@ -56,11 +63,6 @@ const UserReportCard = ({ report, showGenerateButton = true }) => {
         <p>
           <IdCard size={15} />
           {report.identification}
-        </p>
-
-        <p>
-          <Phone size={15} />
-          {report.phone}
         </p>
 
         <p>
@@ -95,11 +97,38 @@ const UserReportCard = ({ report, showGenerateButton = true }) => {
       <section className="user-report-card__section">
         <h3>Evidencia</h3>
 
-        <img
-          src={report.evidenceImage}
-          alt={`Evidencia del incidente: ${report.type}`}
-          className="user-report-card__evidence"
-        />
+        {evidenceLoading ? (
+          <p>Consultando evidencias...</p>
+        ) : evidenceError ? (
+          <p>{evidenceError}</p>
+        ) : evidences.length === 0 ? (
+          <p>No hay evidencia registrada para este incidente.</p>
+        ) : (
+          <div className="user-report-card__evidence-list">
+            {evidences.map((evidence) => {
+              const evidenceId = evidence.idEvidenciaIncidente;
+              const imageFailed = failedEvidenceIds.has(evidenceId);
+
+              return (
+                <figure key={evidenceId} className="user-report-card__evidence-item">
+                  {imageFailed ? (
+                    <div className="user-report-card__evidence-unavailable">Imagen no disponible</div>
+                  ) : (
+                    <img
+                      src={evidence.urlArchivo}
+                      alt={evidence.nombreArchivo || "Evidencia del incidente"}
+                      className="user-report-card__evidence"
+                      loading="lazy"
+                      onError={() => setFailedEvidenceIds((current) => new Set(current).add(evidenceId))}
+                    />
+                  )}
+                  <figcaption>{evidence.nombreArchivo || "Evidencia remota"}</figcaption>
+                  <a href={evidence.urlArchivo} target="_blank" rel="noopener noreferrer">Abrir evidencia</a>
+                </figure>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {showGenerateButton && (

@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import StatsCard from "./StatsCard";
 import IncidentChart from "./IncidentChart";
 import WeeklyChart from "./WeeklyChart";
-import { fetchIncidents, fetchPoliceReportsByIncident } from "../services/policeApi";
+import { fetchIncidents } from "../services/policeApi";
 
 const StatsPanel = () => {
-  const [statusFilter, setStatusFilter] = useState("Todos");
+  const navigate = useNavigate();
+  const [statusFilter, setStatusFilter] = useState("TODOS");
   const [typeFilter, setTypeFilter] = useState("Todos");
   const [reportsWithFinalStatus, setReportsWithFinalStatus] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,23 +22,36 @@ const StatsPanel = () => {
         setError("");
 
         const incidents = await fetchIncidents();
-        const enriched = await Promise.all(
-          incidents.map(async (incident) => {
-            const policeReports = await fetchPoliceReportsByIncident(incident.id);
-
-            return {
-              ...incident,
-              finalStatus: policeReports.length > 0 ? "atendido" : incident.status,
-            };
-          }),
-        );
 
         if (active) {
-          setReportsWithFinalStatus(enriched);
+          setReportsWithFinalStatus(incidents);
         }
       } catch (loadError) {
         if (active) {
-          setError(loadError.message || "No se pudieron cargar estadísticas");
+          const status = loadError?.status;
+
+          if (status === 401) {
+            setError("No hay una sesión válida para consultar las estadísticas.");
+            navigate("/login", { replace: true });
+            return;
+          }
+
+          if (status === 403) {
+            setError("No tienes permiso para consultar las estadísticas.");
+            return;
+          }
+
+          if (status === 500) {
+            setError("Ocurrió un error al consultar las estadísticas.");
+            return;
+          }
+
+          if (loadError instanceof TypeError || loadError?.message === "Failed to fetch") {
+            setError("No fue posible conectar con el servicio de incidentes.");
+            return;
+          }
+
+          setError("Ocurrió un error al consultar las estadísticas.");
         }
       } finally {
         if (active) {
@@ -50,18 +65,32 @@ const StatsPanel = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [navigate]);
+
+  const safeIncidents = Array.isArray(reportsWithFinalStatus)
+    ? reportsWithFinalStatus
+    : [];
+
+  const availableStatuses = useMemo(() => {
+    return Array.from(
+      new Set(
+        safeIncidents
+          .map((incident) => String(incident.estadoIncidente ?? "").trim().toUpperCase())
+          .filter(Boolean),
+      ),
+    ).sort((left, right) => left.localeCompare(right));
+  }, [safeIncidents]);
 
   const filteredReports =
-    statusFilter === "Todos"
-      ? reportsWithFinalStatus
-      : reportsWithFinalStatus.filter(
-          (report) => report.finalStatus === statusFilter,
+    statusFilter === "TODOS"
+      ? safeIncidents
+      : safeIncidents.filter(
+          (incident) => String(incident.estadoIncidente ?? "").trim().toUpperCase() === statusFilter,
         );
 
   const availableTypes = useMemo(() => {
     return Array.from(
-      new Set(reportsWithFinalStatus.map((report) => report.type).filter(Boolean)),
+      new Set(safeIncidents.map((report) => report.type).filter(Boolean)),
     ).sort((a, b) => a.localeCompare(b));
   }, [reportsWithFinalStatus]);
 
@@ -77,9 +106,7 @@ const StatsPanel = () => {
         name: type,
         value: filteredReports.filter((report) => report.type === type).length,
       }))
-    : [
-        { name: "Sin datos", value: 1 },
-      ];
+    : [];
 
   const weeklyReports = weeklyFilteredReports.filter((report) => {
     const reportDate = new Date(report.reportedAt);
@@ -90,11 +117,16 @@ const StatsPanel = () => {
     return differenceDays <= 7;
   });
 
+  if (isLoading) {
+    return <aside className="stats-panel"><p>Cargando estadísticas...</p></aside>;
+  }
+
+  if (error) {
+    return <aside className="stats-panel"><p>{error}</p></aside>;
+  }
+
   return (
     <aside className="stats-panel">
-      {isLoading && <p>Cargando estadísticas...</p>}
-      {error && <p>{error}</p>}
-
       <StatsCard
         title="Total de incidentes"
         value={totalReports}
@@ -106,9 +138,12 @@ const StatsPanel = () => {
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
               >
-                <option value="Todos">Todos</option>
-                <option value="pendiente">Pendientes</option>
-                <option value="atendido">Atendidos</option>
+                <option value="TODOS">Todos</option>
+                {availableStatuses.map((status) => (
+                  <option key={status} value={status}>
+                    {status === "PENDIENTE" ? "Pendientes" : status}
+                  </option>
+                ))}
               </select>
             </div>
 

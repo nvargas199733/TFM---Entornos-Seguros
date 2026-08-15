@@ -86,9 +86,11 @@ public class IncidentService {
 
     @Transactional(readOnly = true)
     public List<IncidentResponse> getIncidents(Long idUsuario) {
-        List<IncidentEntity> incidents = idUsuario == null
+        Long effectiveUserId = resolveAuthorizedListUserId(idUsuario);
+
+        List<IncidentEntity> incidents = effectiveUserId == null
             ? incidentRepository.findAll()
-            : incidentRepository.findByIdUsuarioOrderByFechaReporteDesc(idUsuario);
+            : incidentRepository.findByIdUsuarioOrderByFechaReporteDesc(effectiveUserId);
 
         return incidents.stream()
             .sorted(Comparator.comparing(IncidentEntity::getFechaReporte).reversed())
@@ -96,23 +98,67 @@ public class IncidentService {
             .toList();
     }
 
+    private Long resolveAuthorizedListUserId(Long requestedUserId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getAuthorities() == null) {
+            throw new AccessDeniedException("No autorizado para consultar incidentes");
+        }
+
+        boolean isUsuario = authentication.getAuthorities().stream()
+            .anyMatch(authority -> "ROLE_USUARIO".equals(authority.getAuthority()));
+
+        if (!isUsuario) {
+            return requestedUserId;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof AuthenticatedUser authenticatedUser) || authenticatedUser.id() == null) {
+            throw new AccessDeniedException("No fue posible identificar al usuario autenticado");
+        }
+
+        Long authUserId = authenticatedUser.id();
+        if (requestedUserId == null) {
+            return authUserId;
+        }
+
+        if (!Objects.equals(authUserId, requestedUserId)) {
+            throw new AccessDeniedException("No tienes permiso para consultar incidentes de otro usuario");
+        }
+
+        return requestedUserId;
+    }
+
     @Transactional(readOnly = true)
     public IncidentResponse getById(Long id) {
-        return toResponse(findIncident(id));
+        IncidentEntity incident = findIncident(id);
+        validateOwnerIncidentAccess(incident);
+        return toResponse(incident);
     }
 
     @Transactional(readOnly = true)
     public List<IncidentStatusHistoryResponse> getHistory(Long incidentId) {
-        findIncident(incidentId);
+        IncidentEntity incident = findIncident(incidentId);
+        validateOwnerIncidentAccess(incident);
 
         return incidentStatusHistoryRepository.findByIncidenteIdOrderByFechaCambioDesc(incidentId).stream()
             .map(this::toHistoryResponse)
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<EvidenceResponse> getEvidence(Long incidentId) {
+        IncidentEntity incident = findIncident(incidentId);
+        validateOwnerIncidentAccess(incident);
+
+        return incidentEvidenceRepository.findByIncidenteIdOrderByFechaCargaDesc(incidentId).stream()
+            .map(this::toEvidenceResponse)
+            .toList();
+    }
+
     @Transactional
     public EvidenceResponse addEvidence(Long incidentId, CreateEvidenceRequest request) {
         IncidentEntity incident = findIncident(incidentId);
+        validateOwnerIncidentAccess(incident);
 
         IncidentEvidenceEntity evidence = new IncidentEvidenceEntity();
         evidence.setIncidente(incident);
@@ -127,6 +173,7 @@ public class IncidentService {
     @Transactional
     public IncidentResponse changeStatus(Long incidentId, ChangeIncidentStatusRequest request) {
         IncidentEntity incident = findIncident(incidentId);
+        validatePoliceStatusChange(request);
 
         IncidentStatusEntity nextStatus = incidentStatusRepository.findById(request.idEstadoIncidente())
             .orElseThrow(() -> new IllegalArgumentException("Estado de incidente no existe"));
@@ -136,6 +183,20 @@ public class IncidentService {
 
         saveStatusHistory(saved, nextStatus, request.idUsuarioResponsable(), request.observacion());
         return toResponse(saved);
+    }
+
+    private void validatePoliceStatusChange(ChangeIncidentStatusRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getAuthorities() == null
+            || authentication.getAuthorities().stream().noneMatch(authority -> "ROLE_POLICIA".equals(authority.getAuthority()))) {
+            throw new AccessDeniedException("No autorizado para actualizar el estado del incidente");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof AuthenticatedUser authenticatedUser) || authenticatedUser.id() == null
+            || !Objects.equals(authenticatedUser.id(), request.idUsuarioResponsable())) {
+            throw new AccessDeniedException("No tienes permiso para actualizar este incidente como otro usuario policial");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -198,7 +259,30 @@ public class IncidentService {
 
     private IncidentEntity findIncident(Long id) {
         return incidentRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Incidente no encontrado"));
+            .orElseThrow(() -> new IncidentNotFoundException("Incidente no encontrado"));
+    }
+
+    private void validateOwnerIncidentAccess(IncidentEntity incident) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getAuthorities() == null) {
+            throw new AccessDeniedException("No autorizado para consultar este incidente");
+        }
+
+        boolean isUsuario = authentication.getAuthorities().stream()
+            .anyMatch(authority -> "ROLE_USUARIO".equals(authority.getAuthority()));
+
+        if (!isUsuario) {
+            return;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof AuthenticatedUser authenticatedUser) || authenticatedUser.id() == null) {
+            throw new AccessDeniedException("No fue posible identificar al usuario autenticado");
+        }
+
+        if (!Objects.equals(authenticatedUser.id(), incident.getIdUsuario())) {
+            throw new AccessDeniedException("No tienes permiso para consultar este incidente");
+        }
     }
 
     private void saveStatusHistory(
