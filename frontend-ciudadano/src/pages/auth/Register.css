@@ -9,18 +9,28 @@
 
 .register-content {
   width: 100%;
-  max-width: 480px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 32px;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 12px 30px rgba(13, 72, 118, 0.14);
 }
 
 .register-title {
   font-size: clamp(32px, 7vw, 56px);
   font-weight: 700;
-  color: #111111;
-  margin-bottom: 24px;
+  color: #0d4876;
+  margin: 0 0 8px;
+}
+
+.register-subtitle {
+  margin: 0 0 24px;
+  color: #5f6f85;
+  line-height: 1.45;
 }
 
 .register-logo {
@@ -46,6 +56,10 @@
 }
 
 .login-button {
+  background-color: #0d4876;
+}
+
+.create-account {
   background-color: #408d9c;
 }
 

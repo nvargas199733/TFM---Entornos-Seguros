@@ -32,35 +32,42 @@ function Login() {
       <section className="login-card">
         <img
           src="/Logo E.S.png"
-          alt="Logo Entornos Seguros"
+          alt="Entornos Seguros"
           className="login-logo"
         />
 
         <form className="login-form" onSubmit={handleSubmit}>
+          <h1>Bienvenido a Entornos Seguros</h1>
+          <p className="login-subtitle">Inicia sesión para registrar y consultar tus reportes.</p>
+
+          <label htmlFor="citizen-email">Correo electrónico</label>
           <input
+            id="citizen-email"
             type="email"
-            placeholder="Correo electrónico"
+            autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
           />
 
+          <label htmlFor="citizen-password">Contraseña</label>
           <input
+            id="citizen-password"
             type="password"
-            placeholder="Contraseña"
+            autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
           />
 
-          <a href="#" className="forgot-password">
-            ¿Olvidé mi contraseña?
-          </a>
+          {error && <p className="password-error" role="alert">{error}</p>}
 
-          {error && <p className="password-error">{error}</p>}
-
-          <button type="submit">
+          <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
+          </button>
+
+          <button className="login-register-button" type="button" onClick={() => navigate("/registro")}>
+            Crear una cuenta
           </button>
         </form>
       </section>

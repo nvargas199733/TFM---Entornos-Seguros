@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { LockKeyhole } from "lucide-react";
 import { getSession, login } from "../services/authService";
+import logo from "../assets/logo.jpg";
 import "../styles/login-police.css";
 
 function LoginPolice() {
@@ -42,10 +42,11 @@ function LoginPolice() {
   return (
     <main className="login-police">
       <form className="login-police__form" onSubmit={handleSubmit}>
-        <LockKeyhole className="login-police__icon" size={32} aria-hidden="true" />
-        <h1>Panel policial</h1>
+        <img className="login-police__logo" src={logo} alt="Entornos Seguros" />
+        <h1>Acceso al panel operativo</h1>
+        <p className="login-police__subtitle">Inicia sesión con una cuenta de policía o administración.</p>
 
-        <label htmlFor="police-email">Correo</label>
+        <label htmlFor="police-email">Correo electrónico</label>
         <input
           id="police-email"
           type="email"

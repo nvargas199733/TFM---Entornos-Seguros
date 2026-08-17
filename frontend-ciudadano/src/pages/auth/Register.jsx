@@ -5,17 +5,15 @@ import { useNavigate } from "react-router-dom";
 function Register() {
   const navigate = useNavigate();
 
-  const handleCreateAccount = () => {
-    navigate("/registro");
-  };
-
   return (
     <main className="register-container">
       <section className="register-content">
 
         <h1 className="register-title">
-          Bienvenidos a:
+          Bienvenido a Entornos Seguros
         </h1>
+
+        <p className="register-subtitle">Registra y consulta tus reportes de seguridad.</p>
 
         <img
           src="/Logo E.S.png"
@@ -23,18 +21,20 @@ function Register() {
           className="register-logo"
         />
 
-        <button 
-        className="register-button create-account"
-        onClick={() => navigate("/registro")}
+        <button
+          className="register-button login-button"
+          type="button"
+          onClick={() => navigate("/login")}
         >
-          Registrarse
+          Iniciar sesión
         </button>
 
-        <button className="register-button login-button"
-            className="register-button login-button"
-            onClick={() => navigate("/login")}
+        <button
+          className="register-button create-account"
+          type="button"
+          onClick={() => navigate("/registro")}
         >
-          Inicio de sesión
+          Crear una cuenta
         </button>
 
       </section>

@@ -4,6 +4,7 @@ import StatsCard from "./StatsCard";
 import IncidentChart from "./IncidentChart";
 import WeeklyChart from "./WeeklyChart";
 import { fetchIncidents } from "../services/policeApi";
+import { getSession } from "../services/authService";
 
 const StatsPanel = () => {
   const navigate = useNavigate();
@@ -15,6 +16,14 @@ const StatsPanel = () => {
 
   useEffect(() => {
     let active = true;
+    const session = getSession();
+
+    if (!session?.token) {
+      setIsLoading(false);
+      return () => {
+        active = false;
+      };
+    }
 
     const loadStats = async () => {
       try {
