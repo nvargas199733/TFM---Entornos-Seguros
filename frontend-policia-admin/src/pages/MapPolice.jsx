@@ -391,66 +391,87 @@ function MapPolice() {
             </div>
           )}
 
-          {/* ── Estados de la vista ── */}
-          {loading && (
-            <div className="map-police__status" role="status" aria-live="polite">
-              <span className="map-police__spinner" aria-hidden="true" />
-              <span>Cargando mapa e incidentes...</span>
-            </div>
-          )}
-
+          {/* ── Error de API (banda compacta; mapa permanece) ── */}
           {!loading && error && (
             <div className="map-police__error" role="alert">
               {error}
             </div>
           )}
 
-          {!loading && !error && (
+          {/* ── Mapa (siempre renderizado) ── */}
+          {!error && (
             <>
-              {/* ── Mapa ── */}
               <div className="map-police__map-wrapper">
-                {incidents.length === 0 ? (
-                  <div className="map-police__empty" role="status">
-                    No hay incidentes disponibles para mostrar en el mapa.
-                  </div>
-                ) : bogotaIncidents.length === 0 ? (
-                  <div className="map-police__empty" role="status">
-                    No hay incidentes ubicados en Bogotá para mostrar con los filtros actuales.
-                  </div>
-                ) : (
-                  <MapContainer
-                    center={BOGOTA_CENTER}
-                    zoom={BOGOTA_ZOOM_INITIAL}
-                    minZoom={BOGOTA_ZOOM_MIN}
-                    maxZoom={BOGOTA_ZOOM_MAX}
-                    maxBounds={BOGOTA_BOUNDS}
-                    maxBoundsViscosity={1.0}
-                    scrollWheelZoom
-                    className="map-police__leaflet"
-                  >
-                    <TileLayer
-                      attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
+                <MapContainer
+                  center={BOGOTA_CENTER}
+                  zoom={BOGOTA_ZOOM_INITIAL}
+                  minZoom={BOGOTA_ZOOM_MIN}
+                  maxZoom={BOGOTA_ZOOM_MAX}
+                  maxBounds={BOGOTA_BOUNDS}
+                  maxBoundsViscosity={1.0}
+                  scrollWheelZoom
+                  className="map-police__leaflet"
+                >
+                  <TileLayer
+                    attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
 
-                    <BoundsController mappableIncidents={filteredIncidents} />
+                  {!loading && (
+                    <>
+                      <BoundsController mappableIncidents={filteredIncidents} />
 
-                    {filteredIncidents.map((incident) => (
-                      <Marker
-                        key={incident.id}
-                        position={[Number(incident.latitud), Number(incident.longitud)]}
-                        icon={buildMarkerIcon(incident.type, incident.estadoIncidente)}
-                      >
-                        <Popup maxWidth={260}>
-                          <IncidentPopup
-                            incident={incident}
-                            onNavigate={handleNavigateToDetail}
-                          />
-                        </Popup>
-                      </Marker>
-                    ))}
-                  </MapContainer>
+                      {filteredIncidents.map((incident) => (
+                        <Marker
+                          key={incident.id}
+                          position={[Number(incident.latitud), Number(incident.longitud)]}
+                          icon={buildMarkerIcon(incident.type, incident.estadoIncidente)}
+                        >
+                          <Popup maxWidth={260}>
+                            <IncidentPopup
+                              incident={incident}
+                              onNavigate={handleNavigateToDetail}
+                            />
+                          </Popup>
+                        </Marker>
+                      ))}
+                    </>
+                  )}
+                </MapContainer>
+
+                {/* ── Overlay de carga ── */}
+                {loading && (
+                  <div className="map-police__map-overlay" role="status" aria-live="polite">
+                    <span className="map-police__spinner" aria-hidden="true" />
+                    <span>Cargando mapa e incidentes...</span>
+                  </div>
                 )}
+
+                {/* ── Overlay de estado vacío ── */}
+                {!loading && (() => {
+                  if (incidents.length === 0) {
+                    return (
+                      <div className="map-police__map-overlay" role="status" aria-live="polite">
+                        No hay incidentes disponibles para mostrar.
+                      </div>
+                    );
+                  }
+                  if (bogotaIncidents.length === 0) {
+                    return (
+                      <div className="map-police__map-overlay" role="status" aria-live="polite">
+                        No hay incidentes ubicados en Bogotá.
+                      </div>
+                    );
+                  }
+                  if (filteredIncidents.length === 0) {
+                    return (
+                      <div className="map-police__map-overlay" role="status" aria-live="polite">
+                        No hay incidentes que coincidan con los filtros actuales.
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
 
               {/* ── Coordenadas inválidas ── */}
@@ -468,13 +489,6 @@ function MapPolice() {
                   {outsideBogotaCount === 1
                     ? "1 incidente fue excluido porque está fuera del área de Bogotá."
                     : `${outsideBogotaCount} incidentes fueron excluidos porque están fuera del área de Bogotá.`}
-                </p>
-              )}
-
-              {/* ── Estado vacío tras filtros (hay Bogotá pero filtros activos no dan resultado) ── */}
-              {filteredIncidents.length === 0 && bogotaIncidents.length > 0 && (
-                <p className="map-police__empty-filter" role="status">
-                  Ningún incidente coincide con los filtros aplicados.
                 </p>
               )}
             </>
