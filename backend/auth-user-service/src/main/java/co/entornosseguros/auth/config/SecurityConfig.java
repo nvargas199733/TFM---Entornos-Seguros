@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/cai/**").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/api/v1/auth/me").authenticated()
-                .requestMatchers("/api/v1/users/**").authenticated()
+                .requestMatchers("/api/v1/users", "/api/v1/users/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())

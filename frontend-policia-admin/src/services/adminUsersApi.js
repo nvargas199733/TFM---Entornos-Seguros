@@ -1,28 +1,80 @@
+import { clearSession, getSession } from "./authService";
+
 const AUTH_BASE_URL =
   import.meta.env.VITE_AUTH_API_BASE_URL ||
   "http://localhost:8081/api/v1/auth";
 
 const USERS_BASE_URL = AUTH_BASE_URL.replace(/\/auth\/?$/, "/users");
 
-async function request(path = "", options = {}) {
-  const response = await fetch(`${USERS_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
+function getAdminAuthHeaders() {
+  const session = getSession();
+  const token = session?.token;
+  if (typeof token !== "string" || !token.trim() || token === "null" || token === "undefined") {
+    const error = new Error("No hay una sesión válida para consultar la gestión de usuarios.");
+    error.status = 401;
+    throw error;
+  }
 
+  const cleanToken = token.trim().replace(/^Bearer\s+/i, "");
+  return {
+    Authorization: `Bearer ${cleanToken}`,
+    Accept: "application/json",
+  };
+}
+
+async function request(path = "", options = {}) {
+  let authHeaders = {};
+  try {
+    authHeaders = getAdminAuthHeaders();
+  } catch (err) {
+    if (err.status === 401) {
+      clearSession();
+    }
+    throw err;
+  }
+
+  let response;
+  const { headers: requestHeaders, ...restOptions } = options;
+
+  try {
+    response = await fetch(`${USERS_BASE_URL}${path}`, {
+      ...restOptions,
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders,
+        ...(requestHeaders || {}),
+      },
+    });
+  } catch {
+    const error = new Error("No fue posible conectar con el servicio de usuarios.");
+    error.status = 0;
+    throw error;
+  }
+
+  const contentType = response.headers.get("Content-Type") || "";
   let payload = null;
 
   try {
-    payload = await response.json();
+    payload = contentType.includes("application/json")
+      ? await response.json()
+      : await response.text();
   } catch {
     payload = null;
   }
 
   if (!response.ok) {
-    throw new Error(payload?.message || `Error ${response.status}: ${response.statusText}`);
+    const message =
+      typeof payload === "object" && payload !== null
+        ? payload.message
+        : payload || `Error ${response.status}: ${response.statusText}`;
+    const error = new Error(message);
+    error.status = response.status;
+
+    if (response.status === 401) {
+      clearSession();
+    }
+
+    throw error;
   }
 
   return payload;

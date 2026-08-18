@@ -26,7 +26,11 @@ public class AppUserDetailsService implements UserDetailsService {
         UserEntity user = userRepository.findByCorreoIgnoreCase(username)
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        String roleName = "ROLE_" + user.getRol().getNombre().toUpperCase();
+        String rawRole = user.getRol() != null && user.getRol().getNombre() != null
+            ? user.getRol().getNombre().trim().toUpperCase()
+            : "";
+        String role = (rawRole.equals("ADMINISTRADOR") || rawRole.equals("ADMIN")) ? "ADMIN" : rawRole;
+        String roleName = role.startsWith("ROLE_") ? role : "ROLE_" + role;
 
         return User.builder()
             .username(user.getCorreo())

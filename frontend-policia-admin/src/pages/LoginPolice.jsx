@@ -12,8 +12,10 @@ function LoginPolice() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  if (getSession()) {
-    return <Navigate to="/" replace />;
+  const currentSession = getSession();
+  if (currentSession) {
+    const currentRole = currentSession.user?.role;
+    return <Navigate to={currentRole === "ADMIN" ? "/admin" : "/"} replace />;
   }
 
   const handleSubmit = async (event) => {
@@ -22,8 +24,10 @@ function LoginPolice() {
     setError("");
 
     try {
-      await login({ email: email.trim(), password });
-      navigate(location.state?.from || "/", { replace: true });
+      const session = await login({ email: email.trim(), password });
+      const role = session?.user?.role;
+      const destination = role === "ADMIN" ? "/admin" : "/";
+      navigate(destination, { replace: true });
     } catch (loginError) {
       if (loginError?.message === "Esta cuenta no tiene acceso al panel policial.") {
         setError(loginError.message);

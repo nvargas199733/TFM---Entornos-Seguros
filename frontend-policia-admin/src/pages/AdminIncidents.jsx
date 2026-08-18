@@ -8,7 +8,7 @@ const AdminIncidents = () => {
   const adminLinks = [
     { label: "Inicio", path: "/admin" },
     { label: "Crear usuario", path: "/admin/crear-usuario" },
-    { label: "Gestión de usuarios", path: "/admin/gestion-usuarios" },
+    { label: "Gestión de usuario", path: "/admin/gestion-usuarios" },
     { label: "Incidentes", path: "/admin/incidentes" },
   ];
 

@@ -7,6 +7,7 @@ import UsersTable from "../components/UsersTable";
 import "../styles/manage-users-admin.css";
 import Pagination from "../components/Pagination";
 import { deleteAdminUser, fetchAdminUsers } from "../services/adminUsersApi";
+import { clearSession } from "../services/authService";
 
 const ManageUsersAdmin = () => {
   const navigate = useNavigate();
@@ -39,11 +40,33 @@ const ManageUsersAdmin = () => {
         const backendUsers = await fetchAdminUsers();
 
         if (active) {
-          setUsers(backendUsers);
+          setUsers(Array.isArray(backendUsers) ? backendUsers : []);
         }
       } catch (loadError) {
         if (active) {
-          setError(loadError.message || "No se pudieron cargar los usuarios");
+          const status = loadError?.status;
+          if (status === 401) {
+            clearSession();
+            navigate("/login", { replace: true });
+            return;
+          }
+          if (status === 403) {
+            setError("No tienes permiso para consultar la gestión de usuarios.");
+            return;
+          }
+          if (status === 500) {
+            setError("Ocurrió un error al consultar los usuarios.");
+            return;
+          }
+          if (
+            status === 0 ||
+            loadError instanceof TypeError ||
+            loadError?.message?.includes("Failed to fetch")
+          ) {
+            setError("No fue posible conectar con el servicio de usuarios.");
+            return;
+          }
+          setError("Ocurrió un error al consultar los usuarios.");
         }
       } finally {
         if (active) {
@@ -57,7 +80,7 @@ const ManageUsersAdmin = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [navigate]);
 
   const sortedUsers = [...users].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
@@ -118,42 +141,69 @@ const ManageUsersAdmin = () => {
         <section className="manage-users-panel">
           <h1 className="manage-users-panel__title">Gestión de usuarios</h1>
 
-          {isLoading && <p>Cargando usuarios...</p>}
-          {error && <p>{error}</p>}
+          {isLoading && (
+            <p className="manage-users-panel__status" role="status">
+              Consultando usuarios...
+            </p>
+          )}
 
-          <div className="manage-users-panel__toolbar">
-            <input
-              className="manage-users-panel__search"
-              type="text"
-              placeholder="Buscar por nombre, apellido o cédula..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
+          {!isLoading && error && (
+            <div className="manage-users-panel__alert" role="alert">
+              {error}
+            </div>
+          )}
 
-            <select
-              className="manage-users-panel__filter"
-              value={roleFilter}
-              onChange={(event) => setRoleFilter(event.target.value)}
-            >
-              <option value="Todos">Todos los roles</option>
-              <option value="usuario">Usuario</option>
-              <option value="administrador">Administrador</option>
-              <option value="policia">Policía</option>
-            </select>
-          </div>
+          {!isLoading && !error && users.length === 0 && (
+            <p className="manage-users-panel__empty" role="status">
+              No existen usuarios registrados.
+            </p>
+          )}
 
-          <UsersTable
-            users={paginatedUsers}
-            handleEditUser={(userId) =>
-              navigate(`/admin/editar-usuario/${userId}`)
-            }
-            handleDeleteUser={handleDeleteUser}
-          />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          {!isLoading && !error && users.length > 0 && (
+            <>
+              <div className="manage-users-panel__toolbar">
+                <input
+                  className="manage-users-panel__search"
+                  type="text"
+                  placeholder="Buscar por nombre, apellido o cédula..."
+                  value={search}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
+                />
+
+                <select
+                  className="manage-users-panel__filter"
+                  value={roleFilter}
+                  onChange={(event) => {
+                    setRoleFilter(event.target.value);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value="Todos">Todos los roles</option>
+                  <option value="usuario">Usuario</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="policia">Policía</option>
+                </select>
+              </div>
+
+              <UsersTable
+                users={paginatedUsers}
+                handleEditUser={(userId) =>
+                  navigate(`/admin/editar-usuario/${userId}`)
+                }
+                handleDeleteUser={handleDeleteUser}
+              />
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              )}
+            </>
+          )}
         </section>
       </main>
 

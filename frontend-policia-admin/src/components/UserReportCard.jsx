@@ -112,7 +112,7 @@ const UserReportCard = ({
               return (
                 <figure key={evidenceId} className="user-report-card__evidence-item">
                   {imageFailed ? (
-                    <div className="user-report-card__evidence-unavailable">Imagen no disponible</div>
+                    <div className="user-report-card__evidence-unavailable">Vista previa no disponible</div>
                   ) : (
                     <img
                       src={evidence.urlArchivo}

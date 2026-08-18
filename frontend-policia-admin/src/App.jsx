@@ -3,7 +3,7 @@
   Configuración principal de rutas.
 */
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import HomePolice from "./pages/HomePolice";
 import ReportsPolice from "./pages/ReportsPolice";
 import UserReportDetail from "./pages/UserReportDetail";
@@ -22,19 +22,20 @@ const App = () => {
     <Routes>
       <Route path="/login" element={<LoginPolice />} />
 
-      <Route element={<ProtectedRoute />}>
+      {/* Rutas operativas de POLICIA */}
+      <Route element={<ProtectedRoute allowedRoles={["POLICIA"]} />}>
         <Route path="/" element={<HomePolice />} />
-
         <Route path="/reportes" element={<ReportsPolice />} />
-
         <Route path="/mapa" element={<MapPolice />} />
-
         <Route path="/reportes/:id" element={<UserReportDetail />} />
-
         <Route
           path="/reportes/:id/generar-informe"
           element={<CreatePoliceReport />}
         />
+      </Route>
+
+      {/* Rutas administrativas de ADMIN */}
+      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
         <Route path="/admin" element={<AdminHome />} />
         <Route path="/admin/crear-usuario" element={<CreateUserAdmin />} />
         <Route path="/admin/gestion-usuarios" element={<ManageUsersAdmin />} />
@@ -42,6 +43,8 @@ const App = () => {
         <Route path="/admin/incidentes" element={<AdminIncidents />} />
         <Route path="/admin/incidentes/:id" element={<AdminIncidentDetail />} />
       </Route>
+
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 };

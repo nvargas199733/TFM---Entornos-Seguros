@@ -6,8 +6,9 @@ import Footer from "../components/Footer";
 import UserReportCard from "../components/UserReportCard";
 import OfficialReportView from "../components/OfficialReportView";
 import currentPoliceData from "../data/currentPoliceData";
-import { fetchIncidentById, fetchPoliceReportsByIncident } from "../services/policeApi";
+import { fetchIncidentById, fetchIncidentEvidences, fetchPoliceReportsByIncident } from "../services/policeApi";
 
+import "../styles/user-report-detail.css";
 import "../styles/admin-incident-detail.css";
 
 const AdminIncidentDetail = () => {
@@ -16,12 +17,15 @@ const AdminIncidentDetail = () => {
   const adminLinks = [
     { label: "Inicio", path: "/admin" },
     { label: "Crear usuario", path: "/admin/crear-usuario" },
-    { label: "Gestión de usuarios", path: "/admin/gestion-usuarios" },
+    { label: "Gestión de usuario", path: "/admin/gestion-usuarios" },
     { label: "Incidentes", path: "/admin/incidentes" },
   ];
 
   const [userReport, setUserReport] = useState(null);
   const [policeReport, setPoliceReport] = useState(null);
+  const [evidences, setEvidences] = useState([]);
+  const [evidenceLoading, setEvidenceLoading] = useState(true);
+  const [evidenceError, setEvidenceError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -39,6 +43,22 @@ const AdminIncidentDetail = () => {
         if (active) {
           setUserReport(incident);
           setPoliceReport(policeReports[0] || null);
+        }
+
+        try {
+          const nextEvidences = await fetchIncidentEvidences(Number(id));
+          if (active) {
+            setEvidences(Array.isArray(nextEvidences) ? nextEvidences : []);
+          }
+        } catch {
+          if (active) {
+            setEvidences([]);
+            setEvidenceError("No fue posible cargar las evidencias del incidente.");
+          }
+        } finally {
+          if (active) {
+            setEvidenceLoading(false);
+          }
         }
       } catch (loadError) {
         if (active) {
@@ -91,7 +111,13 @@ const AdminIncidentDetail = () => {
         <h1 className="admin-incident-detail__title">Detalle del incidente</h1>
 
         <section className="admin-incident-detail__grid">
-          <UserReportCard report={userReport} showGenerateButton={false} />
+          <UserReportCard
+            report={userReport}
+            evidences={evidences}
+            evidenceLoading={evidenceLoading}
+            evidenceError={evidenceError}
+            showGenerateButton={false}
+          />
 
           <OfficialReportView policeReport={policeReportView} />
         </section>

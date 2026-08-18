@@ -1,24 +1,34 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/header.css";
 import logo from "../assets/logo.jpg";
-import { Moon, Sun } from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
 import { useState } from "react";
+import { clearSession, getSession } from "../services/authService";
 
 /*
   Header:
   Componente reutilizable para navegación principal.
-
-  Ahora permite navegación dinámica según el rol.
+  Permite navegación dinámica según el rol e incluye Cerrar sesión.
 */
 
 const Header = ({ navLinks }) => {
-  /*
-    Links por defecto para el rol policía.
-  */
-  const defaultLinks = [
+  const navigate = useNavigate();
+  const session = getSession();
+  const role = session?.user?.role;
+
+  const defaultPoliceLinks = [
     { label: "Inicio", path: "/" },
     { label: "Reportes", path: "/reportes" },
+    { label: "Mapa", path: "/mapa" },
   ];
+
+  const defaultAdminLinks = [
+    { label: "Inicio", path: "/admin" },
+    { label: "Crear usuario", path: "/admin/crear-usuario" },
+    { label: "Gestión de usuario", path: "/admin/gestion-usuarios" },
+    { label: "Incidentes", path: "/admin/incidentes" },
+  ];
+
   const [darkMode, setDarkMode] = useState(
     document.body.classList.contains("dark-mode"),
   );
@@ -28,26 +38,24 @@ const Header = ({ navLinks }) => {
     setDarkMode(document.body.classList.contains("dark-mode"));
   };
 
-  /*
-    Si recibe navLinks:
-    usa esos links.
+  const handleLogout = () => {
+    clearSession();
+    navigate("/login", { replace: true });
+  };
 
-    Si no:
-    usa los links por defecto.
-  */
-  const links = navLinks || defaultLinks;
+  const links =
+    navLinks || (role === "ADMIN" ? defaultAdminLinks : defaultPoliceLinks);
 
   return (
     <header className="header">
       {/* Logo y nombre */}
       <div className="header__brand">
         <img className="header__logo" src={logo} alt="Logo Entornos Seguros" />
-
         <h1 className="header__title">Entornos Seguros</h1>
       </div>
 
       {/* Navegación dinámica */}
-      <nav className="header__nav">
+      <nav className="header__nav" aria-label="Navegación principal">
         {links.map((link) => (
           <Link key={link.path} to={link.path} className="header__link">
             {link.label}
@@ -55,14 +63,26 @@ const Header = ({ navLinks }) => {
         ))}
       </nav>
 
-      {/* Botón usuario */}
-      <button
-        className="header__user-button"
-        type="button"
-        onClick={toggleDarkMode}
-      >
-        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-      </button>
+      {/* Acciones de cabecera */}
+      <div className="header__actions">
+        <button
+          className="header__theme-button"
+          type="button"
+          onClick={toggleDarkMode}
+          aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"}
+        >
+          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+
+        <button
+          className="header__logout-button"
+          type="button"
+          onClick={handleLogout}
+        >
+          <LogOut size={18} />
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
     </header>
   );
 };

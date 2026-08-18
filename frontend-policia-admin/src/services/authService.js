@@ -6,7 +6,11 @@ const AUTH_STORAGE_KEY = "entornos_auth";
 const ALLOWED_ROLES = new Set(["POLICIA", "ADMIN"]);
 
 function normalizeRole(role) {
-  return String(role || "").trim().toUpperCase();
+  const clean = String(role || "").trim().toUpperCase();
+  if (clean === "ADMINISTRADOR" || clean === "ADMIN") return "ADMIN";
+  if (clean === "POLICIA" || clean === "POLICÍA") return "POLICIA";
+  if (clean === "USUARIO") return "USUARIO";
+  return clean;
 }
 
 export function getSession() {

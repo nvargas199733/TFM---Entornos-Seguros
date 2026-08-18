@@ -44,7 +44,7 @@ const UsersTable = ({
         ))
       ) : (
         <p className="manage-users-table__empty">
-          No existen usuarios registrados.
+          No se encontraron usuarios que coincidan con los filtros aplicados.
         </p>
       )}
     </div>
