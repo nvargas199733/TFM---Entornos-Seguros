@@ -18,11 +18,42 @@ import policeVideo from "../assets/policia.mp4";
 
 import "../styles/create-police-report.css";
 
-function buildStatusObservation(report) {
-  return Number.isInteger(Number(report?.id))
-    ? `Atención policial finalizada. Informe oficial #${Number(report.id)} registrado.`
-    : "Atención policial finalizada e informe oficial registrado.";
+const OBSERVATION_MAX_CHARS = 300;
+
+function buildStatusObservation(report, officialDescription) {
+  const reportId = Number(report?.id);
+  const injured = report?.huboHeridos ?? "No";
+
+  const raw = (officialDescription || "")
+    .replace(/^[Dd]escripci[oó]n\s+oficial\s*:\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  let summary = raw;
+  if (summary.length > OBSERVATION_MAX_CHARS) {
+    summary = summary.slice(0, OBSERVATION_MAX_CHARS);
+    const lastSpace = summary.lastIndexOf(" ");
+    summary = (lastSpace > 0 ? summary.slice(0, lastSpace) : summary) + "…";
+  }
+
+  // Referencia administrativa opcional — secundaria para el ciudadano
+  const ref = Number.isInteger(reportId) && reportId > 0
+    ? ` · Ref. informe #${reportId}`
+    : "";
+
+  const lines = [
+    `Las autoridades policiales atendieron tu reporte${ref}.`,
+    `¿Hubo heridos?: ${injured}`,
+  ];
+
+  if (summary) {
+    lines.push(`Descripción: ${summary}`);
+  }
+
+  return lines.join("\n");
 }
+
+
 
 const CreatePoliceReport = () => {
   const { id } = useParams();
@@ -127,7 +158,7 @@ const CreatePoliceReport = () => {
       await updateIncidentStatus(userReport.id, {
         idEstadoIncidente: attendedStatusId,
         idUsuarioResponsable: Number(policeUser.id),
-        observacion: buildStatusObservation(report),
+        observacion: buildStatusObservation(report, officialDescription),
       });
 
       setIsCloseModalOpen(false);

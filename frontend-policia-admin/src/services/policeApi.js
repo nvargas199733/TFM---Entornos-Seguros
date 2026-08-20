@@ -90,21 +90,59 @@ function normalizeIncident(incident) {
 	};
 }
 
+/**
+ * Separa descripcionAtencion (campo del backend) en secciones independientes.
+ * Tolera ausencia de etiquetas, valor null/undefined, diferencias de capitalización
+ * y saltos de línea variables.
+ *
+ * @returns {{ officialDescription: string, actionsTaken: string }}
+ */
+export function parsePoliceReportDescription(value) {
+	if (!value || typeof value !== "string") {
+		return { officialDescription: "", actionsTaken: "" };
+	}
+
+	const normalized = value.replace(/\r\n/g, "\n").trim();
+
+	// Buscar "Descripción oficial:" y "Acciones tomadas:" de forma insensible
+	const descMatch = normalized.match(
+		/[Dd]escripci[oó]n\s+oficial\s*:\s*([\s\S]*?)(?=\n{1,}\s*[Aa]cciones\s+tomadas\s*:|$)/
+	);
+	const actMatch = normalized.match(
+		/[Aa]cciones\s+tomadas\s*:\s*([\s\S]*)$/
+	);
+
+	const officialDescription = descMatch ? descMatch[1].trim() : "";
+	const actionsTaken = actMatch ? actMatch[1].trim() : "";
+
+	// Si no se encontró ninguna etiqueta, todo el texto es la descripción general
+	if (!officialDescription && !actionsTaken) {
+		return { officialDescription: normalized, actionsTaken: "" };
+	}
+
+	return { officialDescription, actionsTaken };
+}
+
 function normalizePoliceReport(report) {
 	if (!report) return null;
+
+	const { officialDescription, actionsTaken } = parsePoliceReportDescription(
+		report.descripcionAtencion
+	);
 
 	return {
 		id: report.idReportePolicial,
 		userReportId: report.idIncidente,
 		policeId: report.idUsuarioPolicia,
 		huboHeridos: report.huboHeridos ? "Sí" : "No",
-		officialDescription: report.descripcionAtencion,
-		actionsTaken: report.descripcionAtencion,
+		officialDescription,
+		actionsTaken,
 		createdAt: report.fechaReporte,
 		updatedAt: report.fechaActualizacion,
 		raw: report
 	};
 }
+
 
 export async function fetchIncidents() {
 	const incidents = await request(INCIDENT_API_BASE_URL, "", {

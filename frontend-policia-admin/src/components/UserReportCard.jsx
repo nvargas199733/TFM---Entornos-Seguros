@@ -39,7 +39,10 @@ const UserReportCard = ({
   evidences = [],
   evidenceLoading = false,
   evidenceError = "",
-  showGenerateButton = true
+  showGenerateButton = true,
+  reporter = null,
+  reporterLoading = false,
+  reporterError = "",
 }) => {
   const navigate = useNavigate();
   const [failedEvidenceIds, setFailedEvidenceIds] = useState(new Set());
@@ -55,21 +58,49 @@ const UserReportCard = ({
       <section className="user-report-card__section">
         <h3>Datos del reportante</h3>
 
-        <p>
-          <User size={15} />
-          {report.reporterName}
-        </p>
+        {reporterLoading && (
+          <p role="status">Consultando datos del reportante...</p>
+        )}
+
+        {!reporterLoading && reporterError && (
+          <p role="alert">{reporterError}</p>
+        )}
+
+        {!reporterLoading && !reporterError && reporter && (
+          <>
+            <p>
+              <User size={15} aria-hidden="true" />
+              <strong>Nombre:</strong>&nbsp;{reporter.fullName}
+            </p>
+            <p>
+              <IdCard size={15} aria-hidden="true" />
+              <strong>Cédula:</strong>&nbsp;{reporter.identification}
+            </p>
+            <p className="user-report-card__reporter-meta">
+              ID del usuario: {report.idUsuario}
+            </p>
+          </>
+        )}
+
+        {!reporterLoading && !reporterError && !reporter && (
+          <>
+            <p>
+              <User size={15} aria-hidden="true" />
+              {report.reporterName}
+            </p>
+            <p>
+              <IdCard size={15} aria-hidden="true" />
+              {report.identification}
+            </p>
+          </>
+        )}
 
         <p>
-          <IdCard size={15} />
-          {report.identification}
-        </p>
-
-        <p>
-          <CalendarDays size={15} />
+          <CalendarDays size={15} aria-hidden="true" />
           {new Date(report.reportedAt).toLocaleString("es-EC")}
         </p>
       </section>
+
 
       <section className="user-report-card__section">
         <h3>Tipo de incidente</h3>

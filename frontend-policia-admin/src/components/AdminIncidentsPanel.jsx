@@ -171,22 +171,33 @@ const AdminIncidentsPanel = () => {
               {incident.policeReport ? (
                 <>
                   <p>
-                    <strong>Policía:</strong> {incident.policeReport.policeName}
-                  </p>
-
-                  <p>
-                    <strong>Placa:</strong> {incident.policeReport.badgeNumber}
-                  </p>
-
-                  <p>
                     <strong>Atendido:</strong>{" "}
-                    {new Date(incident.policeReport.createdAt).toLocaleString()}
+                    {new Date(incident.policeReport.createdAt).toLocaleString("es-EC")}
                   </p>
 
                   <p>
-                    <strong>Acciones:</strong>{" "}
-                    {incident.policeReport.actionsTaken}
+                    <strong>¿Heridos?:</strong>{" "}
+                    {incident.policeReport.huboHeridos}
                   </p>
+
+                  {incident.policeReport.officialDescription && (
+                    <p>
+                      <strong>Descripción:</strong>{" "}
+                      {incident.policeReport.officialDescription.length > 120
+                        ? `${incident.policeReport.officialDescription.slice(0, 120).trimEnd()}…`
+                        : incident.policeReport.officialDescription}
+                    </p>
+                  )}
+
+                  {!incident.policeReport.officialDescription &&
+                    incident.policeReport.actionsTaken && (
+                      <p>
+                        <strong>Acciones:</strong>{" "}
+                        {incident.policeReport.actionsTaken.length > 120
+                          ? `${incident.policeReport.actionsTaken.slice(0, 120).trimEnd()}…`
+                          : incident.policeReport.actionsTaken}
+                      </p>
+                    )}
                 </>
               ) : (
                 <p className="admin-incident-card__pending">

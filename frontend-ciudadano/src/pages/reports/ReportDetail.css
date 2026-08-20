@@ -178,7 +178,10 @@
   margin: 0;
   color: #071b3a;
   font-size: 0.97rem;
-  line-height: 1.45;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .detail-timeline-date {

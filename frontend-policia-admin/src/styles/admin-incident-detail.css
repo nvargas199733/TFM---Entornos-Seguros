@@ -36,15 +36,46 @@
   margin-bottom: 20px;
 }
 
-.official-report-view h3 {
+.official-report-view__section {
+  border-top: 1px solid #e8edf3;
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.official-report-view__section:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.official-report-view__section-title {
   color: var(--color-primary);
-  margin-top: 22px;
+  font-size: 0.95rem;
+  font-weight: 700;
   margin-bottom: 10px;
+  margin-top: 0;
 }
 
 .official-report-view p {
   line-height: 1.8;
   color: var(--color-text);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  margin-bottom: 6px;
+}
+
+.official-report-view__text {
+  white-space: pre-wrap;
+}
+
+.official-report-view__info-loading {
+  color: #4d5d73;
+  font-size: 0.92rem;
+}
+
+.official-report-view__info-error {
+  color: #b91c1c;
+  font-size: 0.92rem;
 }
 
 .official-report-view--empty {
@@ -52,6 +83,13 @@
   flex-direction: column;
   justify-content: center;
   min-height: 300px;
+}
+
+/* ---------- REPORTANTE META ---------- */
+
+.user-report-card__reporter-meta {
+  font-size: 0.85rem;
+  color: #5f6f85;
 }
 
 /* ---------- RESPONSIVE ---------- */
@@ -62,4 +100,4 @@
     grid-template-columns: 1fr;
   }
 
-}
+}
