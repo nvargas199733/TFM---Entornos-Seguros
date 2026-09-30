@@ -41,7 +41,7 @@ El sistema implementa fielmente los principios de la memoria técnica de arquite
 | **Backend Multi-módulo Gradle** | ✅ Completo | 3 microservicios en Java 21 + Spring Boot 3 con Gradle Wrapper funcional. |
 | **Autenticación JWT & RBAC** | ✅ Completo | Registro, login, emisión de tokens, validación en backend y enrutamiento protegido en frontends. |
 | **Flujo Ciudadano de Incidentes** | ✅ Completo | Creación de reporte con evidencias URL, consulta de mis reportes y detalle con historial de estados. |
-| **Catálogo & Mapa de CAIs** | ✅ Completo | Catálogo de 156+ CAIs en `auth_user`, búsqueda del más cercano con PostGIS y mapa Leaflet ciudadano. |
+| **Catálogo & Mapa de CAIs** | ✅ Completo | Endpoints geoespaciales con PostGIS (`ST_Distance`) en `auth-user-service`, mapa Leaflet ciudadano y dataset de inicialización en `docs/SETUP.md`. |
 | **Bandeja y Detalle Policial** | ✅ Completo | Listado con filtros, detalle con evidencias reales remotas y soporte de fallback visual. |
 | **Atención e Informe Policial** | ✅ Completo | Formulario de informe oficial que registra en `police-report-service` y actualiza el estado del incidente a `ATENDIDO` en `incident-service`. |
 | **Mapa Operativo Policial** | ✅ Completo | Mapa Leaflet con marcadores por tipo/estado, filtros por periodo/semana, delimitación a Bogotá (`BOGOTA_BOUNDS`) y overlays de estado vacío/carga. |

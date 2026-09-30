@@ -1,6 +1,6 @@
 # Backend Monorepo - Entornos Seguros
 
-Backend multi-módulo basado en **Java 21 LTS** y **Spring Boot 3.2.x**, gestionado con **Gradle**. Implementa una arquitectura de microservicios con persistencia *schema-per-service* sobre PostgreSQL 16.
+Backend multi-módulo basado en **Java 21 LTS** y **Spring Boot 3.5.x**, gestionado con **Gradle**. Implementa una arquitectura de microservicios con persistencia *schema-per-service* sobre PostgreSQL 16 con soporte geoespacial (PostGIS).
 
 ---
 
@@ -28,34 +28,73 @@ backend/
 
 ---
 
-## 3. Compilación y Ejecución
+## 3. Variables de Entorno de los Servicios
 
-### 3.1. Compilar Todos los Subproyectos
-```bash
-# Desde la carpeta backend/
-./gradlew build -x test
-```
+Cada servicio lee las siguientes variables desde su `application.yml` o del entorno del sistema:
 
-### 3.2. Ejecución Individual de Servicios
-```bash
-# Terminal 1 - Auth User Service
-./gradlew :auth-user-service:bootRun
+| Variable | Valor por Defecto Local | Descripción |
+| :--- | :--- | :--- |
+| `DB_URL` | `jdbc:postgresql://localhost:5432/entorno_seguros_db` | Cadena JDBC de PostgreSQL |
+| `DB_USERNAME` | `postgres` | Usuario con permisos en los esquemas |
+| `DB_PASSWORD` | `postgres` | Contraseña del usuario |
+| `SERVER_PORT` | `8081` / `8082` / `8083` | Puerto HTTP del servicio |
+| `JWT_SECRET` | `entornos-seguros-jwt-secret-for-dev-min-32-bytes` | Secreto HMAC para firma y verificación de JWT |
+| `JWT_EXPIRATION` | `86400000` | Expiración del token en milisegundos (24h) |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173,http://localhost:5174` | Orígenes HTTP permitidos para peticiones CORS |
 
-# Terminal 2 - Incident Service
-./gradlew :incident-service:bootRun
+---
 
-# Terminal 3 - Police Report Service
-./gradlew :police-report-service:bootRun
-```
+## 4. Compilación y Ejecución
 
-### 3.3. Health Checks
+### 4.1. Compilar Todos los Subproyectos
+
+* **En Windows (PowerShell):**
+  ```powershell
+  cd backend
+  .\gradlew.bat build -x test
+  ```
+
+* **En Linux / macOS:**
+  ```bash
+  cd backend
+  ./gradlew build -x test
+  ```
+
+### 4.2. Ejecución Individual de Servicios
+
+Abre una terminal independiente por microservicio:
+
+* **En Windows PowerShell:**
+  ```powershell
+  # Terminal 1 - Auth & Users Service
+  cd backend
+  .\gradlew.bat :auth-user-service:bootRun
+
+  # Terminal 2 - Incident Service
+  cd backend
+  .\gradlew.bat :incident-service:bootRun
+
+  # Terminal 3 - Police Report Service
+  cd backend
+  .\gradlew.bat :police-report-service:bootRun
+  ```
+
+* **En Linux / macOS:**
+  ```bash
+  cd backend
+  ./gradlew :auth-user-service:bootRun   # Terminal 1
+  ./gradlew :incident-service:bootRun    # Terminal 2
+  ./gradlew :police-report-service:bootRun # Terminal 3
+  ```
+
+### 4.3. Health Checks
 - `GET http://localhost:8081/api/v1/auth/health`
 - `GET http://localhost:8082/api/v1/incidents/health`
 - `GET http://localhost:8083/api/v1/police-reports/health`
 
 ---
 
-## 4. Estándares Técnicos
+## 5. Estándares Técnicos
 - **Desacoplamiento Relacional:** No existen claves foráneas físicas entre tablas de esquemas diferentes.
 - **Seguridad:** Tokens JWT firmados compartidos; filtros de seguridad Spring Security configurados con `hasRole('ADMIN')`, `hasRole('POLICIA')`, `hasRole('USUARIO')`.
 - **Manejo de Errores:** Controladores REST con `@ExceptionHandler` estructurados mediante respuestas `ApiErrorResponse`.

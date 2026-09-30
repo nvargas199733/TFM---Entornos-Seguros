@@ -36,7 +36,7 @@ TFM---Entornos-Seguros/
 │   ├── src/
 │   │   ├── components/                    # Header, Footer, Hero, ReportFlow, Modales
 │   │   ├── pages/                         # Home, Login, Register, Report, ReportsList, Detail, Map, Profile
-│   │   ├── services/                      # Clientes API (authService, incidentService, caiService)
+│   │   ├── services/                      # Clientes API (authService, reportService, caiService, locationService)
 │   │   └── styles/                        # Estilos CSS modulares
 │   ├── package.json
 │   └── vite.config.js

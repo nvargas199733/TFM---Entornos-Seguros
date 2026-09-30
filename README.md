@@ -2,7 +2,7 @@
 
 [![TFM](https://img.shields.io/badge/TFM-Master_Ingenieria_Software-0d4876.svg)](https://github.com/)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.x-green.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5.x-green.svg)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-19.x-61dafb.svg)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.x-646cff.svg)](https://vitejs.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org/)
@@ -19,9 +19,9 @@ Plataforma integral y distribuida para la gestión, geolocalización, atención 
 - [3. Estructura del Monorepo](#3-estructura-del-monorepo)
 - [4. Pila Tecnológica](#4-pila-tecnológica)
 - [5. Guía Rápida de Inicio (Quickstart)](#5-guía-rápida-de-inicio-quickstart)
-  - [5.1. Infraestructura con Docker](#51-infraestructura-con-docker)
-  - [5.2. Ejecución del Backend (Java/Gradle)](#52-ejecución-del-backend-javagradle)
-  - [5.3. Ejecución de los Frontends (React/Vite)](#53-ejecución-de-los-frontends-reactvite)
+  - [5.1. Infraestructura de Base de Datos](#51-infraestructura-de-base-de-datos)
+  - [5.2. Ejecución del Backend (Spring Boot / Gradle)](#52-ejecución-del-backend-spring-boot--gradle)
+  - [5.3. Ejecución de los Frontends (React / Vite)](#53-ejecución-de-los-frontends-react--vite)
 - [6. Funcionalidades y Cobertura End-to-End](#6-funcionalidades-y-cobertura-end-to-end)
 - [7. Modelo de Seguridad y Roles](#7-modelo-de-seguridad-y-roles)
 - [8. Documentación Complementaria](#8-documentación-complementaria)
@@ -78,8 +78,7 @@ graph TD
 | **auth-user-service** | Microservicio (Spring Boot) | `8081` | Autenticación, gestión de usuarios, roles y catálogo de CAIs (PostGIS). |
 | **incident-service** | Microservicio (Spring Boot) | `8082` | Registro de incidentes, evidencias, catálogo de tipos/estados y cambios de estado. |
 | **police-report-service** | Microservicio (Spring Boot) | `8083` | Formalización de la atención policial y emisión de informes oficiales. |
-| **PostgreSQL** | Base de Datos | `5432` | Motor relacional con esquemas `auth_user`, `incident` y `police_report`. |
-| **Redis** | Caché | `6379` | Soporte de caché para sesiones y operaciones concurrentes. |
+| **PostgreSQL** | Base de Datos | `5432` | Motor relacional con esquemas `auth_user`, `incident` y `police_report` + extensión PostGIS. |
 | **pgAdmin** | GUI DB Admin | `5050` | Administrador visual de PostgreSQL. |
 
 ---
@@ -99,7 +98,7 @@ TFM---Entornos-Seguros/
 ├── frontend-ciudadano/              # Aplicación React para la ciudadanía (:5173)
 │   ├── src/
 │   │   ├── pages/                   # Vistas: Auth, Reportes, Detalle, Mapa CAI, Perfil
-│   │   ├── services/                # Clientes API REST (auth, incidentes, CAI, geolocalización)
+│   │   ├── services/                # Clientes API REST (auth, reportes, CAI, ubicación)
 │   │   └── components/              # Componentes UI encapsulados
 │   └── README.md
 ├── frontend-policia-admin/          # Aplicación React para Policía y Administradores (:5174)
@@ -111,12 +110,13 @@ TFM---Entornos-Seguros/
 ├── docs/                            # Documentación técnica detallada
 │   ├── ARCHITECTURE.md              # Blueprint de arquitectura, esquemas DB y patrones
 │   ├── API.md                       # Especificación de contratos REST y DTOs
-│   ├── MICROSERVICES_ENDPOINTS.md   # Catálogo detallado de endpoints con ejemplos cURL
-│   └── SETUP.md                     # Guía integral de instalación y configuración
+│   ├── MICROSERVICES_ENDPOINTS.md   # Catálogo operativo con ejemplos cURL
+│   └── SETUP.md                     # Guía maestra de configuración local y troubleshooting
 ├── database/                        # Scripts SQL y esquemas de base de datos
-├── docker-compose.yml               # Orquestación local de PostgreSQL, Redis y pgAdmin
+├── docker-compose.yml               # Orquestación local de PostgreSQL y pgAdmin
 ├── PROJECT_STRUCTURE.md             # Descripción canónica de estructura de archivos
 ├── PROJECT_SUMMARY.md               # Resumen ejecutivo y estado del proyecto
+├── CONTRIBUTING.md                  # Guía de contribución y flujo Git
 └── README.md                        # Entrada principal al proyecto
 ```
 
@@ -126,9 +126,9 @@ TFM---Entornos-Seguros/
 
 ### Backend & Datos
 - **Lenguaje:** Java 21 LTS
-- **Framework:** Spring Boot 3.2.x (Spring Web, Spring Security, Spring Data JPA, Actuator)
+- **Framework:** Spring Boot 3.5.x (Spring Web, Spring Security, Spring Data JPA, Actuator)
 - **Seguridad:** JSON Web Tokens (jjwt 0.12.x), BCrypt password hashing
-- **Base de Datos:** PostgreSQL 16 (con extensiones espaciales PostGIS)
+- **Base de Datos:** PostgreSQL 16 (con extensiones espaciales PostGIS y Hibernate Spatial)
 - **Gestión de Construcción:** Gradle 8.x con Gradle Wrapper multi-módulo
 
 ### Frontend
@@ -142,58 +142,68 @@ TFM---Entornos-Seguros/
 
 ## 5. Guía Rápida de Inicio (Quickstart)
 
+> [!TIP]
+> Para una guía paso a paso con scripts SQL de inicialización, resolución de variables y resolución de problemas comunes, consulta la [**Guía Maestra de Configuración Local (docs/SETUP.md)**](docs/SETUP.md).
+
 ### Requisitos Previos
-- **Java Development Kit (JDK):** 21 o superior
-- **Node.js:** 20.x o superior (con npm 10+)
-- **Docker & Docker Compose:** Versión moderna
+- **Java JDK:** 21 LTS (`java -version`)
+- **Node.js:** 20.x o superior con npm 10+ (`node -v`)
+- **Docker & Compose:** Para la base de datos PostgreSQL (`docker compose version`)
 
 ---
 
-### 5.1. Infraestructura con Docker
+### 5.1. Infraestructura de Base de Datos
 
-Levanta la base de datos PostgreSQL, Redis y pgAdmin:
+Levanta el contenedor de PostgreSQL:
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
-> **Verificación:** Verifica que el contenedor `entornos-seguros-db` esté saludable en el puerto `5432`.
+> **Inicialización:** Asegúrate de ejecutar el [script SQL de inicialización](docs/SETUP.md#22-script-sql-de-inicialización-y-seeding-de-datos) para crear los esquemas (`auth_user`, `incident`, `police_report`), activar la extensión `postgis` y sembrar los roles y usuarios de prueba iniciales.
 
 ---
 
-### 5.2. Ejecución del Backend (Java/Gradle)
+### 5.2. Ejecución del Backend (Spring Boot / Gradle)
 
-Abre una terminal en el directorio `backend/` y ejecuta los tres microservicios (en terminales separadas o usando tu IDE):
+Abre terminales dedicadas para cada microservicio dentro de la carpeta `backend/`:
 
-```bash
-# Terminal 1 - Auth & Users Service (Puerto 8081)
+#### En Windows PowerShell:
+```powershell
+# Terminal 1 - Auth & Users Service (:8081)
 cd backend
-./gradlew :auth-user-service:bootRun
+.\gradlew.bat :auth-user-service:bootRun
 
-# Terminal 2 - Incident Service (Puerto 8082)
+# Terminal 2 - Incident Service (:8082)
 cd backend
-./gradlew :incident-service:bootRun
+.\gradlew.bat :incident-service:bootRun
 
-# Terminal 3 - Police Report Service (Puerto 8083)
+# Terminal 3 - Police Report Service (:8083)
 cd backend
-./gradlew :police-report-service:bootRun
+.\gradlew.bat :police-report-service:bootRun
 ```
 
-*En Windows PowerShell puedes usar `.\gradlew.bat :<servicio>:bootRun`.*
+#### En Linux / macOS (Bash):
+```bash
+cd backend
+./gradlew :auth-user-service:bootRun   # Terminal 1
+./gradlew :incident-service:bootRun    # Terminal 2
+./gradlew :police-report-service:bootRun # Terminal 3
+```
 
 ---
 
-### 5.3. Ejecución de los Frontends (React/Vite)
+### 5.3. Ejecución de los Frontends (React / Vite)
 
-Abre terminales dedicadas para cada aplicación frontend:
+Abre dos terminales adicionales para los frontends:
 
 ```bash
-# Frontend Ciudadano (Puerto 5173)
+# Terminal 4 - Frontend Ciudadano (Puerto 5173)
 cd frontend-ciudadano
 npm install
 npm run dev
 
-# Frontend Policía / Administrador (Puerto 5174)
+# Terminal 5 - Frontend Policía / Administrador (Puerto 5174)
 cd frontend-policia-admin
 npm install
 npm run dev

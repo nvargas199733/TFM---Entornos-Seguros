@@ -52,4 +52,14 @@ Toda la comunicación con el backend está encapsulada en la capa `src/services/
 
 ---
 
+## 4. Variables de Entorno (Opcional `.env.local`)
+
+| Variable | Valor por Defecto | Propósito |
+| :--- | :--- | :--- |
+| `VITE_AUTH_API_BASE_URL` | `http://localhost:8081/api/v1/auth` | URL base para autenticación y usuarios |
+| `VITE_INCIDENT_API_BASE_URL` | `http://localhost:8082/api/v1/incidents` | URL base para incidentes y evidencias |
+| `VITE_POLICE_REPORT_API_BASE_URL` | `http://localhost:8083/api/v1/police-reports` | URL base para informes policiales |
+
+---
+
 **Entornos Seguros** | Frontend Policía y Administrador - 2026

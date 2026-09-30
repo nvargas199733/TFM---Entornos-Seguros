@@ -131,7 +131,7 @@ erDiagram
 
     ESTADO_INCIDENTE {
         bigint id_estado_incidente PK
-        varchar nombre "PENDIENTE, EN_ATENCION, ATENDIDO, DESCARTADO"
+        varchar nombre "PENDIENTE, EN_ATENCION, ATENDIDO, CERRADO"
         varchar descripcion
     }
 

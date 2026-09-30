@@ -35,9 +35,15 @@ npm run preview
 
 Toda la comunicación con el backend está desacoplada en la capa `src/services/`:
 - **`authService.js`:** Consumo de `auth-user-service` (:8081) para registro, login y perfil.
-- **`incidentService.js`:** Consumo de `incident-service` (:8082) para creación de incidentes, evidencias y consulta de reportes.
-- **`caiService.js`:** Consumo de `auth-user-service` (:8081) para catálogo de CAIs y CAI más cercano.
+- **`reportService.js`:** Consumo de `incident-service` (:8082) para creación de incidentes, evidencias y consulta de reportes ciudadanos.
+- **`caiService.js`:** Consumo de `auth-user-service` (:8081) para catálogo de CAIs y cálculo del CAI más cercano con PostGIS.
+- **`locationService.js`:** Utilidades de geolocalización en navegador y coordenadas por defecto de Bogotá.
 
 ---
 
-**Entornos Seguros** | Frontend Ciudadano - 2026
+## 4. Variables de Entorno (Opcional `.env.local`)
+
+| Variable | Valor por Defecto | Propósito |
+| :--- | :--- | :--- |
+| `VITE_API_BASE_URL` | `http://localhost:8081` | URL base para autenticación y catálogo CAI |
+| `VITE_INCIDENT_API_BASE_URL` | `http://localhost:8082/api/v1/incidents` | URL base para gestión de incidentes y evidencias |
