@@ -12,12 +12,76 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - entornos-network
+      entornos-network:
+        aliases:
+          - postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d entorno_seguros_db"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
+
+  auth-user-service:
+    build:
+      context: ./backend
+      dockerfile: auth-user-service/Dockerfile
+    container_name: auth-user-service
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/entorno_seguros_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      SERVER_PORT: 8081
+      JWT_SECRET: entornos-seguros-jwt-secret-for-dev-min-32-bytes
+      JWT_EXPIRATION: 86400000
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5174
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - entornos-network
+
+  incident-service:
+    build:
+      context: ./backend
+      dockerfile: incident-service/Dockerfile
+    container_name: incident-service
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/entorno_seguros_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      SERVER_PORT: 8082
+      JWT_SECRET: entornos-seguros-jwt-secret-for-dev-min-32-bytes
+      JWT_EXPIRATION: 86400000
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5174
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - entornos-network
+
+  police-report-service:
+    build:
+      context: ./backend
+      dockerfile: police-report-service/Dockerfile
+    container_name: police-report-service
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/entorno_seguros_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      SERVER_PORT: 8083
+      JWT_SECRET: entornos-seguros-jwt-secret-for-dev-min-32-bytes
+      CORS_ALLOWED_ORIGINS: http://localhost:5174
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - entornos-network
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -30,7 +94,8 @@ services:
     networks:
       - entornos-network
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   redis:
     image: redis:7-alpine
