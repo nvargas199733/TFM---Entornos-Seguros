@@ -61,12 +61,12 @@ VALUES
 ON CONFLICT (id_rol) DO NOTHING;
 
 -- 4. Usuarios de prueba (Contraseñas con hash BCrypt):
---    - Admin:   Admin123!   -> $2a$10$eACCYoNOHEqgkVE8aVnFeO1z18iV0wZ65aU2p74.wS2mUvQyQ3Fqa
---    - Policia: Policia123! -> $2a$10$vWd2J0x0yK4mO0F5z6H1rOFn4r8j5vM2s7Y1u8Q2e4W6r8T0y2U4O
+--    - Admin:   Admin123!   -> $2a$10$ERYR06VQ//9uqmKEljUgD.0CrH7CW9zKkUCRKADZi8SQ14ZD2acPy
+--    - Policia: Policia123! -> $2a$10$wtISNvwAFE4iCSbdyR3gsuy6gqQ/eZek150zYBw8MYqtM2NG22.S2
 INSERT INTO auth_user.usuario (id_rol, cedula, nombres, apellidos, telefono, correo, contrasena_hash, activo, fecha_creacion)
 VALUES 
-    (1, '80000001', 'Administrador', 'Principal', '3001112233', 'admin@entornosseguros.gov.co', '$2a$10$eACCYoNOHEqgkVE8aVnFeO1z18iV0wZ65aU2p74.wS2mUvQyQ3Fqa', true, NOW()),
-    (2, '80000002', 'Oficial', 'Patrullero', '3004445566', 'policia@entornosseguros.gov.co', '$2a$10$vWd2J0x0yK4mO0F5z6H1rOFn4r8j5vM2s7Y1u8Q2e4W6r8T0y2U4O', true, NOW())
+    (1, '80000001', 'Administrador', 'Principal', '3001112233', 'admin@entornosseguros.gov.co', '$2a$10$ERYR06VQ//9uqmKEljUgD.0CrH7CW9zKkUCRKADZi8SQ14ZD2acPy', true, NOW()),
+    (2, '80000002', 'Oficial', 'Patrullero', '3004445566', 'policia@entornosseguros.gov.co', '$2a$10$wtISNvwAFE4iCSbdyR3gsuy6gqQ/eZek150zYBw8MYqtM2NG22.S2', true, NOW())
 ON CONFLICT DO NOTHING;
 
 -- 5. CAIs de Muestra en Bogotá (con geometría EPSG:4326)
