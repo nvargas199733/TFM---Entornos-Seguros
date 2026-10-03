@@ -15,7 +15,7 @@ COPY auth-user-service ./auth-user-service
 COPY incident-service ./incident-service
 COPY police-report-service ./police-report-service
 
-RUN chmod +x gradlew && ./gradlew :auth-user-service:bootJar -x test --no-daemon
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew && ./gradlew :auth-user-service:bootJar -x test --no-daemon
 
 # Runtime Stage
 FROM eclipse-temurin:21-jre-alpine
