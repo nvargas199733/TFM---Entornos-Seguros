@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "./Pagination";
 import { fetchIncidents, fetchPoliceReportsByIncident } from "../services/policeApi";
+import { fetchAdminUsers } from "../services/adminUsersApi";
 /*
   AdminIncidentsPanel:
   Muestra la relación entre reportes ciudadanos e informes oficiales policiales.
@@ -27,12 +28,30 @@ const AdminIncidentsPanel = () => {
         setError("");
 
         const backendIncidents = await fetchIncidents();
+
+        // Cargar catálogo de usuarios para asociar los nombres reales de los reportantes
+        let usersMap = new Map();
+        try {
+          const allUsers = await fetchAdminUsers();
+          if (Array.isArray(allUsers)) {
+            allUsers.forEach((u) => {
+              if (u?.id) usersMap.set(Number(u.id), u);
+            });
+          }
+        } catch {
+          // Si no es posible cargar usuarios, se mantiene el fallback por ID
+        }
+
         const incidentsWithReports = await Promise.all(
           backendIncidents.map(async (incident) => {
             const policeReports = await fetchPoliceReportsByIncident(incident.id);
+            const reporterUser = usersMap.get(Number(incident.idUsuario));
+            const realReporterName = reporterUser?.fullName || incident.reporterName;
 
             return {
               ...incident,
+              reporterName: realReporterName,
+              reporterUser: reporterUser || null,
               policeReport: policeReports[0] || null,
               finalStatus: incident.status,
             };

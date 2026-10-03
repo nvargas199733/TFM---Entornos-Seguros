@@ -241,11 +241,18 @@ public class AuthService {
         return new AuthResponse(token, "Bearer", toSummary(user));
     }
 
+    private String formatFullName(String nombres, String apellidos) {
+        String n = nombres != null ? nombres.trim() : "";
+        String a = (apellidos != null && !apellidos.trim().equals("-")) ? apellidos.trim() : "";
+        String full = (n + " " + a).trim();
+        return full.isBlank() ? "Usuario" : full;
+    }
+
     private UserSummaryResponse toSummary(UserEntity user) {
         return new UserSummaryResponse(
             user.getId(),
             user.getCorreo(),
-            (user.getNombres() + " " + user.getApellidos()).trim(),
+            formatFullName(user.getNombres(), user.getApellidos()),
             user.getTelefono(),
             user.getRol().getNombre()
         );
@@ -255,7 +262,7 @@ public class AuthService {
         return new AdminUserResponse(
             user.getId(),
             user.getCedula(),
-            (user.getNombres() + " " + user.getApellidos()).trim(),
+            formatFullName(user.getNombres(), user.getApellidos()),
             user.getTelefono(),
             user.getCorreo(),
             user.getRol().getNombre(),

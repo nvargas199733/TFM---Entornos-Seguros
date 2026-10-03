@@ -78,7 +78,14 @@ const AdminIncidentDetail = () => {
           setReporterLoading(true);
           fetchAdminUserById(reporterId)
             .then((user) => { if (active) setReporter(user); })
-            .catch(() => { if (active) setReporterError("No fue posible cargar los datos del reportante."); })
+            .catch(() => {
+              if (active) {
+                setReporter({
+                  fullName: incident.reporterName || `Reportante #${reporterId}`,
+                  identification: incident.identification || `ID ${reporterId}`,
+                });
+              }
+            })
             .finally(() => { if (active) setReporterLoading(false); });
         }
 

@@ -9,6 +9,7 @@ import "../styles/user-report-detail.css";
 import { useParams } from "react-router-dom";
 import policeVideo from "../assets/policia.mp4";
 import { fetchIncidentById, fetchIncidentEvidences } from "../services/policeApi";
+import { fetchAdminUserById } from "../services/adminUsersApi";
 
 /*
   UserReportDetail:
@@ -26,6 +27,11 @@ const UserReportDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  /* ── Reportante ── */
+  const [reporter, setReporter] = useState(null);
+  const [reporterLoading, setReporterLoading] = useState(false);
+  const [reporterError, setReporterError] = useState("");
+
   useEffect(() => {
     let active = true;
 
@@ -38,6 +44,23 @@ const UserReportDetail = () => {
 
         if (active) {
           setReport(incident);
+        }
+
+        /* Consultar datos del reportante */
+        const reporterId = incident?.idUsuario;
+        if (active && reporterId && Number.isInteger(Number(reporterId)) && Number(reporterId) > 0) {
+          setReporterLoading(true);
+          fetchAdminUserById(reporterId)
+            .then((user) => { if (active) setReporter(user); })
+            .catch(() => {
+              if (active) {
+                setReporter({
+                  fullName: incident.reporterName || `Reportante #${reporterId}`,
+                  identification: incident.identification || `ID ${reporterId}`,
+                });
+              }
+            })
+            .finally(() => { if (active) setReporterLoading(false); });
         }
 
         try {
@@ -107,6 +130,9 @@ const UserReportDetail = () => {
             evidences={evidences}
             evidenceLoading={evidenceLoading}
             evidenceError={evidenceError}
+            reporter={reporter}
+            reporterLoading={reporterLoading}
+            reporterError={reporterError}
           />
         </div>
       </main>

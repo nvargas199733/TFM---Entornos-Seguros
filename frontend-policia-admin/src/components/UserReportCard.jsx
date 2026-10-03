@@ -63,7 +63,16 @@ const UserReportCard = ({
         )}
 
         {!reporterLoading && reporterError && (
-          <p role="alert">{reporterError}</p>
+          <>
+            <p>
+              <User size={15} aria-hidden="true" />
+              <strong>Nombre:</strong>&nbsp;{report.reporterName || `Reportante #${report.idUsuario}`}
+            </p>
+            <p>
+              <IdCard size={15} aria-hidden="true" />
+              <strong>Identificación:</strong>&nbsp;{report.identification || `ID ${report.idUsuario}`}
+            </p>
+          </>
         )}
 
         {!reporterLoading && !reporterError && reporter && (
@@ -72,10 +81,22 @@ const UserReportCard = ({
               <User size={15} aria-hidden="true" />
               <strong>Nombre:</strong>&nbsp;{reporter.fullName}
             </p>
-            <p>
-              <IdCard size={15} aria-hidden="true" />
-              <strong>Cédula:</strong>&nbsp;{reporter.identification}
-            </p>
+            {reporter.identification && (
+              <p>
+                <IdCard size={15} aria-hidden="true" />
+                <strong>Cédula:</strong>&nbsp;{reporter.identification}
+              </p>
+            )}
+            {reporter.phone && (
+              <p>
+                <strong>Teléfono:</strong>&nbsp;{reporter.phone}
+              </p>
+            )}
+            {reporter.email && (
+              <p>
+                <strong>Correo:</strong>&nbsp;{reporter.email}
+              </p>
+            )}
             <p className="user-report-card__reporter-meta">
               ID del usuario: {report.idUsuario}
             </p>
@@ -86,11 +107,11 @@ const UserReportCard = ({
           <>
             <p>
               <User size={15} aria-hidden="true" />
-              {report.reporterName}
+              <strong>Nombre:</strong>&nbsp;{report.reporterName || `Reportante #${report.idUsuario}`}
             </p>
             <p>
               <IdCard size={15} aria-hidden="true" />
-              {report.identification}
+              <strong>Identificación:</strong>&nbsp;{report.identification || `ID ${report.idUsuario}`}
             </p>
           </>
         )}

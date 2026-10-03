@@ -8,14 +8,11 @@ import "../styles/reports-police.css";
 import HeroBanner from "../components/HeroBanner";
 import Pagination from "../components/Pagination";
 import { fetchIncidents } from "../services/policeApi";
+import { fetchAdminUsers } from "../services/adminUsersApi";
 
 /*
   ReportsPolice:
   Vista donde el rol Policía puede ver reportes pendientes.
-
-  Por ahora usa datos ficticios.
-  Luego se conectará al backend para mostrar reportes reales
-  generados desde el rol Usuario.
 */
 
 const ReportsPolice = () => {
@@ -38,12 +35,33 @@ const ReportsPolice = () => {
 
         const incidents = await fetchIncidents();
 
+        let usersMap = new Map();
+        try {
+          const allUsers = await fetchAdminUsers();
+          if (Array.isArray(allUsers)) {
+            allUsers.forEach((u) => {
+              if (u?.id) usersMap.set(Number(u.id), u);
+            });
+          }
+        } catch {
+          // ignore
+        }
+
         if (active) {
-          setReports(
-            incidents.filter(
+          const mappedReports = incidents
+            .filter(
               (incident) => String(incident.estadoIncidente || "").toUpperCase() === "PENDIENTE",
-            ),
-          );
+            )
+            .map((incident) => {
+              const u = usersMap.get(Number(incident.idUsuario));
+              return {
+                ...incident,
+                reporterName: u?.fullName || incident.reporterName,
+                reporterUser: u || null,
+              };
+            });
+
+          setReports(mappedReports);
         }
       } catch (loadError) {
         if (active) {
